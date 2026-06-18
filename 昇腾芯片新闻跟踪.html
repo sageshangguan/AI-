@@ -1,0 +1,4200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>华为昇腾芯片 · 新闻追踪</title>
+<style>
+/* ============================================================
+   CSS Variables & Reset
+   ============================================================ */
+:root {
+  --bg-primary: #0a0e17;
+  --bg-secondary: #111620;
+  --bg-card: #161c28;
+  --bg-card-hover: #1c2434;
+  --border: #1e2a3a;
+  --border-light: #263348;
+  --text-primary: #e8ecf1;
+  --text-secondary: #8b95a8;
+  --text-muted: #5a6578;
+  --accent: #00c8e8;
+  --accent-glow: rgba(0, 200, 232, 0.15);
+  --accent2: #6c5ce7;
+  --accent3: #00d68f;
+  --amber: #f0a030;
+  --red: #e0556a;
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --max-width: 1280px;
+  --header-h: 60px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  min-height: 100dvh; /* iOS Safari — avoids address bar clipping */
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent; /* Remove default tap highlight */
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  /* outline: see :focus-visible below */
+  transition: var(--transition);
+  touch-action: manipulation; /* Eliminate 300ms tap delay on mobile */
+}
+
+/* Preserve focus visibility for keyboard users (WCAG 2.4.7) */
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+input, select {
+  font-family: inherit;
+  outline: none;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ============================================================
+   Header
+   ============================================================ */
+.app-header {
+  position: -webkit-sticky; position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: var(--header-h);
+  display: flex; align-items: center; gap: 16px;
+}
+
+.header-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.header-logo {
+  width: 34px; height: 34px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.header-search {
+  flex: 1; max-width: 420px;
+  position: relative;
+}
+.header-search input {
+  width: 100%; padding-left: 38px;
+  height: 38px;
+  background: var(--bg-card); border: 1px solid var(--border);
+}
+.header-search .search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 0.95rem; pointer-events: none;
+}
+
+.header-actions { display: flex; gap: 8px; margin-left: auto; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem; font-weight: 500;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--border-light); }
+.btn-primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+.btn-primary:hover { background: #00dff7; box-shadow: 0 0 16px var(--accent-glow); }
+.btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+.btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+.btn-icon { padding: 8px; min-width: 36px; justify-content: center; }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { color: var(--text-primary); background: var(--bg-card); }
+
+/* ============================================================
+   Stats Bar
+   ============================================================ */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 20px 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  transition: var(--transition);
+}
+.stat-card:hover { border-color: var(--border-light); background: var(--bg-card-hover); }
+
+.stat-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.stat-icon.cyan { background: rgba(0,200,232,0.12); color: var(--accent); }
+.stat-icon.purple { background: rgba(108,92,231,0.12); color: var(--accent2); }
+.stat-icon.green { background: rgba(0,214,143,0.12); color: var(--accent3); }
+.stat-icon.amber { background: rgba(240,160,48,0.12); color: var(--amber); }
+
+.stat-info { min-width: 0; }
+.stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+
+/* ============================================================
+   Main Layout
+   ============================================================ */
+.main-content {
+  display: flex;
+  gap: 20px;
+  padding: 0 24px 40px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.sidebar-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.sidebar-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.filter-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  margin: 0 4px 6px 0;
+}
+.filter-chip:hover, .filter-chip.active {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filter-chip .count { font-size: 0.7rem; color: var(--text-muted); }
+
+.date-nav-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px; border-radius: var(--radius-sm);
+  font-size: 0.82rem; cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-secondary);
+}
+.date-nav-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.date-nav-item.active { background: var(--accent-glow); color: var(--accent); }
+.date-nav-item .badge {
+  font-size: 0.7rem; background: var(--bg-primary);
+  padding: 2px 8px; border-radius: 10px; color: var(--text-muted);
+}
+
+/* News Feed */
+.news-feed {
+  flex: 1;
+  min-width: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.feed-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 0 10px;
+}
+
+.feed-title {
+  font-size: 1rem; font-weight: 600;
+}
+
+.feed-sort { display: flex; gap: 4px; }
+
+/* ============================================================
+   News Card
+   ============================================================ */
+.news-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: var(--transition);
+  position: relative;
+  cursor: pointer;
+  animation: fadeInUp 0.35s ease both;
+  contain: layout style; /* Isolate layout recalc - Chrome 52+ */
+}
+.news-card:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+  transform: translateX(3px);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.news-card-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.news-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+  flex: 1;
+}
+.news-card:hover .news-card-title { color: var(--accent); }
+
+.news-card-actions {
+  display: flex; gap: 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: var(--transition);
+}
+.news-card:hover .news-card-actions { opacity: 1; }
+
+.card-action-btn {
+  width: 30px; height: 30px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.card-action-btn:hover { background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary); }
+.card-action-btn.fav-active { color: var(--amber); }
+.card-action-btn:hover.fav-active { color: var(--amber); }
+
+.news-card-meta {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.source-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+.source-tag.weibo { color: #e0556a; }
+.source-tag.news { color: #5b9bd5; }
+.source-tag.blog { color: #00d68f; }
+
+.news-card-summary {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.keyword-highlight {
+  background: rgba(0,200,232,0.18);
+  color: var(--accent);
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Competitor Comparison Panel
+   ============================================================ */
+.compare-panel {
+  max-width: var(--max-width);
+  margin: 0 auto 16px;
+  padding: 0 24px;
+}
+.compare-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+  margin-bottom: 12px;
+}
+.compare-header h3 { font-size: 1rem; font-weight: 600; }
+.compare-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-secondary); }
+.legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+
+.compare-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.compare-table thead th {
+  position: -webkit-sticky; position: sticky; top: 0;
+  background: var(--bg-secondary);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-light);
+  z-index: 1;
+  will-change: transform;
+}
+.compare-table thead th:first-child {
+  position: -webkit-sticky; position: sticky; left: 0; z-index: 2;
+  border-radius: var(--radius) 0 0 0;
+}
+.compare-table thead th:last-child { border-radius: 0 var(--radius) 0 0; }
+
+.compare-table tbody td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.compare-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.compare-table tbody td:first-child {
+  position: -webkit-sticky; position: sticky; left: 0; z-index: 1;
+  will-change: transform;
+  font-weight: 600; color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+.compare-table .chip-col { min-width: 120px; }
+.compare-table .val-best { color: var(--accent3); font-weight: 600; }
+.compare-table .val-good { color: var(--accent); }
+.compare-table .val-mid { color: var(--amber); }
+.compare-table .highlight-row td { background: rgba(0,200,232,0.04); }
+.compare-table .highlight-row td:first-child { background: var(--bg-secondary); } /* Keep sticky col opaque */
+
+.compare-note {
+  font-size: 0.72rem; color: var(--text-muted);
+  margin-top: 8px; line-height: 1.5;
+}
+
+.compare-toggle {
+  position: relative;
+}
+.compare-toggle .badge {
+  position: absolute; top: -4px; right: -4px;
+  font-size: 0.6rem; background: var(--accent); color: #000;
+  padding: 1px 5px; border-radius: 8px; font-weight: 700;
+}
+
+/* Dynamic data indicators in comparison table */
+.compare-table .val-dynamic {
+  position: relative;
+}
+.compare-table .val-dynamic::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 2px; bottom: 2px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+}
+.compare-table .val-dynamic.val-xv::before {
+  background: var(--accent3);
+}
+.compare-table .val-dynamic:not(.val-xv)::before {
+  background: var(--accent);
+}
+.compare-table .val-xv {
+  font-weight: 600;
+  color: var(--accent3);
+}
+.dyn-badge {
+  font-size: 0.65rem;
+  margin-left: 3px;
+  cursor: help;
+  opacity: 0.7;
+}
+.freshness-row td {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-light);
+}
+.freshness-row td:first-child {
+  position: -webkit-sticky; position: sticky; left: 0; z-index: 1;
+  will-change: transform;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.freshness-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.freshness-dot.recent { background: var(--accent3); }
+.freshness-dot.week { background: var(--amber); }
+.freshness-dot.older { background: var(--text-muted); }
+
+/* ============================================================
+   Empty / Loading State
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+.empty-state h3 { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; }
+.empty-state p { font-size: 0.85rem; max-width: 400px; margin: 0 auto; }
+
+.loading-spinner {
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px;
+  gap: 10px;
+  color: var(--text-muted);
+}
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   Settings Modal
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.6);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  width: 90%;
+  max-width: 560px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal h3 { font-size: 1.15rem; margin-bottom: 20px; }
+.modal label { display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px; }
+.modal input, .modal select { width: 100%; margin-bottom: 16px; }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast-container {
+  position: fixed; bottom: 20px; right: 20px; z-index: 300;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  box-shadow: var(--shadow);
+  animation: slideIn 0.3s ease;
+  max-width: 360px;
+}
+.toast.success { border-left: 3px solid var(--accent3); }
+.toast.error { border-left: 3px solid var(--red); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ============================================================
+   Trend Chart (Simple CSS bars)
+   ============================================================ */
+.trend-bars {
+  display: flex; align-items: flex-end; gap: 4px;
+  height: 60px;
+}
+.trend-bar {
+  flex: 1;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+  transition: height 0.4s ease;
+  min-height: 4px;
+  opacity: 0.7;
+  position: relative;
+}
+.trend-bar:hover { opacity: 1; }
+.trend-bar-label {
+  position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 0.6rem; color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .main-content { flex-direction: column; }
+  .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+  .sidebar-section { flex: 1; min-width: 140px; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .header-search { max-width: 200px; }
+}
+
+@media (max-width: 560px) {
+  .stats-bar { grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 12px; }
+  .stat-card { padding: 12px 14px; gap: 10px; }
+  .stat-value { font-size: 1.2rem; }
+  .stat-icon { width: 34px; height: 34px; font-size: 1rem; }
+  .main-content { padding: 0 10px 30px; gap: 12px; }
+  .app-header { padding: 0 8px; gap: 6px; flex-wrap: wrap; height: auto; min-height: var(--header-h); }
+  .header-brand { font-size: 0.9rem; }
+  .header-brand .header-logo { width: 28px; height: 28px; font-size: 0.9rem; }
+  .header-search { max-width: 120px; flex: 0 0 auto; }
+  .header-actions { gap: 4px; }
+  .btn { padding: 10px 12px; font-size: 0.8rem; } /* Larger touch target */
+  .btn-sm { padding: 8px 10px; font-size: 0.75rem; min-height: 36px; }
+  .btn-icon { padding: 8px; min-width: 36px; min-height: 36px; }
+  .sidebar { flex-direction: column; }
+  .filter-chip { padding: 8px 14px; font-size: 0.8rem; margin: 2px 6px 8px 0; min-height: 36px; display: inline-flex; align-items: center; }
+  .news-card { padding: 14px; }
+  .news-card-title { font-size: 0.9rem; }
+  .card-action-btn { width: 36px; height: 36px; } /* Larger fav/share buttons */
+  .modal { padding: 20px; width: 95%; }
+  .compare-panel { padding: 0 10px; }
+  /* Scroll hint for comparison table on mobile */
+  .compare-table-wrap { -webkit-overflow-scrolling: touch; position: relative; }
+  .compare-table-wrap::after {
+    content: '← 滑动查看 →';
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: 0.65rem; color: var(--text-muted); opacity: 0.6;
+    pointer-events: none; white-space: nowrap;
+    background: linear-gradient(90deg, transparent, var(--bg-card) 40%);
+    padding: 6px 6px 6px 30px; border-radius: 4px;
+  }
+}
+
+@media (max-width: 380px) {
+  .stats-bar { grid-template-columns: 1fr; gap: 6px; padding: 8px 8px; }
+  .header-actions { gap: 2px; }
+  .btn { padding: 8px 8px; font-size: 0.72rem; gap: 3px; }
+  .header-brand span { display: none; }
+  .header-search { max-width: 90px; }
+  .news-card-meta { gap: 6px; font-size: 0.7rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     Header
+     ============================================================ -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="header-logo">⬡</div>
+    <span>昇腾新闻追踪</span>
+  </div>
+  <div class="header-search">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="搜索新闻标题、关键词..." autocomplete="off">
+  </div>
+  <div class="header-actions">
+    <button class="btn compare-toggle" id="btnCompareToggle" title="AI芯片规格对比">📊 对比</button>
+    <button class="btn" id="btnImport" title="导入JSON数据">📤 导入</button>
+    <input type="file" id="importFileInput" accept=".json" style="display:none">
+    <button class="btn" id="btnExport" title="导出数据">📥 导出</button>
+    <button class="btn btn-primary" id="btnRefresh" title="刷新新闻">
+      <span>↻</span> 刷新
+    </button>
+    <button class="btn btn-ghost btn-icon" id="btnSettings" title="设置">⚙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     Stats Bar
+     ============================================================ -->
+<section class="stats-bar" id="statsBar">
+  <div class="stat-card">
+    <div class="stat-icon cyan">📰</div>
+    <div class="stat-info">
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-label">追踪新闻总数</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green">📅</div>
+    <div class="stat-info">
+      <div class="stat-value" id="statToday">0</div>
+      <div class="stat-label">今日新增</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple">📡</div>
+    <div class="stat-info">
+      <div class="stat-value" id="statSources">0</div>
+      <div class="stat-label">活跃源 / 性能数据</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon amber">⭐</div>
+    <div class="stat-info">
+      <div class="stat-value" id="statFavs">0</div>
+      <div class="stat-label">已收藏 / 已验证</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     Competitor Comparison Panel
+     ============================================================ -->
+<section class="compare-panel" id="comparePanel">
+  <div class="compare-header">
+    <h3>📊 AI 芯片横向对比 · 规格速查表</h3>
+    <div class="compare-legend">
+      <span class="legend-dot" style="background:#00c8e8"></span> 华为昇腾
+      <span class="legend-dot" style="background:#ff6b35"></span> 寒武纪
+      <span class="legend-dot" style="background:#00a3e0"></span> 海光
+      <span class="legend-dot" style="background:#de2f3f"></span> 百度昆仑
+      <span class="legend-dot" style="background:#00b4d8"></span> 燧原
+      <span class="legend-dot" style="background:#7b2d8e"></span> 壁仞
+      <span class="legend-dot" style="background:#ffd100"></span> 摩尔线程
+      <span class="legend-dot" style="background:#76b900"></span> NVIDIA
+      <span class="legend-dot" style="background:#ed1c24"></span> AMD
+      <span class="legend-dot" style="background:#0071c5"></span> Intel
+      <span class="legend-dot" style="background:#4285f4"></span> Google TPU
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:0.75rem;color:var(--text-muted)">选择对比：</span>
+      <button class="btn btn-sm active" id="btnChipSelectAll" style="font-size:0.7rem">全部</button>
+      <button class="btn btn-sm" id="btnChipClearAll" style="font-size:0.7rem">清空</button>
+      <span style="font-size:0.7rem;color:var(--text-muted);margin-left:4px">· 厂商：</span>
+      <span id="vendorToggles" style="display:flex;gap:3px;flex-wrap:wrap"></span>
+      <span id="chipToggles" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;width:100%"></span>
+    </div>
+  </div>
+  <div id="newChipBanner" style="display:none;background:var(--amber);color:#000;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-size:0.78rem;line-height:1.5"></div>
+  <div class="compare-table-wrap">
+    <table class="compare-table" id="compareTable"></table>
+  </div>
+  <div class="compare-note">
+    📌 数据来源：公开规格、MLPerf 成绩、第三方评测（2026年6月更新）。<br>
+    ⚠ 实际性能因工作负载、软件栈优化程度而异。昇腾 910C 部分数据为预估/泄露值。
+  </div>
+</section>
+
+<!-- ============================================================
+     Main Content
+     ============================================================ -->
+<div class="main-content">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <!-- Date Navigator -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">📆 日期导航</div>
+      <div id="dateNav"></div>
+    </div>
+
+    <!-- Source Filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">📡 新闻来源</div>
+      <div id="sourceFilters"></div>
+    </div>
+
+    <!-- Competitor Chip Filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">🔬 竞品芯片</div>
+      <div id="competitorFilters">
+        <span class="filter-chip active" data-competitor="all" role="button" tabindex="0" aria-pressed="true">全部芯片</span>
+        <span class="filter-chip" data-competitor="ascend" role="button" tabindex="0" aria-pressed="false">⬡ 华为昇腾</span>
+        <span class="filter-chip" data-competitor="cambricon" role="button" tabindex="0" aria-pressed="false">🟠 寒武纪</span>
+        <span class="filter-chip" data-competitor="hygon" role="button" tabindex="0" aria-pressed="false">🔹 海光</span>
+        <span class="filter-chip" data-competitor="baidu" role="button" tabindex="0" aria-pressed="false">🔴 百度昆仑</span>
+        <span class="filter-chip" data-competitor="enflame" role="button" tabindex="0" aria-pressed="false">🩵 燧原</span>
+        <span class="filter-chip" data-competitor="biren" role="button" tabindex="0" aria-pressed="false">🟣 壁仞</span>
+        <span class="filter-chip" data-competitor="moore" role="button" tabindex="0" aria-pressed="false">🟡 摩尔线程</span>
+        <span class="filter-chip" data-competitor="nvidia" role="button" tabindex="0" aria-pressed="false">🟢 NVIDIA</span>
+        <span class="filter-chip" data-competitor="amd" role="button" tabindex="0" aria-pressed="false">🔴 AMD</span>
+        <span class="filter-chip" data-competitor="intel" role="button" tabindex="0" aria-pressed="false">🔵 Intel</span>
+        <span class="filter-chip" data-competitor="google" role="button" tabindex="0" aria-pressed="false">🔷 Google TPU</span>
+        <span class="filter-chip" data-competitor="aws" role="button" tabindex="0" aria-pressed="false">🟠 AWS Trainium</span>
+        <span class="filter-chip" data-competitor="microsoft" role="button" tabindex="0" aria-pressed="false">🟣 Microsoft Maia</span>
+      </div>
+    </div>
+
+    <!-- Trend Mini Chart -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">📊 近7天趋势</div>
+      <div class="trend-bars" id="trendBars"></div>
+    </div>
+  </aside>
+
+  <!-- News Feed -->
+  <main class="news-feed" id="newsFeed">
+    <div class="feed-header">
+      <span class="feed-title" id="feedTitle">最新新闻</span>
+      <div class="feed-sort">
+        <button class="btn btn-sm" id="btnVerifiedOnly" title="仅看多源验证">✅ 已验证</button>
+        <button class="btn btn-sm" id="btnPerfOnly" title="仅看性能数据">⚡ 性能</button>
+        <button class="btn btn-sm" id="btnFavOnly" title="仅看收藏">⭐ 收藏</button>
+        <button class="btn btn-sm active" data-sort="newest">最新</button>
+        <button class="btn btn-sm" data-sort="oldest">最早</button>
+      </div>
+    </div>
+    <div id="newsList">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <span>正在获取最新新闻...</span>
+      </div>
+      <noscript>
+        <div style="padding:40px;text-align:center;color:#e0556a">
+          <p style="font-size:1.2rem;font-weight:bold">⚠️ JavaScript 未启用</p>
+          <p style="font-size:0.85rem;margin-top:8px">请在浏览器设置中启用 JavaScript 后刷新页面</p>
+        </div>
+      </noscript>
+      <!-- DIAGNOSTIC: if you see "JS未运行" on screen, JavaScript is blocked -->
+      <script>
+      (function(){var d=document.getElementById('newsList');if(d)d.getElementsByClassName('loading-spinner')[0].getElementsByTagName('span')[0].textContent='✅ JS引擎正常，加载主程序…';})();
+      </script>
+    </div>
+    <div id="pagination" style="display:flex;justify-content:center;gap:8px;padding:16px 0;"></div>
+  </main>
+
+  <!-- JS disabled fallback -->
+  <noscript><div style="text-align:center;padding:40px;color:red;font-size:18px">
+    ⚠️ 请启用 JavaScript 以使用此页面
+  </div></noscript>
+</div>
+
+<!-- ============================================================
+     Settings Modal
+     ============================================================ -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>⚙ 设置</h3>
+
+    <label>NewsAPI Key（<a href="https://newsapi.org/register" target="_blank">免费注册</a>，支持中文新闻搜索）</label>
+    <input type="text" id="settingNewsApiKey" placeholder="输入你的 NewsAPI Key...">
+
+    <label>GNews API Key（<a href="https://gnews.io/" target="_blank">免费注册</a>，每天100次请求）</label>
+    <input type="text" id="settingGnewsKey" placeholder="输入你的 GNews API Key...">
+
+    <label>自动刷新间隔</label>
+    <select id="settingAutoRefresh">
+      <option value="0">手动刷新</option>
+      <option value="15">每 15 分钟</option>
+      <option value="30" selected>每 30 分钟</option>
+      <option value="60">每 1 小时</option>
+    </select>
+
+    <label>每页显示条数</label>
+    <select id="settingPageSize">
+      <option value="10">10 条</option>
+      <option value="20" selected>20 条</option>
+      <option value="50">50 条</option>
+    </select>
+
+    <label>自定义 RSS 源（每行一个 URL）</label>
+    <textarea id="settingCustomRSS" rows="3" style="width:100%;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;font-family:var(--font-mono);font-size:0.78rem;resize:vertical;" placeholder="https://example.com/rss/feed.xml"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn" id="btnSettingsCancel">取消</button>
+      <button class="btn btn-primary" id="btnSettingsSave">💾 保存设置</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Export Modal
+     ============================================================ -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <h3>📥 导出新闻数据</h3>
+    <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">
+      当前筛选结果共 <strong id="exportCount">0</strong> 条新闻
+    </p>
+
+    <label>导出格式</label>
+    <select id="exportFormat">
+      <option value="json">JSON（完整数据，可重新导入）</option>
+      <option value="csv">CSV（可用 Excel 打开）</option>
+      <option value="md">Markdown（便于阅读和笔记）</option>
+    </select>
+
+    <label>导出范围</label>
+    <select id="exportScope">
+      <option value="filtered">当前筛选结果</option>
+      <option value="all">全部新闻</option>
+      <option value="favs">仅收藏</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn" id="btnExportCancel">取消</button>
+      <button class="btn btn-primary" id="btnExportDo">📥 导出并下载</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Toast Container
+     ============================================================ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============================================================
+     JavaScript
+     ============================================================ -->
+<script>
+(function() {
+'use strict';
+
+// Global error trap — catches runtime errors and shows them in the UI
+window.addEventListener('error', function(e) {
+  var el = document.getElementById('newsList');
+  if (el && e.error) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>' +
+      '<h3>脚本错误</h3><p style="font-size:0.8rem;word-break:break-all">' +
+      (e.error.message || 'Unknown error') + '</p>' +
+      '<p style="font-size:0.7rem;color:var(--text-muted)">行 ' + (e.lineno || '?') + ' · 刷新页面重试</p></div>';
+  }
+});
+
+/* ============================================================
+   Constants & Config
+   ============================================================ */
+const STORAGE_KEY = 'ascend_news_tracker';
+const DATA_VERSION = 3; // v3: quality-tiered sources, expanded blocked list
+
+// Sources to filter out (e.g., low-quality or spam sources)
+// Low-quality / spam sources — automatically filtered out
+// Category A: 中文流量农场/标题党聚合站 (frequently repost without verification)
+// Category B: Known rumor-mill sites with poor fact-checking records
+const BLOCKED_SOURCES = [
+  // Category A — 中文低质量聚合站
+  'IT之家', '36氪', 'IT之家 [中文]', '36kr',
+  '快科技', '驱动之家', '科技美学', '凤凰网科技', '腾讯科技',
+  'WCCFTech', 'WCCFtech',
+  // Category B — 论坛/非专业源 (high noise-to-signal)
+  'cnBeta', '煎蛋', '品玩',
+  // Category C — AI生成/SEO农场
+  'Analytics India', 'TechStory'
+];
+const DEFAULT_SOURCES = [
+  // ══════ Tier 1 — 权威一手信源 (quality: 3) ══════
+  {
+    id: 'semiengineering',
+    name: 'Semiconductor Engineering [EN]',
+    type: 'rss', url: 'https://semiengineering.com/feed/',
+    proxy: true, color: '#44cc88', lang: 'en', tier: 1,
+    note: '芯片设计/制造/测试深度技术分析'
+  },
+  {
+    id: 'hpcwire',
+    name: 'HPCwire [EN]',
+    type: 'rss', url: 'https://www.hpcwire.com/rss/',
+    proxy: true, color: '#aa66ff', lang: 'en', tier: 1,
+    note: 'HPC+AI超算权威媒体'
+  },
+  {
+    id: 'servethehome',
+    name: 'ServeTheHome [EN]',
+    type: 'rss', url: 'https://www.servethehome.com/feed/',
+    proxy: true, color: '#ff6699', lang: 'en', tier: 1,
+    note: '数据中心/服务器芯片一手评测'
+  },
+  {
+    id: 'theregister',
+    name: 'The Register [EN]',
+    type: 'rss', url: 'https://www.theregister.com/headlines/hardware/index.rss',
+    proxy: true, color: '#4488ff', lang: 'en', tier: 1,
+    note: '企业IT+芯片产业深度报道'
+  },
+  {
+    id: 'ieeespectrum',
+    name: 'IEEE Spectrum [EN]',
+    type: 'rss', url: 'https://spectrum.ieee.org/feeds/topic/semiconductors.rss',
+    proxy: true, color: '#0066cc', lang: 'en', tier: 1,
+    note: 'IEEE旗舰 — 半导体/芯片工程技术'
+  },
+  // ══════ Tier 2 — 专业芯片媒体 (quality: 2) ══════
+  {
+    id: 'anandtech',
+    name: 'AnandTech [EN]',
+    type: 'rss', url: 'https://www.anandtech.com/rss',
+    proxy: true, color: '#ff6b6b', lang: 'en', tier: 2,
+    note: '芯片架构深度评测'
+  },
+  {
+    id: 'tomshardware',
+    name: 'Tom\'s Hardware [EN]',
+    type: 'rss', url: 'https://www.tomshardware.com/feeds/all',
+    proxy: true, color: '#ff9944', lang: 'en', tier: 2,
+    note: '消费级+数据中心硬件评测'
+  },
+  {
+    id: 'eetimes',
+    name: 'EETimes [EN]',
+    type: 'rss', url: 'https://www.eetimes.com/feed/',
+    proxy: true, color: '#00a86b', lang: 'en', tier: 2,
+    note: '电子工程时报 — 半导体产业标准媒体'
+  },
+  {
+    id: 'electronicsweekly',
+    name: 'Electronics Weekly [EN]',
+    type: 'rss', url: 'https://www.electronicsweekly.com/feed/',
+    proxy: true, color: '#cc6600', lang: 'en', tier: 2,
+    note: '英国电子工程 — 芯片+半导体供应链'
+  },
+  {
+    id: 'techspot',
+    name: 'TechSpot [EN]',
+    type: 'rss', url: 'https://www.techspot.com/backend.xml',
+    proxy: true, color: '#ffcc44', lang: 'en', tier: 2,
+    note: '硬件评测+产业分析'
+  },
+  {
+    id: 'semidigest',
+    name: 'Semiconductor Digest [EN]',
+    type: 'rss', url: 'https://www.semiconductor-digest.com/feed/',
+    proxy: true, color: '#9966cc', lang: 'en', tier: 2,
+    note: '半导体制造+封测产业新闻'
+  },
+  // ══════ 中文源 — 半导体/芯片专业 ══════
+  {
+    id: 'eet-china',
+    name: '电子工程专辑 [中文]',
+    type: 'rss', url: 'https://www.eet-china.com/rss',
+    proxy: true, color: '#00d68f', lang: 'zh', tier: 2,
+    note: '中国半导体专业技术媒体'
+  },
+  {
+    id: 'jiwei',
+    name: '集微网 [中文]',
+    type: 'rss', url: 'https://www.jiwei.net/feed',
+    proxy: true, color: '#f0a030', lang: 'zh', tier: 2,
+    note: '中国半导体产业核心媒体'
+  },
+  {
+    id: 'laoyaoba',
+    name: '老杳吧/集微 [中文]',
+    type: 'rss', url: 'https://rss.laoyaoba.com/rss',
+    proxy: true, color: '#6c5ce7', lang: 'zh', tier: 2,
+    note: '芯片产业社区 — 行业人士深度讨论'
+  },
+  {
+    id: 'icsmart',
+    name: '芯智讯 [中文]',
+    type: 'rss', url: 'https://www.icsmart.cn/feed',
+    proxy: true, color: '#e04090', lang: 'zh', tier: 2,
+    note: '中国芯片产业资讯'
+  }
+];
+
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const RSS_PROXY_BACKUP = 'https://api.allorigins.win/raw?url=';
+
+// Source quality tier → numeric weight for cross-validation
+// Tier 1 (权威): 3pts | Tier 2 (专业): 2pts | NewsAPI/GNews: 1pt
+// Cross-validation threshold: quality score >= 4 → verified
+const SOURCE_QUALITY = {
+  // Tier 1
+  semiengineering: 3, hpcwire: 3, servethehome: 3, theregister: 3, ieeespectrum: 3,
+  // Tier 2
+  anandtech: 2, tomshardware: 2, eetimes: 2, electronicsweekly: 2, techspot: 2,
+  semidigest: 2, 'eet-china': 2, jiwei: 2, laoyaoba: 2, icsmart: 2,
+  // API sources (lower weight — broad crawl, less curated)
+  newsapi: 1, gnews: 1, custom: 1
+};
+function getSourceQuality(sourceId) {
+  return SOURCE_QUALITY[sourceId] || 1;
+}
+
+// Keywords for relevance scoring — weighted by position (earlier = higher weight)
+const RELEVANCE_KEYWORDS = [
+  // ── 芯片型号/代号 ──
+  '昇腾', 'Ascend', '910B', '910C', '310P', '910', '310', '昇思', '鲲鹏', '海思',
+  'CANN', 'MindSpore', '达芬奇', 'Da Vinci', 'Huawei AI',
+  '寒武纪', '思元', 'Siyuan', '590', '海光', 'Hygon', 'DCU', 'Z100',
+  '昆仑芯', 'Kunlun', '燧原', '云燧', 'Yunsui', '壁仞', 'BR100', 'BIREN',
+  '摩尔线程', 'MTT', 'MUSA',
+
+  // ── 性能指标类 (高权重) ──
+  'TFLOPS', 'TOPS', 'FLOPS', '算力', 'performance', 'benchmark', '基准测试',
+  'throughput', '吞吐', 'latency', '延迟', 'bandwidth', '带宽',
+  'power consumption', '功耗', 'TDP', 'thermal', '散热',
+  'transistor', '晶体管', 'die size', '芯片面积',
+
+  // ── 制程/工艺类 ──
+  '7nm', '5nm', '3nm', '14nm', '制程', 'process node', 'N+2', 'N+1',
+  'SMIC', '中芯国际', '台积电', 'TSMC', 'Samsung', '三星', 'Intel',
+
+  // ── 对比竞品类 ──
+  'NVIDIA', 'A100', 'H100', 'B200', 'H200', 'B100', 'GH200',
+  'AMD', 'MI300', 'MI250', 'Instinct',
+  'Google TPU', 'AWS Trainium', 'Intel Gaudi',
+  'MLPerf', 'MLPerf training', 'MLPerf inference',
+
+  // ── 架构/技术类 ──
+  'NPU', 'AI芯片', 'AI accelerator', 'AI训练', 'AI推理',
+  'training', 'inference', '推理', '训练', '大模型', 'LLM',
+  'HBM', 'HBM2e', 'HBM3', 'HBM3e', '显存', 'memory',
+  'interconnect', '互联', 'NVLink', 'HCCS', 'PCIe',
+
+  // ── 生态/部署类 ──
+  'datacenter', '数据中心', '智算中心', 'supercomputer', '超算',
+  'cloud', '云', 'server', '服务器', 'edge', '边缘',
+
+  // ── 政策/市场类 ──
+  '制裁', 'sanction', 'export control', '出口管制', 'entity list',
+  '自研', 'domestic', '国产', '替代', 'supply chain', '供应链',
+  'semiconductor', '半导体', 'chip', '芯片'
+];
+
+// Performance-specific keywords — news matching these get a "⚡性能数据" badge
+const PERFORMANCE_KEYWORDS = [
+  'TFLOPS', 'TOPS', 'FLOPS', '算力', 'benchmark', '基准测试', '性能测试',
+  'throughput', '吞吐', 'latency', '延迟', 'bandwidth', '带宽',
+  'power consumption', '功耗', 'TDP', 'thermal', '散热',
+  'transistor', '晶体管', 'die size', '芯片面积',
+  '7nm', '5nm', '3nm', '制程', 'process node',
+  'MLPerf', 'HBM', '显存', 'memory bandwidth',
+  'A100', 'H100', 'B200', 'H200', 'MI300', '对比', 'vs.', 'comparison',
+  'GHz', 'MHz', 'Watt', 'TOPS/W', 'performance per watt',
+  'PCIe 5.0', 'PCIe 6.0', 'CXL', 'HCCS', 'NVLink'
+];
+// Pre-lowered copies for performance — avoids ~140 toLowerCase() calls per analyzeText
+const RELEVANCE_KEYWORDS_LOWER = RELEVANCE_KEYWORDS.map(function(k) { return k.toLowerCase(); });
+const PERFORMANCE_KEYWORDS_LOWER = PERFORMANCE_KEYWORDS.map(function(k) { return k.toLowerCase(); });
+// COMPETITOR_KEYWORDS_LOWER is built once below (nested arrays need deep conversion)
+
+// 📊 Chip registry — single source of truth for display name + color.
+// Add a chip here → auto-appears in comparison table. Also add keys to COMPETITOR_SPECS below.
+const CHIP_META = [
+  { id: 'a910b',     name: 'Ascend 910B', color: '#00c8e8', vendor: '华为' },
+  { id: 'a910c',     name: 'Ascend 910C', color: '#00dff7', vendor: '华为' },
+  { id: 'siyuan590', name: '思元590',     color: '#ff6b35', vendor: '寒武纪' },
+  { id: 'dcuz100',   name: 'DCU Z100',    color: '#00a3e0', vendor: '海光' },
+  { id: 'kunlun2',   name: '昆仑芯2',     color: '#de2f3f', vendor: '百度' },
+  { id: 'yunsuiT20', name: '云燧T20',     color: '#00b4d8', vendor: '燧原' },
+  { id: 'br100',     name: 'BR100',       color: '#7b2d8e', vendor: '壁仞' },
+  { id: 'mttS4000',  name: 'MTT S4000',   color: '#ffd100', vendor: '摩尔线程' },
+  { id: 'h100',      name: 'H100',        color: '#76b900', vendor: 'NVIDIA' },
+  { id: 'h200',      name: 'H200',        color: '#8bc34a', vendor: 'NVIDIA' },
+  { id: 'b200',      name: 'B200',        color: '#aed581', vendor: 'NVIDIA' },
+  { id: 'mi300x',    name: 'MI300X',      color: '#ed1c24', vendor: 'AMD' },
+  { id: 'gaudi3',    name: 'Gaudi 3',     color: '#0071c5', vendor: 'Intel' },
+  { id: 'tpuv6',     name: 'TPU v6e',     color: '#4285f4', vendor: 'Google' },
+  { id: 'trainium3', name: 'Trainium3',   color: '#ff9900', vendor: 'AWS' },
+  { id: 'maia200',   name: 'Maia 200',    color: '#5c2d91', vendor: 'Microsoft' },
+  { id: 'a950pr',    name: 'Ascend 950PR',  color: '#00e5ff', vendor: '华为' },
+  { id: 'a950dt',    name: 'Ascend 950DT',  color: '#00f0ff', vendor: '华为' },
+  { id: 'b300',      name: 'B300 Ultra',    color: '#9ccc65', vendor: 'NVIDIA' },
+  { id: 'mi355x',    name: 'MI355X',        color: '#ff4444', vendor: 'AMD' },
+  { id: 'tpuv7',     name: 'TPU v7 Ironwood',color: '#6699ff', vendor: 'Google' },
+  { id: 'siyuan690', name: '思元690',       color: '#ff8c42', vendor: '寒武纪' },
+  { id: 'mttS5000',  name: 'MTT S5000',     color: '#ffe066', vendor: '摩尔线程' },
+  { id: 'kunlunP800',name: '昆仑芯P800',    color: '#ff5555', vendor: '百度' },
+  { id: 'shensuan3', name: '深算三号',      color: '#3399ff', vendor: '海光' },
+  { id: 'yunsuiL600',name: '燧原L600',      color: '#33ccff', vendor: '燧原' },
+  { id: 'mi400',     name: 'MI400',          color: '#ff6666', vendor: 'AMD' },
+  { id: 'bili20x',   name: '壁砺20X',       color: '#9b30ff', vendor: '壁仞' }
+];
+
+// Spec values for each chip key above. Keys must match CHIP_META ids.
+// Add a new chip → add its id to every row below + add the id to CHIP_META above.
+const COMPETITOR_SPECS = [
+  // 国产芯片新增：寒武纪590 / 海光DCU Z100 / 昆仑芯2 / 燧原T20 / 壁仞BR100 / 摩尔线程S4000
+  { key: 'vendor',      label: '厂商',           a910b:'华为',     a910c:'华为',      h100:'NVIDIA',     h200:'NVIDIA',     b200:'NVIDIA',     mi300x:'AMD',       gaudi3:'Intel',     tpuv6:'Google',     trainium3:'AWS',       maia200:'Microsoft',  siyuan590:'寒武纪',  dcuz100:'海光',    kunlun2:'百度',    yunsuiT20:'燧原',    br100:'壁仞',      mttS4000:'摩尔线程', a950pr:'华为', a950dt:'华为', b300:'NVIDIA', mi355x:'AMD', tpuv7:'Google', siyuan690:'寒武纪', mttS5000:'摩尔线程', kunlunP800:'百度', shensuan3:'海光', yunsuiL600:'燧原', mi400:'AMD', bili20x:'壁仞' },
+  { key: 'chip',        label: '芯片代号',       a910b:'Ascend 910B', a910c:'Ascend 910C', h100:'H100 SXM',   h200:'H200 SXM',   b200:'B200 (Blackwell)', mi300x:'MI300X', gaudi3:'Gaudi 3', tpuv6:'TPU v6e Trillium', trainium3:'Trainium3', maia200:'Maia 200',  siyuan590:'思元590',  dcuz100:'DCU Z100', kunlun2:'昆仑芯2',  yunsuiT20:'云燧T20', br100:'BR100',     mttS4000:'MTT S4000', a950pr:'Ascend 950PR', a950dt:'Ascend 950DT', b300:'B300 (Blackwell Ultra)', mi355x:'MI355X', tpuv7:'TPU v7 Ironwood', siyuan690:'思元690', mttS5000:'MTT S5000', kunlunP800:'昆仑芯P800', shensuan3:'深算三号', yunsuiL600:'燧原L600', mi400:'MI400', bili20x:'壁砺20X' },
+  { key: 'release',     label: '上市时间',       a910b:'2023 H2', a910c:'2024 H2', h100:'2023 Q1', h200:'2024 Q2', b200:'2024 H2', mi300x:'2023 H2', gaudi3:'2024 Q2', tpuv6:'2024 H2', trainium3:'2025 Q4', maia200:'2024 H2', siyuan590:'2023', dcuz100:'2023', kunlun2:'2022', yunsuiT20:'2023', br100:'2022', mttS4000:'2023', a950pr:'2026 Q1', a950dt:'2026 Q4 (预期)', b300:'2025 H2', mi355x:'2025 H2', tpuv7:'2025 H2', siyuan690:'2026 (预期)', mttS5000:'2025 H2', kunlunP800:'2025', shensuan3:'2025 H2', yunsuiL600:'2025 H2', mi400:'2026 (预期)', bili20x:'2026 (预期)' },
+  { key: 'process',     label: '制程工艺',       a910b:'7nm (SMIC N+1)', a910c:'7nm++ (SMIC N+2)', h100:'4nm (TSMC)', h200:'4nm (TSMC)', b200:'4nm (TSMC)', mi300x:'5nm/6nm (TSMC)', gaudi3:'5nm (TSMC)', tpuv6:'5nm',       trainium3:'5nm (TSMC)',  maia200:'5nm (TSMC)',  siyuan590:'7nm (TSMC)', dcuz100:'7nm',      kunlun2:'7nm',      yunsuiT20:'12nm (GF)', br100:'7nm (TSMC)', mttS4000:'12nm', a950pr:'7nm (SMIC N+2)', a950dt:'7nm (SMIC N+2)', b300:'4nm (TSMC 4NP)', mi355x:'3nm (TSMC N3P)', tpuv7:'5nm', siyuan690:'7nm', mttS5000:'12nm', kunlunP800:'7nm', shensuan3:'7nm', yunsuiL600:'12nm (GF)', mi400:'2nm (TSMC 预期)', bili20x:'7nm (TSMC)' },
+  { key: 'transistors', label: '晶体管数',       a910b:'~30B (估)',  a910c:'~44B (估)', h100:'80B',        h200:'80B',        b200:'208B',       mi300x:'153B',      gaudi3:'~90B (估)', tpuv6:'~50B',     trainium3:'~100B',       maia200:'~80B',       siyuan590:'~50B (估)', dcuz100:'~30B (估)', kunlun2:'~25B (估)', yunsuiT20:'~15B (估)', br100:'~77B',     mttS4000:'~22B (估)', a950pr:'~55B (估)', a950dt:'~65B (估)', b300:'208B', mi355x:'185B', tpuv7:'~80B (估)', siyuan690:'~60B (估)', mttS5000:'~30B (估)', kunlunP800:'~35B (估)', shensuan3:'~40B (估)', yunsuiL600:'~25B (估)', mi400:'~300B (估)', bili20x:'~90B (估)' },
+  { key: 'die_size',    label: '芯片面积',       a910b:'~580mm²',   a910c:'~680mm²',  h100:'814mm²',     h200:'814mm²',     b200:'~820mm²×2',  mi300x:'~1017mm²',  gaudi3:'~750mm²',  tpuv6:'~350mm²',  trainium3:'~600mm²',     maia200:'~500mm²',    siyuan590:'~600mm²', dcuz100:'~500mm²',  kunlun2:'~400mm²',  yunsuiT20:'~500mm²', br100:'~800mm²',  mttS4000:'~450mm²', a950pr:'~750mm²', a950dt:'~820mm²', b300:'~820mm²×2', mi355x:'~900mm²', tpuv7:'~500mm²', siyuan690:'~650mm²', mttS5000:'~550mm²', kunlunP800:'~500mm²', shensuan3:'~550mm²', yunsuiL600:'~600mm²', mi400:'~1,200mm²', bili20x:'~850mm²' },
+  { key: 'fp16',        label: 'FP16/BF16 算力', a910b:'320 TFLOPS', a910c:'640 TFLOPS', h100:'990 TFLOPS', h200:'990 TFLOPS', b200:'2,250 TFLOPS', mi300x:'1,307 TFLOPS', gaudi3:'1,835 TFLOPS (FP8)', tpuv6:'918 TFLOPS (BF16)', trainium3:'~800 TFLOPS', maia200:'~700 TFLOPS', siyuan590:'~256 TFLOPS(估)', dcuz100:'~100 TFLOPS', kunlun2:'~32 TFLOPS', yunsuiT20:'~160 TFLOPS', br100:'~512 TFLOPS(估)', mttS4000:'~50 TFLOPS', a950pr:'~1,600 TFLOPS (估)', a950dt:'~1,800 TFLOPS (估)', b300:'3,500 TFLOPS', mi355x:'2,500 TFLOPS', tpuv7:'~2,300 TFLOPS (BF16)', siyuan690:'~600 TFLOPS', mttS5000:'500 TFLOPS', kunlunP800:'~345 TFLOPS', shensuan3:'376 TFLOPS', yunsuiL600:'~256 TFLOPS', mi400:'~10,000 TFLOPS (估)', bili20x:'~700 TFLOPS (估)' },
+  { key: 'fp8',         label: 'FP8 算力',       a910b:'不支持',     a910c:'~1,200 TFLOPS (估)', h100:'1,980 TFLOPS', h200:'1,980 TFLOPS', b200:'4,500 TFLOPS', mi300x:'2,614 TFLOPS (FP8)', gaudi3:'1,835 TFLOPS', tpuv6:'不支持',  trainium3:'~1,600 TFLOPS', maia200:'~1,400 TFLOPS', siyuan590:'不支持',    dcuz100:'不支持',   kunlun2:'不支持',   yunsuiT20:'不支持',   br100:'不支持',    mttS4000:'不支持', a950pr:'~1,000 TFLOPS (1 PFLOPS)', a950dt:'~1,000 TFLOPS (1 PFLOPS)', b300:'7,000 TFLOPS', mi355x:'4,600 TFLOPS', tpuv7:'4,614 TFLOPS', siyuan690:'~1,200 TFLOPS (估)', mttS5000:'~1,000 TFLOPS', kunlunP800:'~700 TFLOPS (估)', shensuan3:'~750 TFLOPS (估)', yunsuiL600:'~512 TFLOPS (估)', mi400:'20,000 TFLOPS (20 PFLOPS)', bili20x:'~1,400 TFLOPS (估)' },
+  { key: 'fp4',         label: 'FP4 算力',       a910b:'不支持',     a910c:'不支持',   h100:'不支持',      h200:'不支持',       b200:'9,000 TFLOPS', mi300x:'不支持',    gaudi3:'不支持',   tpuv6:'不支持',   trainium3:'不支持',      maia200:'不支持',      siyuan590:'不支持',   dcuz100:'不支持',  kunlun2:'不支持',   yunsuiT20:'不支持',   br100:'不支持',   mttS4000:'不支持', a950pr:'2,000 TFLOPS (2 PFLOPS)', a950dt:'2,000 TFLOPS (2 PFLOPS)', b300:'15,000 TFLOPS', mi355x:'9,200 TFLOPS', tpuv7:'不支持', siyuan690:'不支持', mttS5000:'不支持', kunlunP800:'不支持', shensuan3:'不支持', yunsuiL600:'不支持', mi400:'40,000 TFLOPS (40 PFLOPS)', bili20x:'~2,800 TFLOPS (估)' },
+  { key: 'memory',      label: '显存容量',       a910b:'64 GB HBM2e', a910c:'96 GB HBM3e', h100:'80 GB HBM3',  h200:'141 GB HBM3e', b200:'192 GB HBM3e', mi300x:'192 GB HBM3', gaudi3:'128 GB HBM2e', tpuv6:'32 GB HBM', trainium3:'96 GB HBM3',  maia200:'64 GB HBM3',  siyuan590:'80 GB HBM2e', dcuz100:'32 GB HBM2', kunlun2:'16 GB HBM2', yunsuiT20:'32 GB HBM2e', br100:'64 GB HBM2e', mttS4000:'32 GB GDDR6', a950pr:'128 GB HiBL 1.0', a950dt:'144 GB HiZQ 2.0', b300:'288 GB HBM3e', mi355x:'288 GB HBM3e', tpuv7:'192 GB HBM3e', siyuan690:'96 GB HBM2e', mttS5000:'64 GB HBM2e', kunlunP800:'64 GB HBM2e', shensuan3:'64 GB HBM2e', yunsuiL600:'144 GB HBM2e', mi400:'432 GB HBM4', bili20x:'96 GB HBM2e' },
+  { key: 'mem_bw',      label: '显存带宽',       a910b:'1.6 TB/s',   a910c:'1.2 TB/s',  h100:'3.35 TB/s',   h200:'4.8 TB/s',    b200:'8.0 TB/s',    mi300x:'5.3 TB/s',  gaudi3:'3.7 TB/s', tpuv6:'1.64 TB/s', trainium3:'2.5 TB/s',   maia200:'2.0 TB/s',   siyuan590:'~1.6 TB/s', dcuz100:'~1.0 TB/s', kunlun2:'~0.5 TB/s', yunsuiT20:'~1.2 TB/s', br100:'~2.3 TB/s', mttS4000:'~768 GB/s', a950pr:'1.6 TB/s', a950dt:'4.0 TB/s', b300:'8.0 TB/s', mi355x:'8.0 TB/s', tpuv7:'7.2 TB/s', siyuan690:'~2.0 TB/s', mttS5000:'~1.5 TB/s', kunlunP800:'~1.8 TB/s', shensuan3:'~1.8 TB/s', yunsuiL600:'~2.0 TB/s', mi400:'19.6 TB/s', bili20x:'~3.0 TB/s (估)' },
+  { key: 'interconnect',label: '芯片互联',       a910b:'HCCS 392GB/s', a910c:'HCCS 392GB/s×3', h100:'NVLink4 900GB/s', h200:'NVLink4 900GB/s', b200:'NVLink5 1.8TB/s', mi300x:'Infinity Fabric 896GB/s', gaudi3:'RoCE 200GbE×24', tpuv6:'ICI ~800GB/s', trainium3:'NeuronLink v3', maia200:'Ethernet 400GbE', siyuan590:'MLU-Link ~200GB/s', dcuz100:'PCIe 4.0 x16', kunlun2:'PCIe 4.0 x16', yunsuiT20:'TopsLink ~200GB/s', br100:'BLink ~500GB/s', mttS4000:'PCIe 5.0 x16', a950pr:'灵衢 2 TB/s', a950dt:'灵衢 2 TB/s', b300:'NVLink5 1.8TB/s', mi355x:'Infinity Fabric 1,075GB/s', tpuv7:'ICI 1.2Tbps', siyuan690:'MLU-Link ~400GB/s', mttS5000:'PCIe 5.0 x16', kunlunP800:'PCIe 5.0 x16', shensuan3:'PCIe 5.0 x16', yunsuiL600:'TopsLink ~400GB/s', mi400:'Infinity Fabric 300GB/s', bili20x:'BLink ~800GB/s' },
+  { key: 'tdp',         label: 'TDP 功耗',       a910b:'~350W',      a910c:'~450W',     h100:'700W',       h200:'700W',        b200:'1,000W',      mi300x:'750W',      gaudi3:'900W',     tpuv6:'~150W',    trainium3:'~500W',       maia200:'~450W',      siyuan590:'~350W',    dcuz100:'~300W',   kunlun2:'~150W',   yunsuiT20:'~250W',    br100:'~550W',    mttS4000:'~250W', a950pr:'~600W', a950dt:'~750W', b300:'1,400W', mi355x:'1,400W', tpuv7:'~450W', siyuan690:'~400W', mttS5000:'~300W', kunlunP800:'~250W', shensuan3:'~350W', yunsuiL600:'~300W', mi400:'~1,800W (估)', bili20x:'~600W' },
+  { key: 'energy_eff',  label: '能效 (TF/W @FP16)', a910b:'~0.91',   a910c:'~1.42',     h100:'~1.41',      h200:'~1.41',       b200:'~2.25',       mi300x:'~1.74',     gaudi3:'~2.04 (FP8)', tpuv6:'~6.12 (BF16)', trainium3:'~1.6',   maia200:'~1.56',    siyuan590:'~0.73',    dcuz100:'~0.33',   kunlun2:'~0.21',   yunsuiT20:'~0.64',    br100:'~0.93',    mttS4000:'~0.20', a950pr:'~2.67', a950dt:'~2.40', b300:'~2.50', mi355x:'~1.79', tpuv7:'~10.25 (BF16)', siyuan690:'~1.50', mttS5000:'~1.67', kunlunP800:'~1.38', shensuan3:'~1.07', yunsuiL600:'~0.85', mi400:'~5.56', bili20x:'~1.17' },
+  { key: 'mlperf',      label: 'MLPerf 相对性能', a910b:'A100 80-90%', a910c:'H100 85-92% (估)', h100:'基准',    h200:'H100 110%',   b200:'H100 180-250%', mi300x:'H100 70-90%', gaudi3:'H100 95-170%', tpuv6:'H100 100-160%', trainium3:'H100 60-80%', maia200:'H100 50-70%', siyuan590:'未参与',     dcuz100:'未参与',   kunlun2:'未参与',   yunsuiT20:'未参与',     br100:'未参与',    mttS4000:'未参与', a950pr:'未参与', a950dt:'未参与', b300:'H100 300-400%', mi355x:'H100 200-280% (估)', tpuv7:'H100 200-300% (估)', siyuan690:'未参与', mttS5000:'未参与', kunlunP800:'未参与', shensuan3:'未参与', yunsuiL600:'未参与', mi400:'未发布', bili20x:'未参与' },
+  { key: 'ecosystem',   label: '软件生态',       a910b:'CANN/MindSpore', a910c:'CANN 7.0/MindSpore 2.0', h100:'CUDA 12.x', h200:'CUDA 12.x', b200:'CUDA 12.x', mi300x:'ROCm 6.x', gaudi3:'SynapseAI', tpuv6:'JAX/TF (Google Cloud)', trainium3:'Neuron SDK', maia200:'Maia SDK (Azure)', siyuan590:'Cambricon Neuware', dcuz100:'ROCm兼容', kunlun2:'PaddlePaddle', yunsuiT20:'TopsRider', br100:'BIREN SUPA', mttS4000:'MUSA', a950pr:'CANN 8.0 / MindSpore 3.0', a950dt:'CANN 8.0 / MindSpore 3.0', b300:'CUDA 12.x', mi355x:'ROCm 7.x', tpuv7:'JAX/TF (Google Cloud)', siyuan690:'Cambricon Neuware 2.0', mttS5000:'MUSA 2.0', kunlunP800:'PaddlePaddle / XPU', shensuan3:'ROCm兼容 (365模型适配)', yunsuiL600:'TopsRider 2.0', mi400:'ROCm 8.x (预期)', bili20x:'BIREN SUPA 2.0' },
+];
+
+// Competitor chip keywords for news tagging
+const COMPETITOR_KEYWORDS = {
+ascend:    ['华为', '昇腾', 'Ascend', '910B', '910C', '310P', 'CANN', 'MindSpore', '达芬奇', 'HCCS', '海思', 'HiSilicon', '鲲鹏', 'a950pr', 'a950dt', '950PR', '950DT', 'HiBL', 'HiZQ', '灵衢'],
+cambricon: ['寒武纪', '思元', 'Siyuan', '590', 'Cambricon', 'Neuware', 'MLU', 'siyuan690', '思元690', '690'],
+hygon:     ['海光', 'DCU', 'Z100', 'Hygon', '深算', 'ROCm', 'shensuan3', '深算三号', '深算3号'],
+baidu:     ['百度', '昆仑芯', 'Kunlun', 'PaddlePaddle', 'XPU', 'kunlunP800', '昆仑芯P800', 'P800', '天池'],
+enflame:   ['燧原', '云燧', 'Yunsui', 'T20', 'TopsRider', 'TopsLink', 'yunsuiL600', 'L600', '燧原L600'],
+biren:     ['壁仞', 'BR100', 'BIREN', 'SUPA', 'BLink', 'bili20x', '壁砺20X', 'BR20X'],
+moore:     ['摩尔线程', 'MTT S4000', 'Moore Threads', 'MUSA', 'mttS5000', 'MTT S5000', 'S5000'],
+nvidia:    ['NVIDIA', 'H100', 'H200', 'B200', 'B100', 'A100', 'GH200', 'GB200', 'GB300', 'CUDA', 'NVLink', 'Blackwell', 'Hopper', 'TensorRT', 'b300', 'B300', 'GB300', 'Blackwell Ultra'],
+amd:       ['AMD', 'MI300', 'MI300X', 'MI250', 'Instinct', 'ROCm', 'Infinity Fabric', 'CDNA', 'mi355x', 'mi400', 'MI355X', 'MI400', 'CDNA4'],
+  intel:     ['Intel', 'Gaudi', 'Gaudi 3', 'Gaudi 2', 'Falcon Shores', 'Ponte Vecchio', 'SynapseAI', 'Habana'],
+google:    ['Google TPU', 'TPU v5', 'TPU v6', 'Trillium', 'Ironwood', 'TPU v7', 'Cloud TPU', 'JAX', 'Systolic Array', 'tpuv7', 'Ironwood', 'TPU v7'],
+  aws:       ['AWS', 'Trainium', 'Trainium2', 'Trainium3', 'Inferentia', 'Neuron', 'NeuronLink'],
+  microsoft: ['Microsoft', 'Maia', 'Maia 200', 'Azure AI', 'Cobalt']
+};
+
+// Pre-lowered COMPETITOR_KEYWORDS for performance (deep conversion)
+var COMPETITOR_KEYWORDS_LOWER = {};
+Object.keys(COMPETITOR_KEYWORDS).forEach(function(vendor) {
+  COMPETITOR_KEYWORDS_LOWER[vendor] = COMPETITOR_KEYWORDS[vendor].map(function(k) { return k.toLowerCase(); });
+});
+
+// Pre-compiled quick-spec-check regex (avoids re-compilation on every call)
+var QUICK_SPEC_RGX = /(\d+)\s*(TFLOPS?|TOPS|GB|TB\/s|nm|mm[²2]|W\b|[Bb](?:晶体管|transistor))|(FP16|FP8|BF16|HBM|TDP|晶体管|芯片面积|die\s*size)|(Ascend|H100|H200|B200|MI300|Gaudi\s*3|TPU\s*v6|Trainium|Maia)/i;
+
+/* ============================================================
+   Storage Manager
+   ============================================================ */
+class StorageManager {
+  static load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return this.defaultData();
+      const data = JSON.parse(raw);
+      // Merge defaults for forward compatibility (Object.assign = Chrome 45+)
+      var merged = {};
+      Object.assign(merged, this.defaultData(), data);
+      return merged;
+    } catch (e) {
+      console.warn('Failed to load from localStorage:', e);
+      return this.defaultData();
+    }
+  }
+
+  static save(data) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e);
+      App.showToast('存储空间不足，请清理旧数据', 'error');
+    }
+  }
+
+  static defaultData() {
+    return {
+      news: [],           // All news items
+      settings: {
+        newsApiKey: '',
+        gnewsKey: '',
+        autoRefresh: 30,
+        pageSize: 20,
+        customSources: ''
+      },
+      specExtractions: {}, // Dynamic chip spec extractions from news
+      lastFetch: null,
+      customChips: []      // User-added chips: [{id, name, color, vendor}]
+    };
+  }
+}
+
+/* ============================================================
+   News Engine
+   ============================================================ */
+class NewsEngine {
+  /**
+   * Fetch from a single RSS source via proxy
+   */
+  static async fetchRSS(source) {
+    // Try primary proxy first, then backup
+    const proxies = [
+      RSS_PROXY + encodeURIComponent(source.url),
+      // Backup: try fetching raw XML via allorigins, then parse
+      RSS_PROXY_BACKUP + encodeURIComponent(source.url)
+    ];
+
+    for (const proxyUrl of proxies) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000);
+
+        const resp = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeout);
+
+        if (!resp.ok) continue;
+
+        const text = await resp.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          // If it's raw XML (from allorigins), try to parse manually
+          if (text.includes('<rss') || text.includes('<feed')) {
+            const parsed = this.parseRawRSS(text, source);
+            if (parsed.length > 0) return parsed;
+          }
+          continue;
+        }
+
+        if (data.status === 'ok' && data.items) {
+          return data.items.map(item => this.parseRSSItem(item, source));
+        }
+      } catch (err) {
+        continue; // Try next proxy
+      }
+    }
+
+    console.warn(`RSS fetch failed for ${source.name}: all proxies exhausted`);
+    return [];
+  }
+
+  /**
+   * Parse raw RSS/Atom XML as fallback
+   */
+  static parseRawRSS(xml, source) {
+    const items = [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, 'text/xml');
+
+    // Try RSS format
+    doc.querySelectorAll('item').forEach(el => {
+      items.push({
+        title: (el.querySelector('title') || {}).textContent || '',
+        link: (el.querySelector('link') || {}).textContent || '',
+        description: (el.querySelector('description') || {}).textContent || '',
+        pubDate: (el.querySelector('pubDate') || {}).textContent || '',
+      });
+    });
+
+    // Try Atom format
+    if (items.length === 0) {
+      doc.querySelectorAll('entry').forEach(el => {
+        items.push({
+          title: (el.querySelector('title') || {}).textContent || '',
+          link: (function() { var lk = el.querySelector('link'); return (lk && lk.getAttribute('href')) || (lk && lk.textContent) || ''; })(),
+          description: (el.querySelector('summary') || el.querySelector('content') || {}).textContent || '',
+          pubDate: (el.querySelector('published') || el.querySelector('updated') || {}).textContent || '',
+        });
+      });
+    }
+
+    return items.map(item => this.parseRSSItem(item, source));
+  }
+
+  /**
+   * Parse a single RSS item into our news format
+   */
+  static parseRSSItem(item, source) {
+    const title = (item.title || '').replace(/<[^>]*>/g, '').trim();
+    const summary = (item.description || item.content || '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .substring(0, 300);
+
+    const pubDate = item.pubDate ? new Date(item.pubDate) : new Date();
+    // Guard against invalid date strings (NaN timestamp would break sorting)
+    const safeDate = isNaN(pubDate.getTime()) ? new Date() : pubDate;
+    const dateStr = this.formatDate(safeDate);
+
+    const analysis = this.analyzeText(title + ' ' + summary);
+    return {
+      id: this.generateId(title + (item.link || '')),
+      title,
+      link: item.link || '',
+      source: source.name,
+      sourceId: source.id,
+      date: dateStr,
+      timestamp: safeDate.getTime(),
+      summary,
+      relevance: analysis.relevance,
+      isPerformance: analysis.isPerformance,
+      competitor: analysis.competitor,
+      mentionedChips: analysis.mentionedChips || [],
+      favorited: false,
+      fetchedAt: Date.now()
+    };
+  }
+
+  /**
+   * Build chip-targeted search queries from CHIP_META.
+   * Returns an array of query strings, each covering ~6 chips.
+   * Rotates through chips to ensure all 28 are covered.
+   */
+  static buildChipQueries() {
+    // Priority chips (newest / most important) — always include
+    var priority = [
+      'Ascend 950PR', 'Ascend 950DT', 'Ascend 910C', 'Ascend 910B',
+      'B300', 'B200', 'H200', 'H100',
+      'MI355X', 'MI400', 'MI300X',
+      'TPU v7 Ironwood', 'TPU v6e',
+      'Trainium3', 'Gaudi 3', 'Maia 200'
+    ];
+    // Batch into groups of 5 to stay under API query limits
+    var batches = [];
+    for (var i = 0; i < priority.length; i += 5) {
+      batches.push(priority.slice(i, i + 5).join(' OR '));
+    }
+    // Add Chinese chip batch
+    batches.push('思元690 OR 思元590 OR 昆仑芯P800 OR 昆仑芯2 OR 深算三号 OR DCU Z100 OR 燧原L600 OR 云燧T20 OR MTT S5000 OR MTT S4000 OR BR100 OR 壁砺20X');
+    return batches;
+  }
+
+  /**
+   * Generate a single combined query string (used when only one API call is possible)
+   */
+  static buildCombinedChipQuery() {
+    var names = [];
+    for (var i = 0; i < CHIP_META.length; i++) {
+      names.push(CHIP_META[i].name);
+    }
+    return names.join(' OR ');
+  }
+
+  /**
+   * Common helper: map a raw API article to our NewsItem format
+   */
+  static _mapApiArticle(article, sourceName, sourceId) {
+    var combined = (article.title || '') + ' ' + (article.description || '');
+    var analysis = this.analyzeText(combined);
+    return {
+      id: this.generateId(article.title + article.url),
+      title: article.title || '',
+      link: article.url || '',
+      source: sourceName,
+      sourceId: sourceId,
+      date: this.formatDate(new Date(article.publishedAt)),
+      timestamp: new Date(article.publishedAt).getTime(),
+      summary: (article.description || '').substring(0, 300),
+      relevance: analysis.relevance,
+      isPerformance: analysis.isPerformance,
+      competitor: analysis.competitor,
+      mentionedChips: analysis.mentionedChips || [],
+      favorited: false,
+      fetchedAt: Date.now()
+    };
+  }
+
+  /**
+   * Fetch from NewsAPI
+   */
+  static async fetchNewsAPI(apiKey) {
+    if (!apiKey) return [];
+    // Build chip-targeted queries (1 batch per call to keep result quality high)
+    var queries = this.buildChipQueries();
+    // Pick 2 batches to keep request volume reasonable while covering all chips
+    var selected = [queries[0], queries[queries.length - 1]]; // International + Chinese
+    if (queries.length > 2) selected.push(queries[1]);
+    var fromDate = this.formatDate(new Date(Date.now() - 7 * 86400000));
+    var allArticles = [];
+    var self = this;
+
+    for (var qi = 0; qi < selected.length; qi++) {
+      var chipQuery = selected[qi];
+      var url = 'https://newsapi.org/v2/everything?q=' + encodeURIComponent(chipQuery) +
+        '&from=' + fromDate + '&language=zh&sortBy=publishedAt&pageSize=20&apiKey=' + apiKey;
+      try {
+        var controller = new AbortController();
+        var timeout = setTimeout(function() { controller.abort(); }, 10000);
+        var resp = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!resp.ok) continue;
+        var data = await resp.json();
+        if (data.status !== 'ok') continue;
+        var batchArticles = data.articles.map(function(article) {
+          return self._mapApiArticle(article, (article.source && article.source.name) || 'NewsAPI', 'newsapi');
+        });
+        allArticles = allArticles.concat(batchArticles);
+      } catch (err) {
+        continue;
+      }
+    }
+    return allArticles;
+  }
+
+  /**
+   * Fetch from GNews API
+   */
+  static async fetchGNews(apiKey) {
+    if (!apiKey) return [];
+    // Chip-targeted query — use combined query for GNews (broader reach)
+    var chipQuery = this.buildCombinedChipQuery();
+    // Truncate if too long for URL
+    if (chipQuery.length > 800) {
+      chipQuery = chipQuery.split(' OR ').slice(0, 20).join(' OR ');
+    }
+    var url = 'https://gnews.io/api/v4/search?q=' + encodeURIComponent(chipQuery) + '&lang=zh&max=30&apikey=' + apiKey;
+
+    try {
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 10000);
+
+      var resp = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
+
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+      var data = await resp.json();
+      if (!data.articles) throw new Error('Invalid GNews response');
+
+      var self = this;
+      return data.articles.map(function(article) {
+        return self._mapApiArticle(article, (article.source && article.source.name) || 'GNews', 'gnews');
+      });
+    } catch (err) {
+      console.warn('GNews fetch failed:', err.message);
+      return [];
+    }
+  }
+
+  /**
+   * Fetch from custom RSS sources
+   */
+  static async fetchCustomRSS(urlsText) {
+    if (!urlsText.trim()) return [];
+    const urls = urlsText.split('\n').map(u => u.trim()).filter(Boolean);
+    const results = [];
+
+    for (const url of urls) {
+      try {
+        const proxyUrl = RSS_PROXY + encodeURIComponent(url);
+        const resp = await fetch(proxyUrl);
+        const data = await resp.json();
+        if (data.status === 'ok' && data.items) {
+          const source = { id: 'custom', name: (data.feed && data.feed.title) || '自定义源', color: '#8b95a8' };
+          results.push(...data.items.map(item => this.parseRSSItem(item, source)));
+        }
+      } catch (e) {
+        console.warn(`Custom RSS fetch failed for ${url}:`, e.message);
+      }
+    }
+    return results;
+  }
+
+  /**
+   * Main fetch orchestration - fetch from all sources in parallel
+   */
+  static async fetchAll(settings) {
+    const tasks = [];
+
+    // Always try RSS sources — each wrapped with a per-source timeout + catch
+    for (const source of DEFAULT_SOURCES) {
+      const sourceTimeout = new Promise(resolve =>
+        setTimeout(() => resolve([]), 8000)
+      );
+      tasks.push(Promise.race([
+        this.fetchRSS(source).catch(() => []),
+        sourceTimeout
+      ]));
+    }
+
+    // NewsAPI if key is set
+    if (settings.newsApiKey) {
+      tasks.push(this.fetchNewsAPI(settings.newsApiKey).catch(() => []));
+    }
+
+    // GNews if key is set
+    if (settings.gnewsKey) {
+      tasks.push(this.fetchGNews(settings.gnewsKey).catch(() => []));
+    }
+
+    // Custom RSS
+    if (settings.customSources) {
+      tasks.push(this.fetchCustomRSS(settings.customSources).catch(() => []));
+    }
+
+    const results = await Promise.all(tasks);
+    const allNews = results.flat();
+
+    console.log(`[NewsEngine] Fetched ${allNews.length} raw items from ${tasks.length} sources`);
+    return allNews;
+  }
+
+  /**
+   * Merge new items with existing, deduplicate, and sort
+   */
+  static mergeAndDedup(existingNews, newItems) {
+    const seen = new Set(existingNews.map(n => n.id));
+    const merged = [...existingNews];
+
+    for (const item of newItems) {
+      if (seen.has(item.id)) continue;
+      // Filter out blocked sources
+      if (BLOCKED_SOURCES.some(s => item.source.includes(s))) continue;
+
+      // Check for near-duplicate titles — this is cross-validation
+      let matched = null;
+      for (const existing of merged) {
+        const sim = this.titleSimilarity(existing.title, item.title);
+        if (sim > 0.70) {
+          matched = existing;
+          break;
+        }
+      }
+
+      if (matched) {
+        // Quality-weighted cross-validation:
+        // Each source contributes its tier weight (T1=3, T2=2, T3=1).
+        // A story is "crossValidated" when qualityScore >= 4 (e.g. 2×T2 or 1×T1+1×T2)
+        if (!matched.crossValidationSources) {
+          matched.crossValidationSources = [matched.source];
+          matched.crossValidationCount = 1;
+          matched._qualityScore = getSourceQuality(matched.sourceId) || 1;
+        }
+        if (!matched.crossValidationSources.includes(item.source)) {
+          matched.crossValidationSources.push(item.source);
+          matched.crossValidationCount = matched.crossValidationSources.length;
+          matched._qualityScore = (matched._qualityScore || 0) + (getSourceQuality(item.sourceId) || 1);
+        }
+        matched.crossValidated = (matched._qualityScore >= 4);
+
+        // If the new item has a better summary, use it
+        if (item.summary && item.summary.length > (matched.summary || '').length) {
+          matched.summary = item.summary;
+        }
+        // Keep the earlier timestamp (first report)
+        if (item.timestamp < matched.timestamp) {
+          matched.timestamp = item.timestamp;
+          matched.date = item.date;
+        }
+      } else {
+        // New unique story
+        item.crossValidationSources = [item.source];
+        item.crossValidationCount = 1;
+        item._qualityScore = getSourceQuality(item.sourceId) || 1;
+        item.crossValidated = false;
+        seen.add(item.id);
+        merged.push(item);
+      }
+    }
+
+    // Sort by cross-validated first, then by timestamp descending
+    merged.sort((a, b) => {
+      if (a.crossValidated && !b.crossValidated) return -1;
+      if (!a.crossValidated && b.crossValidated) return 1;
+      return b.timestamp - a.timestamp;
+    });
+
+    return merged;
+  }
+
+  /**
+   * Calculate title similarity (simple Jaccard-like on character bigrams)
+   */
+  static titleSimilarity(a, b) {
+    if (a === b) return 1;
+    // Fast length-ratio bailout: if lengths differ by >40%, similarity won't reach 70%
+    var lenRatio = Math.min(a.length, b.length) / Math.max(a.length, b.length);
+    if (lenRatio < 0.40) return 0;
+    var getBigrams = function(s) {
+      var bigrams = new Set();
+      for (var i = 0; i < s.length - 1; i++) bigrams.add(s.substring(i, i + 2));
+      return bigrams;
+    };
+    var ba = getBigrams(a);
+    var bb = getBigrams(b);
+    if (ba.size === 0 || bb.size === 0) return 0;
+    var intersection = 0;
+    // Iterate the smaller set for fewer lookups
+    if (ba.size <= bb.size) {
+      ba.forEach(function(bg) { if (bb.has(bg)) intersection++; });
+    } else {
+      bb.forEach(function(bg) { if (ba.has(bg)) intersection++; });
+    }
+    return intersection / Math.max(ba.size, bb.size);
+  }
+
+  /**
+   * Analyze text once and return all three keyword-based scores (relevance, performance, competitor).
+   * Position-based weighting: first 15 keywords ×3, next 15 ×2, rest ×1.
+   * Uses pre-lowered keyword arrays to avoid repeated toLowerCase() calls.
+   */
+  /**
+   * Analyze text once — chip-targeted scoring.
+   * Score = chip mentions × 5 + keyword matches × 1.
+   * Chip mentions are the primary relevance signal.
+   */
+  static analyzeText(text) {
+    var lower = text.toLowerCase();
+    // Count exact chip model mentions (highest-weight signal)
+    var chipHits = 0;
+    var mentionedChips = [];
+    for (var ci = 0; ci < CHIP_META.length; ci++) {
+      var chipName = CHIP_META[ci].name;
+      var chipLower = chipName.toLowerCase();
+      if (lower.indexOf(chipLower) >= 0) {
+        chipHits++;
+        mentionedChips.push(chipName);
+      }
+    }
+    // Also check chip ids (shorter aliases)
+    for (var cj = 0; cj < CHIP_META.length; cj++) {
+      var chipId = CHIP_META[cj].id;
+      if (lower.indexOf(chipId.toLowerCase()) >= 0 && mentionedChips.indexOf(CHIP_META[cj].name) < 0) {
+        mentionedChips.push(CHIP_META[cj].name);
+      }
+    }
+    return {
+      relevance: chipHits * 5 + this._calcRelevanceLower(lower),
+      isPerformance: this._isPerformanceLower(lower),
+      competitor: this._tagCompetitorLower(lower),
+      mentionedChips: mentionedChips
+    };
+  }
+
+  static _calcRelevanceLower(lower) {
+    var score = 0;
+    var kw = RELEVANCE_KEYWORDS_LOWER;
+    for (var i = 0; i < kw.length; i++) {
+      if (lower.indexOf(kw[i]) >= 0) {
+        score += i < 15 ? 3 : i < 30 ? 2 : 1;
+      }
+    }
+    return score;
+  }
+
+  static _isPerformanceLower(lower) {
+    var hits = 0;
+    var kw = PERFORMANCE_KEYWORDS_LOWER;
+    for (var i = 0; i < kw.length; i++) {
+      if (lower.indexOf(kw[i]) >= 0) hits++;
+    }
+    return hits >= 2;
+  }
+
+  static _tagCompetitorLower(lower) {
+    var tags = [];
+    var vendors = Object.keys(COMPETITOR_KEYWORDS_LOWER);
+    for (var vi = 0; vi < vendors.length; vi++) {
+      var vendor = vendors[vi];
+      var keywords = COMPETITOR_KEYWORDS_LOWER[vendor];
+      var hits = 0;
+      for (var ki = 0; ki < keywords.length; ki++) {
+        if (lower.indexOf(keywords[ki]) >= 0) hits++;
+      }
+      if (hits >= 2) tags.push(vendor);
+    }
+    return tags.length > 0 ? tags : ['general'];
+  }
+
+  /**
+   * Simple hash for generating IDs
+   */
+  static generateId(str) {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      var char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0;
+    }
+    // Use >>> 0 to safely convert to unsigned (Math.abs(INT32_MIN) stays negative in JS)
+    return 'n_' + (hash >>> 0).toString(36);
+  }
+
+  /**
+   * Format date to YYYY-MM-DD
+   */
+  static formatDate(date) {
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    var d = date.getDate();
+    // Manual zero-pad avoids String.padStart (Chrome 57+)
+    return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+}
+
+/* ============================================================
+   UI Renderer
+   ============================================================ */
+class UIRenderer {
+  /**
+   * Render the full news list
+   */
+  static renderNewsList(news, page = 1, pageSize = 20) {
+    const container = document.getElementById('newsList');
+    if (!news.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>暂无新闻</h3>
+          <p>点击右上角 <strong>刷新</strong> 按钮获取最新新闻，或在 <strong>设置</strong> 中配置 API Key 以获得更多新闻源。</p>
+        </div>`;
+      return;
+    }
+
+    const start = (page - 1) * pageSize;
+    const pageItems = news.slice(start, start + pageSize);
+
+    container.innerHTML = pageItems.map((item, i) => `
+      <article class="news-card" style="animation-delay:${i * 0.04}s" data-id="${item.id}">
+        <div class="news-card-header">
+          <a class="news-card-title" href="${this.escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer" title="${this.escapeHtml(item.title)}">
+            ${this.highlightKeywords(this.escapeHtml(item.title))}
+          </a>
+          <div class="news-card-actions">
+            <button class="card-action-btn ${item.favorited ? 'fav-active' : ''}" data-action="fav" data-id="${item.id}" title="收藏">
+              ${item.favorited ? '★' : '☆'}
+            </button>
+            <button class="card-action-btn" data-action="share" data-id="${item.id}" data-title="${this.escapeHtml(item.title)}" data-link="${this.escapeHtml(item.link)}" title="复制链接">
+              🔗
+            </button>
+          </div>
+        </div>
+        <div class="news-card-meta">
+          <span class="source-tag" style="color:${this.getSourceColor(item)}">📡 ${this.escapeHtml(item.source)}</span>
+          <span>🕐 ${item.date}</span>
+          ${item.crossValidated ? `<span style="color:var(--accent3);font-weight:600;cursor:help" title="交叉验证来源：${(item.crossValidationSources||[]).join('、')}">✅ ${item.crossValidationCount}源验证</span>` : ''}
+          ${item.competitor && item.competitor.length > 0 && item.competitor[0] !== 'general' ? this.renderCompetitorBadges(item.competitor) : ''}
+          ${item.isPerformance ? '<span style="color:var(--amber);font-weight:600">⚡ 性能数据</span>' : ''}
+          ${item.relevance > 4 ? '<span style="color:var(--accent)">🏷 高相关</span>' : ''}
+          ${item.mentionedChips && item.mentionedChips.length > 0 ? '<span style="color:var(--accent2);font-size:0.7rem">🎯 ' + item.mentionedChips.slice(0, 3).join(', ') + (item.mentionedChips.length > 3 ? ' +' + (item.mentionedChips.length - 3) : '') + '</span>' : ''}
+        </div>
+        ${item.summary ? `<p class="news-card-summary">${this.highlightKeywords(this.escapeHtml(item.summary))}</p>` : ''}
+      </article>
+    `).join('');
+  }
+
+  /**
+   * Render stats bar
+   */
+  static renderStats(news, favorites) {
+    const today = NewsEngine.formatDate(new Date());
+    const sources = new Set();
+    let todayCount = 0, perfCount = 0, verifiedCount = 0;
+    for (const n of news) {
+      if (n.date === today) todayCount++;
+      if (n.isPerformance) perfCount++;
+      if (n.crossValidated) verifiedCount++;
+      sources.add(n.sourceId);
+    }
+
+    document.getElementById('statTotal').textContent = news.length;
+    document.getElementById('statToday').textContent = todayCount;
+    document.getElementById('statSources').textContent = sources.size + ' / ⚡' + perfCount;
+    document.getElementById('statFavs').textContent = favorites.length + ' / ✅' + verifiedCount;
+  }
+
+  /**
+   * Render date navigator in sidebar
+   */
+  static renderDateNav(news) {
+    const container = document.getElementById('dateNav');
+    const dateGroups = {};
+    news.forEach(n => {
+      dateGroups[n.date] = (dateGroups[n.date] || 0) + 1;
+    });
+
+    const dates = Object.keys(dateGroups).sort().reverse().slice(0, 14);
+    if (!dates.length) {
+      container.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted)">暂无数据</div>';
+      return;
+    }
+
+    const activeDate = App.state.dateFilter || 'all';
+
+    container.innerHTML = dates.map(d => `
+      <div class="date-nav-item ${activeDate === d ? 'active' : ''}" data-date="${d}" role="button" tabindex="0" aria-pressed="${activeDate === d}">
+        <span>${d}</span>
+        <span class="badge">${dateGroups[d]}</span>
+      </div>
+    `).join('') + `
+      <div class="date-nav-item ${activeDate === 'all' ? 'active' : ''}" data-date="all" role="button" tabindex="0" aria-pressed="${activeDate === 'all'}" style="margin-top:4px;border-top:1px solid var(--border);padding-top:8px;">
+        <span>📋 全部日期</span>
+        <span class="badge">${news.length}</span>
+      </div>`;
+  }
+
+  /**
+   * Render source filters in sidebar
+   */
+  static renderSourceFilters(news) {
+    const container = document.getElementById('sourceFilters');
+    const sourceCounts = {};
+    news.forEach(n => {
+      sourceCounts[n.source] = (sourceCounts[n.source] || 0) + 1;
+    });
+
+    const sources = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1]);
+    if (!sources.length) {
+      container.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted)">暂无数据</div>';
+      return;
+    }
+
+    const activeSource = App.state.sourceFilter || 'all';
+
+    container.innerHTML = `
+      <span class="filter-chip ${activeSource === 'all' ? 'active' : ''}" data-source="all" role="button" tabindex="0" aria-pressed="${activeSource === 'all'}">全部 <span class="count">${news.length}</span></span>
+      ${sources.map(([name, count]) => `
+        <span class="filter-chip ${activeSource === name ? 'active' : ''}" data-source="${this.escapeHtml(name)}" role="button" tabindex="0" aria-pressed="${activeSource === name}">${this.escapeHtml(name)} <span class="count">${count}</span></span>
+      `).join('')}
+    `;
+  }
+
+  /**
+   * Render trend mini chart
+   */
+  static renderTrend(news) {
+    var container = document.getElementById('trendBars');
+    // Build 7-day date index once (avoids 7 separate .filter() traversals)
+    var dayIdx = {};
+    for (var i = 0; i <= 6; i++) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      dayIdx[NewsEngine.formatDate(d)] = i;
+    }
+    // Single pass through news to count per day
+    var counts = [0, 0, 0, 0, 0, 0, 0];
+    for (var ni = 0; ni < news.length; ni++) {
+      var pos = dayIdx[news[ni].date];
+      if (pos !== undefined) counts[pos]++;
+    }
+    // Reverse to show oldest→newest (pos 6 = 6 days ago, pos 0 = today)
+    counts.reverse();
+    var maxCount = counts[0];
+    for (var ci = 1; ci < 7; ci++) { if (counts[ci] > maxCount) maxCount = counts[ci]; }
+    if (maxCount < 1) maxCount = 1;
+
+    // Build the 7 day labels
+    var days = [];
+    var today = new Date();
+    for (var di = 6; di >= 0; di--) {
+      var dd = new Date(today);
+      dd.setDate(dd.getDate() - di);
+      days.push(NewsEngine.formatDate(dd));
+    }
+
+    var html = '';
+    for (var di2 = 0; di2 < 7; di2++) {
+      html += '<div class="trend-bar" style="height:' + Math.max(4, (counts[di2] / maxCount) * 56) + 'px" title="' + days[di2] + ': ' + counts[di2] + ' 条">' +
+        '<span class="trend-bar-label">' + days[di2].substring(5) + '</span></div>';
+    }
+    container.innerHTML = html;
+  }
+
+  /**
+   * Render pagination
+   */
+  static renderPagination(total, page, pageSize) {
+    const container = document.getElementById('pagination');
+    const totalPages = Math.ceil(total / pageSize);
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+    let html = '';
+    html += `<button class="btn btn-sm" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''}>‹ 上一页</button>`;
+    html += `<span style="padding:5px 12px;font-size:0.82rem;color:var(--text-muted)">${page} / ${totalPages}</span>`;
+    html += `<button class="btn btn-sm" data-page="${page + 1}" ${page === totalPages ? 'disabled' : ''}>下一页 ›</button>`;
+    container.innerHTML = html;
+  }
+
+  /**
+   * Render chip column toggle buttons — one per CHIP_META entry
+   */
+  static renderChipToggles() {
+    var container = document.getElementById('chipToggles');
+    if (!container) return;
+    var visible = App.state.visibleChips; // null = all visible
+
+    // Build a set of user-added chip ids for quick lookup
+    var customIds = {};
+    var customChips = App.state.customChips;
+    if (customChips && customChips.length) {
+      for (var ci = 0; ci < customChips.length; ci++) {
+        customIds[customChips[ci].id] = true;
+      }
+    }
+
+    var html = '';
+    CHIP_META.forEach(function(c) {
+      var isOn = !visible || visible.has(c.id);
+      var isCustom = !!customIds[c.id];
+      html += '<button class="btn btn-sm chip-toggle' + (isOn ? ' active' : '') +
+        '" data-chip="' + c.id + '" style="font-size:0.65rem;padding:3px 6px;border-left:3px solid ' + c.color + '">' +
+        c.name;
+      // User-added chips get a remove "×" button
+      if (isCustom) {
+        html += '<span class="chip-remove" data-chip="' + c.id + '" title="删除此芯片" ' +
+          'style="display:inline-block;margin-left:4px;width:16px;height:16px;line-height:16px;text-align:center;' +
+          'border-radius:50%;background:rgba(255,255,255,0.3);font-size:0.6rem;font-weight:700;cursor:pointer;' +
+          'vertical-align:middle">×</span>';
+      }
+      html += '</button>';
+    });
+    container.innerHTML = html;
+  }
+
+  /**
+   * Render vendor quick-select buttons — one per vendor in CHIP_META.
+   * Clicking a vendor button toggles all chips from that vendor on/off.
+   */
+  static renderVendorToggles() {
+    var container = document.getElementById('vendorToggles');
+    if (!container) return;
+
+    // Collect unique vendors from CHIP_META with their chip ids
+    var vendorMap = {};
+    CHIP_META.forEach(function(c) {
+      if (!vendorMap[c.vendor]) vendorMap[c.vendor] = { count: 0, color: c.color, ids: [] };
+      vendorMap[c.vendor].count++;
+      vendorMap[c.vendor].ids.push(c.id);
+    });
+
+    var visible = App.state.visibleChips; // null = all
+    var html = '';
+    var vendors = Object.keys(vendorMap);
+    for (var vi = 0; vi < vendors.length; vi++) {
+      var v = vendors[vi];
+      var info = vendorMap[v];
+      // Check if ALL chips from this vendor are currently visible
+      var allOn = !visible;
+      if (visible) {
+        allOn = true;
+        for (var ii = 0; ii < info.ids.length; ii++) {
+          if (!visible.has(info.ids[ii])) { allOn = false; break; }
+        }
+      }
+      html += '<button class="btn btn-sm vendor-toggle' + (allOn ? ' active' : '') +
+        '" data-vendor="' + v + '" style="font-size:0.62rem;padding:2px 7px;border-left:3px solid ' + info.color + '">' +
+        v + ' <span style="opacity:0.5;font-size:0.55rem">' + info.count + '</span></button>';
+    }
+    container.innerHTML = html;
+  }
+
+  /**
+   * Render the detected new chips banner (amber alert above compare table)
+   */
+  static renderNewChipBanner(detectedChips) {
+    var banner = document.getElementById('newChipBanner');
+    if (!banner) return;
+    if (!detectedChips || !detectedChips.length) {
+      banner.style.display = 'none';
+      return;
+    }
+
+    // Deduplicate by chip name (case-insensitive)
+    var seen = {};
+    var unique = [];
+    for (var i = 0; i < detectedChips.length; i++) {
+      var key = detectedChips[i].name.toLowerCase();
+      if (!seen[key]) {
+        seen[key] = true;
+        unique.push(detectedChips[i]);
+      }
+    }
+    // Limit to 10
+    unique = unique.slice(0, 10);
+
+    // Build clickable chip buttons with "+" icon
+    var chipsHtml = '';
+    for (var j = 0; j < unique.length; j++) {
+      var c = unique[j];
+      var escapedName = c.name.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+      var escapedVendor = c.vendor.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+      chipsHtml += '<button class="btn btn-sm add-chip-btn" ' +
+        'data-chip-name="' + escapedName + '" ' +
+        'data-chip-vendor="' + escapedVendor + '" ' +
+        'style="display:inline-block;background:rgba(255,255,255,0.25);border:1px solid rgba(0,0,0,0.2);' +
+        'padding:3px 8px;border-radius:4px;margin:2px;font-weight:600;cursor:pointer;' +
+        'font-size:0.75rem;color:#000;touch-action:manipulation;min-height:36px" ' +
+        'title="点击添加到对比表">' +
+        '+' + c.name + ' <span style="font-size:0.6rem;opacity:0.6">' + c.vendor + '</span>' +
+        '</button>';
+    }
+
+    banner.style.display = 'block';
+    banner.innerHTML = '🆕 检测到 ' + unique.length + ' 个可能的新芯片：' + chipsHtml +
+      ' <span style="font-size:0.65rem;opacity:0.7">— 点击即可添加到对比表</span>';
+  }
+
+  /**
+   * Render the chip specs comparison table with dynamic data from news
+   */
+  static renderComparisonTable(specExtractions) {
+    // Filter chips by visibility
+    var visibleChips = App.state.visibleChips;
+    var allChips = CHIP_META;
+    var chips = visibleChips ? allChips.filter(function(c) { return visibleChips.has(c.id); }) : allChips;
+
+    // Sort chips by FP16 TFLOPS (highest → left) for performance-ordered comparison
+    var fp16Row = null;
+    for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
+      if (COMPETITOR_SPECS[si].key === 'fp16') { fp16Row = COMPETITOR_SPECS[si]; break; }
+    }
+    chips.sort(function(a, b) {
+      // Extract numeric TFLOPS from static spec values
+      var getTFLOPS = function(chipId) {
+        if (fp16Row && fp16Row[chipId]) {
+          var val = fp16Row[chipId];
+          if (val.indexOf('不支持') >= 0) return -1; // Push unsupported to far right
+          var nums = val.match(/[\d,]+/g);
+          if (nums && nums.length > 0) {
+            return parseFloat(nums[nums.length - 1].replace(/,/g, '')) || 0;
+          }
+        }
+        return 0;
+      };
+      var aTF = getTFLOPS(a.id);
+      var bTF = getTFLOPS(b.id);
+      // Handle estimated values (~ prefix) — sort slightly lower than exact
+      var aSpec = fp16Row[a.id] || ''; var bSpec = fp16Row[b.id] || '';
+      if (aSpec.indexOf('~') >= 0 || aSpec.indexOf('估') >= 0) aTF *= 0.95;
+      if (bSpec.indexOf('~') >= 0 || bSpec.indexOf('估') >= 0) bTF *= 0.95;
+      return bTF - aTF; // Descending: highest first
+    });
+
+    var table = document.getElementById('compareTable');
+    if (!table) return;
+    var specs = COMPETITOR_SPECS;
+
+    // ── Phase 1: Pre-compute all cell values (avoids interleaving getBestValue with string build) ──
+    // Build a [specIdx][chipIdx] → {dyn, staticVal, cls} lookup matrix
+    var cellMatrix = [];
+    // Also pre-compute the value class helper (hoisted)
+    var valClassFn = function(key, val) {
+      if (val.indexOf('不支持') >= 0) return 'val-mid';
+      var nums = val.match(/[\d,]+/g);
+      if (!nums) return '';
+      var n = parseFloat(nums[nums.length-1].replace(/,/g, ''));
+      if (key === 'fp16') {
+        if (n >= 2000) return 'val-best';
+        if (n >= 1000) return 'val-good';
+      }
+      if (key === 'fp8') {
+        if (n >= 4000) return 'val-best';
+        if (n >= 2000) return 'val-good';
+      }
+      if ((key === 'mem_bw' || key === 'memory') && val.indexOf('TB/s') >= 0) {
+        if (key === 'mem_bw') {
+          if (n >= 5.0) return 'val-best';
+          if (n >= 3.0) return 'val-good';
+        }
+      }
+      if (key === 'energy_eff') {
+        if (n >= 4) return 'val-best';
+        if (n >= 2) return 'val-good';
+      }
+      if (key === 'tdp' && val.indexOf('不支持') < 0) {
+        if (n <= 200) return 'val-best';
+        if (n <= 500) return 'val-good';
+        if (n >= 900) return 'val-mid';
+      }
+      return '';
+    };
+
+    for (var si = 0; si < specs.length; si++) {
+      var spec = specs[si];
+      var rowData = [];
+      for (var ci = 0; ci < chips.length; ci++) {
+        var c = chips[ci];
+        var dyn = SpecExtractor.getBestValue(c.id, spec.key, specExtractions);
+        if (dyn) {
+          var classes = ['val-dynamic'];
+          if (dyn.crossValidated) classes.push('val-xv');
+          var staticCls = valClassFn(spec.key, dyn.value);
+          if (staticCls) classes.push(staticCls);
+          rowData.push({ dyn: dyn, isDynamic: true, cls: classes.join(' ') });
+        } else {
+          var staticVal = spec[c.id] || '-';
+          var cls = valClassFn(spec.key, staticVal);
+          rowData.push({ staticVal: staticVal, isDynamic: false, cls: cls });
+        }
+      }
+      cellMatrix.push(rowData);
+    }
+
+    // ── Phase 2: Build HTML from pre-computed matrix ──
+    // Header
+    var html = '<thead><tr><th>规格项</th>';
+    for (var hi = 0; hi < chips.length; hi++) {
+      html += '<th class="chip-col" style="color:' + chips[hi].color + '">' + chips[hi].name + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    // Rows
+    for (var ri = 0; ri < specs.length; ri++) {
+      var specRow = specs[ri];
+      var isAscendRow = specRow.key === 'chip' || specRow.key === 'vendor' || specRow.key === 'process';
+      html += '<tr class="' + (isAscendRow ? 'highlight-row' : '') + '">';
+      html += '<td>' + specRow.label + '</td>';
+      var rowData = cellMatrix[ri];
+      for (var ci = 0; ci < rowData.length; ci++) {
+        var cell = rowData[ci];
+        if (cell.isDynamic) {
+          var d = cell.dyn;
+          var badge = d.crossValidated
+            ? '<span class="dyn-badge" title="多源交叉验证">✅</span>'
+            : '<span class="dyn-badge" title="单源提取">📰</span>';
+          // Build tooltip inline
+          var tt = d.crossValidated ? '📰 动态数据 · ' + d.sourceCount + '源交叉验证' : '📰 动态数据（单源）';
+          for (var si2 = 0; si2 < d.sources.length; si2++) {
+            tt += '\n  • ' + d.sources[si2].source + ' (' + d.sources[si2].articleDate + ')';
+            tt += '\n    置信度: ' + Math.round(d.sources[si2].confidence * 100) + '%';
+          }
+          html += '<td class="' + cell.cls + '" title="' + this.escapeHtml(tt) + '">' + this.escapeHtml(d.value) + badge + '</td>';
+        } else {
+          html += '<td class="' + cell.cls + '" title="📌 静态默认值（尚未从新闻中提取到数据）">' + cell.staticVal + '</td>';
+        }
+      }
+      html += '</tr>';
+    }
+
+    html += '</tbody>';
+
+    // Freshness row
+    html += '<tfoot><tr class="freshness-row"><td>📅 数据新鲜度</td>';
+    for (var fi = 0; fi < chips.length; fi++) {
+      var newest = SpecExtractor.getNewestExtractionDate(chips[fi].id, specExtractions);
+      if (!newest) {
+        html += '<td>静态数据</td>';
+      } else {
+        var daysAgo = Math.floor((Date.now() - newest) / 86400000);
+        var dotClass = daysAgo <= 3 ? 'recent' : daysAgo <= 14 ? 'week' : 'older';
+        var label = daysAgo === 0 ? '今天' : daysAgo === 1 ? '1天前' : daysAgo + '天前';
+        html += '<td><span class="freshness-dot ' + dotClass + '"></span> ' + label + '</td>';
+      }
+    }
+    html += '</tr></tfoot>';
+
+    table.innerHTML = html;
+
+    // Update the comparison note dynamically
+    var noteEl = document.querySelector('.compare-note');
+    if (noteEl) {
+      var dynCount = SpecExtractor.countDynamicCells(specExtractions);
+      noteEl.innerHTML = '📌 数据来源：公开规格、MLPerf 成绩、第三方评测 + <span style="color:var(--accent3);font-weight:600">📰 ' + dynCount + ' 项动态数据</span>（从新闻中自动提取）。<br>⚠ 实际性能因工作负载、软件栈优化程度而异。动态数据仅供参考，请核对原文。绿色=多源验证，青色=单源提取。';
+    }
+  }
+
+  /**
+   * Render competitor filter counts
+   */
+  static renderCompetitorFilters(news) {
+    const container = document.getElementById('competitorFilters');
+    if (!container) return;
+    const chips = container.querySelectorAll('.filter-chip');
+    const counts = {};
+    news.forEach(n => {
+      if (n.competitor) {
+        n.competitor.forEach(c => { counts[c] = (counts[c] || 0) + 1; });
+      }
+    });
+    counts['all'] = news.length;
+
+    chips.forEach(chip => {
+      const key = chip.dataset.competitor;
+      const count = counts[key] || 0;
+      const existingCount = chip.querySelector('.count');
+      if (existingCount) existingCount.remove();
+      if (count > 0 && key !== 'all') {
+        chip.insertAdjacentHTML('beforeend', ` <span class="count">${count}</span>`);
+      }
+    });
+  }
+
+  static renderFeedTitle() {
+    const el = document.getElementById('feedTitle');
+    const vendorNames = { ascend: '⬡昇腾', nvidia: 'NVIDIA', amd: 'AMD', intel: 'Intel', google: 'Google TPU', aws: 'AWS Trainium', microsoft: 'Maia' };
+    const filters = [];
+    if (App.state.verifiedOnly) filters.push('✅仅已验证');
+    if (App.state.perfOnly) filters.push('⚡仅性能数据');
+    if (App.state.favOnly) filters.push('⭐仅收藏');
+    if (App.state.competitorFilter && App.state.competitorFilter !== 'all') filters.push(vendorNames[App.state.competitorFilter] || App.state.competitorFilter);
+    if (App.state.dateFilter && App.state.dateFilter !== 'all') filters.push(App.state.dateFilter);
+    if (App.state.sourceFilter && App.state.sourceFilter !== 'all') filters.push(App.state.sourceFilter);
+    if (App.state.searchQuery) filters.push(`"${App.state.searchQuery}"`);
+
+    el.textContent = filters.length ? `筛选结果 (${filters.join(' · ')})` : '最新新闻';
+  }
+
+  /**
+   * Highlight keywords in text
+   */
+  static highlightKeywords(text) {
+    if (!App.state.searchQuery) return text;
+    const q = App.state.searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${q})`, 'gi');
+    return text.replace(regex, '<mark class="keyword-highlight">$1</mark>');
+  }
+
+  /**
+   * Get color for a news source
+   */
+  static getSourceColor(item) {
+    const src = DEFAULT_SOURCES.find(s => s.id === item.sourceId);
+    return src ? src.color : '#8b95a8';
+  }
+
+  /**
+   * Render competitor chip badges
+   */
+  static renderCompetitorBadges(competitors) {
+    const colors = {
+      ascend: 'color:#00c8e8;border-color:#00c8e8',
+      cambricon: 'color:#ff6b35;border-color:#ff6b35',
+      hygon: 'color:#00a3e0;border-color:#00a3e0',
+      baidu: 'color:#de2f3f;border-color:#de2f3f',
+      enflame: 'color:#00b4d8;border-color:#00b4d8',
+      biren: 'color:#7b2d8e;border-color:#7b2d8e',
+      moore: 'color:#ffd100;border-color:#ffd100',
+      nvidia: 'color:#76b900;border-color:#76b900',
+      amd: 'color:#ed1c24;border-color:#ed1c24',
+      intel: 'color:#0071c5;border-color:#0071c5',
+      google: 'color:#4285f4;border-color:#4285f4',
+      aws: 'color:#ff9900;border-color:#ff9900',
+      microsoft: 'color:#5c2d91;border-color:#5c2d91'
+    };
+    const labels = {
+      ascend: '⬡ 昇腾', cambricon: '🟠 寒武纪', hygon: '🔹 海光', baidu: '🔴 昆仑',
+      enflame: '🩵 燧原', biren: '🟣 壁仞', moore: '🟡 摩尔线程',
+      nvidia: '🟢 NVIDIA', amd: '🔴 AMD', intel: '🔵 Intel',
+      google: '🔷 TPU', aws: '🟠 Trainium', microsoft: '🟣 Maia'
+    };
+    return competitors.slice(0, 3).map(c =>
+      `<span class="source-tag" style="${colors[c] || ''};font-size:0.68rem;padding:1px 6px">${labels[c] || c}</span>`
+    ).join('');
+  }
+
+  /**
+   * Escape HTML entities to prevent XSS in innerHTML
+   */
+  static escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+}
+
+/* ============================================================
+   Spec Extractor — extracts chip specs from news text
+   ============================================================ */
+class SpecExtractor {
+  /* ---- Regex patterns for each spec key (lazily initialized) ---- */
+  static get SPEC_PATTERNS() {
+    if (!this._SPEC_PATTERNS) this._SPEC_PATTERNS = [
+    {
+      specKey: 'fp16',
+      regex: /(\d[\d,]*(?:\.\d+)?)\s*TFLOPS?\s*(?:[\(（]\s*)?(?:FP16|BF16|bf16|fp16|半精度)/gi,
+      normalize: (m) => ({ numValue: parseFloat(m[1].replace(/,/g, '')), unit: 'TFLOPS' })
+    },
+    {
+      specKey: 'fp8',
+      regex: /(\d[\d,]*(?:\.\d+)?)\s*TFLOPS?\s*(?:[\(（]\s*)?(?:FP8|fp8)/gi,
+      normalize: (m) => ({ numValue: parseFloat(m[1].replace(/,/g, '')), unit: 'TFLOPS' })
+    },
+    {
+      specKey: 'memory',
+      regex: /(\d+)\s*GB\s*(?:HBM\d[eE]?|HBM|显存|内存)/gi,
+      normalize: (m) => ({ numValue: parseInt(m[1]), unit: 'GB' })
+    },
+    {
+      specKey: 'mem_bw',
+      regex: /(\d[\d,]*(?:\.\d+)?)\s*(TB\/s|GB\/s)\s*(?:带宽|bandwidth|memory|HBM)?/gi,
+      normalize: (m) => ({
+        numValue: parseFloat(m[1].replace(/,/g, '')) * (m[2].toLowerCase() === 'tb/s' ? 1 : 0.001),
+        unit: 'TB/s'
+      })
+    },
+    {
+      specKey: 'tdp',
+      regex: /~?(\d[\d,]*(?:\.\d+)?)\s*W\s*(?:TDP|功耗|power|thermal)?/gi,
+      normalize: (m) => ({ numValue: parseFloat(m[1].replace(/,/g, '')), unit: 'W' })
+    },
+    {
+      specKey: 'process',
+      regex: /(\d+)\s*nm\s*(?:工艺|制程|process|node)?/gi,
+      normalize: (m) => ({ numValue: parseInt(m[1]), unit: 'nm' })
+    },
+    {
+      specKey: 'transistors',
+      regex: /~?(\d[\d,]+)\s*[Bb亿]\s*(?:晶体管|transistor|transistors)?/gi,
+      normalize: (m) => {
+        let num = parseFloat(m[1].replace(/,/g, ''));
+        return { numValue: num, unit: 'B' };
+      }
+    },
+    {
+      specKey: 'die_size',
+      regex: /~?(\d[\d,]+)\s*mm[²2]\s*(?:芯片面积|die\s*size|die\s*area)?/gi,
+      normalize: (m) => ({ numValue: parseFloat(m[1].replace(/,/g, '')), unit: 'mm²' })
+    }
+  ];
+    return this._SPEC_PATTERNS;
+  }
+
+  /* ---- Chip model patterns for attribution (lazily initialized) ---- */
+  static get CHIP_MODEL_PATTERNS() {
+    if (!this._CHIP_MODEL_PATTERNS) this._CHIP_MODEL_PATTERNS = {
+    a910b:   /\b(?:Ascend\s*)?910\s*B\b|910B|昇腾\s*910\s*B/gi,
+    a910c:   /\b(?:Ascend\s*)?910\s*C\b|910C|昇腾\s*910\s*C/gi,
+    siyuan590: /\b(?:思元|Siyuan)\s*590\b|寒武纪\s*590/gi,
+    dcuz100:  /\bDCU\s*Z100\b|海光\s*(?:DCU|Z100)/gi,
+    kunlun2:  /\b昆仑芯?\s*2\b|Kunlun\s*2/gi,
+    yunsuiT20: /\b(?:云燧|Yunsui)\s*T20\b|燧原\s*T20/gi,
+    br100:    /\bBR100\b|壁仞\s*BR100/gi,
+    mttS4000: /\bMTT\s*S4000\b|摩尔线程\s*S4000/gi,
+    h100:    /\bH100\b(?!\s*[A-Z0-9])/gi,
+    h200:    /\bH200\b/gi,
+    b200:    /\bB200\b|Blackwell\s*B200/gi,
+    mi300x:  /\bMI300X?\b|MI\s*300\s*X/gi,
+    gaudi3:  /\bGaudi\s*3\b/gi,
+    tpuv6:   /\bTPU\s*v6[ep]?\b|Trillium/gi,
+    trainium3: /\bTrainium\s*3\b|Trainium3/gi,
+    maia200: /Maia\s*200/gi,
+    a950pr: /\b(?:Ascend\s*)?950\s*PR\b|950PR|昇腾\s*950\s*PR/gi,
+    a950dt: /\b(?:Ascend\s*)?950\s*DT\b|950DT|昇腾\s*950\s*DT/gi,
+    b300: /\bB300\b|Blackwell\s*Ultra|GB300/gi,
+    mi355x: /\bMI355X?\b|MI\s*355\s*X/gi,
+    tpuv7: /\bTPU\s*v7\b|Ironwood/gi,
+    siyuan690: /\b(?:思元|Siyuan)\s*690\b|寒武纪\s*690/gi,
+    mttS5000: /\bMTT\s*S5000\b|摩尔线程\s*S5000/gi,
+    kunlunP800: /\b昆仑芯?\s*P800\b|Kunlun\s*P800/gi,
+    shensuan3: /\b深算\s*三号\b|深算\s*3号|海光\s*三号/gi,
+    yunsuiL600: /\b(?:云燧|Yunsui)\s*L600\b|燧原\s*L600/gi,
+    mi400: /\bMI400\b|MI\s*400/gi,
+    bili20x: /\b壁砺\s*20X?\b|BR20X/gi,
+  };
+    return this._CHIP_MODEL_PATTERNS;
+  }
+
+  /* ---- Vendor→chipKeys mapping (lazily initialized) ---- */
+  static get VENDOR_CHIPS() {
+    if (!this._VENDOR_CHIPS) this._VENDOR_CHIPS = {
+	    ascend:    ['a910b', 'a910c', 'a950pr', 'a950dt'],
+	    cambricon: ['siyuan590', 'siyuan690'],
+	    hygon:     ['dcuz100', 'shensuan3'],
+	    baidu:     ['kunlun2', 'kunlunP800'],
+	    enflame:   ['yunsuiT20', 'yunsuiL600'],
+	    biren:     ['br100', 'bili20x'],
+	    moore:     ['mttS4000', 'mttS5000'],
+	    nvidia:    ['h100', 'h200', 'b200', 'b300'],
+	    amd:       ['mi300x', 'mi355x', 'mi400'],
+    intel:     ['gaudi3'],
+	    google:    ['tpuv6', 'tpuv7'],
+    aws:       ['trainium3'],
+    microsoft: ['maia200']
+  };
+    return this._VENDOR_CHIPS;
+  }
+
+  // Fast pre-check: does the text contain any numeric spec indicator?
+  // Uses pre-compiled global regex to avoid re-compilation on every call.
+  // Avoids running 18 full regex patterns on irrelevant articles.
+  static _quickSpecCheck(text) {
+    return QUICK_SPEC_RGX.test(text);
+  }
+
+  /**
+   * Extract specs from a single news item
+   * @returns {Array<{chipKey, specKey, numValue, unit, rawValue, source, articleId, articleTitle, articleDate, confidence}>}
+   */
+  static extractSpecs(item) {
+    const text = (item.title || '') + ' ' + (item.summary || '');
+    if (!text.trim()) return [];
+
+    // Fast bailout: skip heavy regex if text has no spec indicators
+    if (!this._quickSpecCheck(text)) return [];
+
+    // Find all chip model mentions with their positions
+    const chipMentions = [];
+    for (const [chipKey, pattern] of Object.entries(this.CHIP_MODEL_PATTERNS)) {
+      let m;
+      while ((m = pattern.exec(text)) !== null) {
+        chipMentions.push({ chipKey, pos: m.index, match: m[0] });
+      }
+      pattern.lastIndex = 0; // Reset regex state
+    }
+
+    // For each spec pattern, find all matches and attribute to nearest chip
+    const extractions = [];
+    for (const { specKey, regex, normalize } of this.SPEC_PATTERNS) {
+      let m;
+      while ((m = regex.exec(text)) !== null) {
+        // Standard exec advancement (no manual lastIndex override) — O(n) per pattern
+        const { numValue, unit } = normalize(m);
+        if (isNaN(numValue) || numValue <= 0) continue;
+
+        const rawValue = m[1] + ' ' + (m[2] || unit);
+        const specPos = m.index;
+
+        // Find the nearest chip mention within 250 chars
+        let bestChip = null, bestDist = Infinity;
+        for (const cm of chipMentions) {
+          const dist = Math.abs(specPos - cm.pos);
+          if (dist < bestDist && dist < 250) {
+            bestDist = dist;
+            bestChip = cm.chipKey;
+          }
+        }
+
+        // If no chip found nearby, try to guess from competitor tags
+        if (!bestChip && item.competitor && item.competitor.length > 0 && item.competitor[0] !== 'general') {
+          const vendorChips = this.VENDOR_CHIPS[item.competitor[0]];
+          if (vendorChips && vendorChips.length > 0) {
+            bestChip = vendorChips[0]; // Default to first chip of that vendor
+          }
+        }
+
+        if (!bestChip) continue;
+
+        // Confidence: base on proximity, penalize estimation markers
+        let confidence = bestDist < Infinity ? Math.max(0.4, 1.0 - bestDist / 400) : 0.5;
+        if (/[~≈估约]/.test(m[0])) confidence -= 0.1;
+        // Boost if chip vendor matches article competitor tags
+        if (item.competitor && item.competitor.length > 0) {
+          const vendorChips = this.VENDOR_CHIPS[item.competitor[0]];
+          if (vendorChips && vendorChips.includes(bestChip)) confidence += 0.1;
+        }
+        confidence = Math.min(1.0, Math.max(0.25, confidence));
+
+        extractions.push({
+          chipKey: bestChip,
+          specKey,
+          numValue,
+          unit,
+          rawValue: rawValue.trim(),
+          source: item.source,
+          articleId: item.id,
+          articleTitle: item.title,
+          articleDate: item.date,
+          confidence: Math.round(confidence * 100) / 100,
+          extractedAt: Date.now()
+        });
+      }
+      regex.lastIndex = 0;
+    }
+
+    return extractions;
+  }
+
+  // Memoization cache for getBestValue — invalidated when extractions change
+  static invalidateCache() { SpecExtractor._bestValueCache = null; }
+
+  /**
+   * Get the best current value for a chip+spec combo (memoized).
+   * Groups extractions by numValue (5% tolerance), picks the largest consensus group.
+   */
+  static getBestValue(chipKey, specKey, extractions) {
+    // Lazy-init memoization cache
+    if (!SpecExtractor._bestValueCache) SpecExtractor._bestValueCache = new Map();
+    const key = chipKey + '::' + specKey;
+    if (SpecExtractor._bestValueCache.has(key)) {
+      return SpecExtractor._bestValueCache.get(key);
+    }
+
+    const store = extractions || {};
+    const entries = (store[chipKey] && store[chipKey][specKey]) ? store[chipKey][specKey] : [];
+    if (!entries.length) {
+      SpecExtractor._bestValueCache.set(key, null);
+      return null;
+    }
+
+    // Group by numValue with 5% tolerance
+    const groups = [];
+    const used = new Set();
+    for (let i = 0; i < entries.length; i++) {
+      if (used.has(i)) continue;
+      const group = [entries[i]];
+      used.add(i);
+      for (let j = i + 1; j < entries.length; j++) {
+        if (used.has(j)) continue;
+        const diff = Math.abs(entries[i].numValue - entries[j].numValue) / Math.max(entries[i].numValue, 1);
+        if (diff < 0.05) {
+          group.push(entries[j]);
+          used.add(j);
+        }
+      }
+      groups.push(group);
+    }
+
+    // Find the largest group (most cross-validated)
+    groups.sort((a, b) => b.length - a.length || b[0].confidence - a[0].confidence);
+    const bestGroup = groups[0];
+
+    // Build the display value
+    const avgNum = bestGroup.reduce((s, e) => s + e.numValue, 0) / bestGroup.length;
+    const hasEstimate = bestGroup.some(e => /[~≈估约]/.test(e.rawValue));
+    const prefix = hasEstimate ? '~' : '';
+    const displayNum = this._formatNum(avgNum);
+    const displayUnit = bestGroup[0].unit;
+
+    // Collect unique sources
+    const sources = [];
+    const seenSources = new Set();
+    for (const e of bestGroup) {
+      if (!seenSources.has(e.source)) {
+        seenSources.add(e.source);
+        sources.push({ source: e.source, articleTitle: e.articleTitle, articleDate: e.articleDate, confidence: e.confidence });
+      }
+    }
+
+    const result = {
+      value: prefix + displayNum + ' ' + displayUnit,
+      numValue: avgNum,
+      unit: displayUnit,
+      sources,
+      crossValidated: sources.length >= 2,
+      sourceCount: sources.length,
+      isDynamic: true
+    };
+    SpecExtractor._bestValueCache.set(key, result);
+    return result;
+  }
+
+  static _formatNum(n) {
+    if (n >= 1000) {
+      const s = n.toLocaleString('en-US', { maximumFractionDigits: 1 });
+      return s;
+    }
+    if (n === Math.floor(n)) return String(Math.floor(n));
+    return n.toFixed(1);
+  }
+
+  /**
+   * Merge new extractions into existing store
+   */
+  static mergeExtractions(existing, newExtractions) {
+    this.invalidateCache();
+    const merged = existing || {};
+    for (const ext of newExtractions) {
+      const { chipKey, specKey } = ext;
+      if (!merged[chipKey]) merged[chipKey] = {};
+      if (!merged[chipKey][specKey]) merged[chipKey][specKey] = [];
+
+      const arr = merged[chipKey][specKey];
+      const dupIdx = arr.findIndex(e => e.articleId === ext.articleId && e.specKey === ext.specKey);
+      if (dupIdx >= 0) {
+        if (ext.confidence > arr[dupIdx].confidence) arr[dupIdx] = ext;
+      } else {
+        arr.push(ext);
+      }
+    }
+
+    // Prune: keep last 20 per chipKey+specKey
+    for (const chipKey of Object.keys(merged)) {
+      for (const specKey of Object.keys(merged[chipKey])) {
+        merged[chipKey][specKey].sort((a, b) => b.extractedAt - a.extractedAt);
+        merged[chipKey][specKey] = merged[chipKey][specKey].slice(0, 20);
+      }
+    }
+
+    return merged;
+  }
+
+  /**
+   * Run extraction on all existing news (used for backfill)
+   */
+  static extractFromAllNews(allNews) {
+    let extractions = {};
+    for (const item of allNews) {
+      const extracted = this.extractSpecs(item);
+      if (extracted.length > 0) {
+        extractions = this.mergeExtractions(extractions, extracted);
+      }
+    }
+    return extractions;
+  }
+
+  /**
+   * Get newest extraction date for a chip
+   * @returns {number|null} timestamp
+   */
+  static getNewestExtractionDate(chipKey, extractions) {
+    if (!extractions || !extractions[chipKey]) return null;
+    let newest = 0;
+    for (const specKey of Object.keys(extractions[chipKey])) {
+      for (const e of extractions[chipKey][specKey]) {
+        if (e.extractedAt > newest) newest = e.extractedAt;
+      }
+    }
+    return newest || null;
+  }
+
+  /**
+   * Count total dynamic data cells
+   */
+  static countDynamicCells(extractions) {
+    if (!extractions) return 0;
+    let count = 0;
+    for (const chipKey of Object.keys(extractions)) {
+      for (const specKey of Object.keys(extractions[chipKey])) {
+        if (extractions[chipKey][specKey].length > 0) count++;
+      }
+    }
+    return count;
+  }
+
+  /* ---- Generic chip model hint regex (lazily initialized) ---- */
+  static get _CHIP_HINT_RGX() {
+    if (!this.__CHIP_HINT_RGX) this.__CHIP_HINT_RGX = new RegExp(
+      // v3: Tight patterns — only match known AI chip naming conventions.
+      // (1) Known AI vendor/series prefix + model number (e.g. "Ascend 910C", "B300", "MI355X")
+      '\\b(Ascend\\s*|Atlas\\s*|Kunlun\\s*|Gaudi\\s*|Trainium\\s*|Inferentia\\s*|Maia\\s*|' +
+      '思元\\s*|云燧\\s*|燧原\\s*|深算\\s*|壁砺\\s*|昆仑芯\\s*|天垓\\s*|' +
+      'Cerebras\\s*|Graphcore\\s*|Groq\\s*|Tenstorrent\\s*)' +
+      '([A-Z]?\\d{2,4}[A-Za-z]*(?:\\s*[A-Za-z]+)?)\\b' +
+      // (2) Chinese chip names with explicit "芯片/处理器/加速卡/AI" suffix (very high precision)
+      '|\\b([\\u4e00-\\u9fff]{2,6}(?:芯片|处理器|加速卡|GPU|TPU|NPU|AI\\s*芯片|AI\\s*加速))\\s*([A-Z]?\\d{2,4}[A-Z]*)\\b' +
+      // (3) NVIDIA/AMD/Intel known GPU model patterns — brand+number style
+      '|\\b((?:NVIDIA\\s*)?(?:GH?\\d{3}|GB\\d{3}|B\\d{3}[A-Z]?|H\\d{3}[A-Z]?|A\\d{3}[A-Z]?|MI\\d{3,4}[A-Z]?))\\b' +
+      // (4) Chinese chip company + model number (e.g. "寒武纪 590", "壁仞 BR200")
+      '|(?:寒武纪|海光|壁仞|燧原|摩尔线程|百度|华为|天数智芯|沐曦|登临|瀚博)\\s*([A-Z]?\\d{2,4}[A-Za-z]*)\\b',
+      'gi'
+    );
+    return this.__CHIP_HINT_RGX;
+  }
+
+  /**
+   * Detect unregistered chip models from news text.
+   * Filters out known chips (already in CHIP_META or matched by CHIP_MODEL_PATTERNS).
+   * @param {Array<NewsItem>} newsItems
+   * @returns {Array<{name: string, vendor: string, source: string}>}
+   */
+  static detectNewChips(newsItems) {
+    if (!newsItems || !newsItems.length) return [];
+
+    // ── 1. Build known-chip index ──
+    var knownLower = {};
+    CHIP_META.forEach(function(c) {
+      knownLower[c.name.toLowerCase()] = true;
+      knownLower[c.id.toLowerCase()] = true;
+      // Also add chip name without spaces
+      knownLower[c.name.toLowerCase().replace(/\s+/g, '')] = true;
+    });
+    var modelPatterns = this.CHIP_MODEL_PATTERNS;
+    Object.keys(modelPatterns).forEach(function(chipKey) {
+      var src = modelPatterns[chipKey].source;
+      var literals = src.replace(/[\\\/\(\)\[\]\|\?\+\.\*\^\$\{\}]/g, ' ').split(/\s+/);
+      literals.forEach(function(lit) {
+        if (lit.length >= 3) knownLower[lit.toLowerCase()] = true;
+      });
+    });
+
+    // ── 2. AI-chip context words (must appear nearby for a match to be valid) ──
+    var aiContextWords = ['AI', '芯片', '算力', 'TFLOPS', 'TOPS', 'NPU', 'GPU', 'TPU',
+      '训练', '推理', 'inference', 'training', 'HBM', '显存', '加速', 'accelerator',
+      'Chiplet', 'chiplet', '制程', 'process', 'nm', '大模型', 'LLM', 'deep learning',
+      '深度学习', 'transistor', '晶体管', 'memory bandwidth', '显存带宽'];
+
+    // ── 3. Chip-name → vendor hint patterns (check chip name itself first) ──
+    var chipNameVendorHints = [
+      { re: /Ascend|昇腾|Atlas|鲲鹏|HiSilicon|海思|HiBL|HiZQ/i, vendor: '华为' },
+      { re: /NVIDIA|nvidia|GeForce|RTX\s*\d|CUDA|NVLink|Blackwell|Hopper|Rubin/i, vendor: 'NVIDIA' },
+      { re: /\bAMD\b|Radeon|Instinct|EPYC|Ryzen|ROCm|CDNA/i, vendor: 'AMD' },
+      { re: /\bIntel\b|Xeon|Gaudi|Habana|Falcon|Ponte/i, vendor: 'Intel' },
+      { re: /Google|TPU|Trillium|Ironwood|JAX|TensorFlow/i, vendor: 'Google' },
+      { re: /AWS|Amazon|Trainium|Inferentia|Neuron/i, vendor: 'AWS' },
+      { re: /Microsoft|Azure|Maia|Cobalt/i, vendor: 'Microsoft' },
+      { re: /寒武纪|Cambricon|思元|Siyuan|MLU|Neuware/i, vendor: '寒武纪' },
+      { re: /海光|Hygon|DCU|深算/i, vendor: '海光' },
+      { re: /百度|Baidu|昆仑|Kunlun|PaddlePaddle|XPU|天池/i, vendor: '百度' },
+      { re: /燧原|Enflame|云燧|Yunsui|TopsRider|TopsLink/i, vendor: '燧原' },
+      { re: /壁仞|Biren|壁砺|BR\d{2,}|SUPA|BLink/i, vendor: '壁仞' },
+      { re: /摩尔线程|Moore\s*Threads|MTT|MUSA|花港|华山/i, vendor: '摩尔线程' },
+      { re: /天数智芯|Iluvatar|天垓/i, vendor: '天数智芯' },
+      { re: /Graphcore|IPU|Bow/i, vendor: 'Graphcore' },
+      { re: /Cerebras|CS-\d|Wafer\s*Scale/i, vendor: 'Cerebras' },
+      { re: /Groq|LPU|TSP/i, vendor: 'Groq' },
+      { re: /Tenstorrent|Grayskull|Wormhole|Blackhole/i, vendor: 'Tenstorrent' },
+      { re: /沐曦|Muxi|MXC/i, vendor: '沐曦' },
+      { re: /登临|Denglin|Goldwasser/i, vendor: '登临科技' }
+    ];
+
+    // ── 4. Scan all news, collect candidates with frequency ──
+    var candidates = {};  // lowerName → { name, vendors: {}, sources: Set, contexts: [], count }
+
+    for (var ni = 0; ni < newsItems.length; ni++) {
+      var item = newsItems[ni];
+      var text = (item.title || '') + ' ' + (item.summary || '');
+      if (!text.trim()) continue;
+
+      var regex = this._CHIP_HINT_RGX;
+      regex.lastIndex = 0;
+      var m;
+      while ((m = regex.exec(text)) !== null) {
+        // Extract chip name from match groups (v3 regex: groups 1-7)
+        var fullName = '';
+        // Group 1 (vendor prefix) + Group 2 (model#)
+        if (m[1] && m[2]) fullName = (m[1] + m[2]).trim();
+        // Group 3 (Chinese suffix e.g. "AI芯片") + Group 4 (model#)
+        if (!fullName && m[3] && m[4]) fullName = (m[3] + m[4]).trim();
+        // Group 5 (standalone GPU model like GH200, B300, MI300X)
+        if (!fullName && m[5]) fullName = m[5];
+        // Group 6 (Chinese company) + Group 7 (model#)
+        if (!fullName && m[6] && m[7]) fullName = (m[6] + ' ' + m[7]).trim();
+        // Fallback to full match
+        if (!fullName) fullName = m[0];
+
+        fullName = fullName.replace(/\s+/g, ' ').trim();
+        if (fullName.length < 3 || fullName.length > 50) continue;
+
+        var lowerName = fullName.toLowerCase().replace(/\s+/g, '');
+
+        // ── Aggressive false-positive filters ──
+        // Skip known chips
+        if (knownLower[fullName.toLowerCase()] || knownLower[lowerName]) continue;
+        // Skip if known name is a substring
+        var skipKnown = false;
+        Object.keys(knownLower).forEach(function(kn) {
+          if (kn.length >= 4 && (lowerName.indexOf(kn) >= 0 || kn.indexOf(lowerName) >= 0)) skipKnown = true;
+        });
+        if (skipKnown) continue;
+        // Pure numbers
+        if (/^\d{1,4}$/.test(fullName)) continue;
+        // Common non-chip prefixes: prepositions, articles, years mixed with numbers
+        if (/^(in|at|on|to|by|for|of|the|and|or|is|be|we|it|no|up|so|go|vs|per|new|big|top|all|end|mid|pre|sub|non|one|two|six|ten)\s+\d{2,4}$/i.test(fullName)) continue;
+        // Year-like: just a 4-digit number in a 2-letter+year pattern
+        if (/^[A-Za-z]{2,3}\s+(20\d{2}|19\d{2})$/.test(fullName)) continue;
+        // Spec-like: number followed by unit words
+        if (/^\d+\s*(nm|GB|TB|PB|Watt|W\b|MHz|GHz|TOPS|TFLOPS|PFLOPS|FLOPS|bps|GB\/s|TB\/s|MB\/s)$/i.test(fullName)) continue;
+        // Known non-chip tech terms
+        if (/^(windows|android|ios|ubuntu|python|cuda|pcie|usb|bluetooth|wifi|hdmi|displayport|directx|metal|vulkan|opengl|sata|nvme|ddr|lpddr|sdx|snapdragon|dimensity|exynos|risc|ampere|hopper|ada|lovelace|zen|rdna|x86|x64|arm|802)/i.test(lowerName)) continue;
+        // Generic version / standard names
+        if (/^(CXL|UCIe|UEC|OCP|PCI-SIG|JEDEC|IEEE|ITU|ISO|OIF)\s*\d/i.test(fullName)) continue;
+        // Date patterns (month + year, quarter + year)
+        if (/^(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Q[1-4]|H[12]|CY|FY)\s+\d{2,4}$/i.test(fullName)) continue;
+        // Pure year references (e.g. "in 2025" → extracted as "in 2025" which is now filtered above,
+        // but also catch standalone "2025" or "2026")
+        if (/^20\d{2}$/.test(fullName)) continue;
+
+        // Context check: AI-related words must appear within 200 chars
+        var ctxStart = Math.max(0, m.index - 200);
+        var ctxEnd = Math.min(text.length, m.index + fullName.length + 200);
+        var context = text.substring(ctxStart, ctxEnd);
+        var aiHits = 0;
+        for (var ai = 0; ai < aiContextWords.length; ai++) {
+          if (context.indexOf(aiContextWords[ai]) >= 0) {
+            aiHits++;
+            if (aiHits >= 1) break; // 1 hit is enough for initial detection
+          }
+        }
+        if (aiHits === 0) continue; // No AI context → likely not a chip
+
+        // Accumulate candidate
+        var key = lowerName;
+        if (!candidates[key]) {
+          candidates[key] = { name: fullName, vendors: {}, sourcesStr: {}, contexts: [], count: 0 };
+        }
+        var cand = candidates[key];
+        cand.count++;
+        cand.contexts.push(context.substring(100, 300)); // Store relevant context snippet
+        if (cand.contexts.length > 10) cand.contexts.shift();
+
+        // Guess vendor from chip name + context
+        for (var vhi = 0; vhi < chipNameVendorHints.length; vhi++) {
+          if (chipNameVendorHints[vhi].re.test(fullName + ' ' + context.substring(0, 150))) {
+            cand.vendors[chipNameVendorHints[vhi].vendor] = (cand.vendors[chipNameVendorHints[vhi].vendor] || 0) + 1;
+            break; // Only match first vendor
+          }
+        }
+        if (!Object.keys(cand.vendors).length) {
+          cand.vendors['未知'] = (cand.vendors['未知'] || 0) + 1;
+        }
+        cand.sourcesStr[item.source] = true;
+      }
+      regex.lastIndex = 0;
+    }
+
+    // ── 5. Filter by frequency & score, build results ──
+    var found = [];
+    var candKeys = Object.keys(candidates);
+    for (var ck = 0; ck < candKeys.length; ck++) {
+      var cand = candidates[candKeys[ck]];
+      // Frequency threshold: must appear >= 2 times across all news
+      if (cand.count < 2) continue;
+
+      // Pick best vendor (most votes)
+      var bestVendor = '未知';
+      var bestVotes = 0;
+      var vendorKeys = Object.keys(cand.vendors);
+      for (var vk = 0; vk < vendorKeys.length; vk++) {
+        if (cand.vendors[vendorKeys[vk]] > bestVotes) {
+          bestVotes = cand.vendors[vendorKeys[vk]];
+          bestVendor = vendorKeys[vk];
+        }
+      }
+
+      // Confidence score (0-1): based on frequency + vendor certainty + AI context density
+      var confidence = Math.min(1.0,
+        (cand.count >= 5 ? 0.6 : cand.count >= 3 ? 0.45 : 0.30) +
+        (bestVendor !== '未知' ? 0.30 : 0) +
+        (Object.keys(cand.sourcesStr).length >= 2 ? 0.10 : 0)
+      );
+      // Only report if confidence >= 0.50
+      if (confidence < 0.50) continue;
+
+      // Build source list string
+      var sources = Object.keys(cand.sourcesStr);
+
+      found.push({
+        name: cand.name,
+        vendor: bestVendor,
+        source: sources.join(', '),
+        confidence: Math.round(confidence * 100) / 100,
+        count: cand.count
+      });
+    }
+
+    // Sort by confidence descending, then count descending
+    found.sort(function(a, b) {
+      if (a.confidence !== b.confidence) return b.confidence - a.confidence;
+      return b.count - a.count;
+    });
+
+    // Limit to 10 results
+    return found.slice(0, 10);
+  }
+}
+
+/* ============================================================
+   App Controller
+   ============================================================ */
+const App = {
+  state: {
+    allNews: [],
+    filteredNews: [],
+    searchQuery: '',
+    dateFilter: 'all',
+    sourceFilter: 'all',
+    sortOrder: 'newest',
+    favOnly: false,
+    perfOnly: false,
+    verifiedOnly: false,
+    competitorFilter: 'all',
+    compareVisible: true,
+    visibleChips: null,     // null = all visible; Set of chip IDs when filtered
+    detectedChips: [],      // New chips discovered from news text
+    customChips: [],        // User-added chips persisted to localStorage
+    currentPage: 1,
+    isFetching: false,
+    settings: {},           // Populated by loadState()
+    specExtractions: {}      // Populated by loadState() + fetchNews()
+  },
+
+  _refreshTimer: null,
+  _saveTimer: null,
+  /* ---- Init ---- */
+  async init() {
+    // Use only ES5 string concat here — this is the first code that runs
+    var updateStatus = function(msg) {
+      console.log('[Init] ' + msg);
+      var el = document.getElementById('newsList');
+      if (el) el.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><h3>初始化中…</h3><p>' + msg + '</p></div>';
+    };
+    try {
+      updateStatus('1/6 加载本地数据...');
+      this.loadState();
+      updateStatus('2/6 绑定事件...');
+      this.bindEvents();
+      updateStatus('3/6 应用设置...');
+      this.applySettings();
+      this.restoreCustomChips(); // Merge user-added chips into live registries
+      updateStatus('4/6 渲染界面...');
+      this.render();
+
+      // Notify user if data was auto-migrated
+      if (this._didMigrate) {
+        this.showToast('🔄 数据源已更新，已自动清理失效来源', 'success');
+      }
+
+      updateStatus('5/6 后台提取规格...');
+      requestAnimationFrame(function() { this.runDeferredBackfill(); }.bind(this));
+      updateStatus('6/6 获取最新新闻...');
+      await this.fetchNews();
+      this.setupAutoRefresh();
+      console.log('[Init] Complete');
+    } catch (err) {
+      console.error('[Init] Fatal error:', err);
+      var nl2 = document.getElementById('newsList');
+      if (nl2) nl2.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>初始化失败</h3><p>' + (err.message || 'Unknown') + '</p></div>';
+      // Emergency fallback: show demo data directly
+      try {
+        this.state.allNews = [];
+        this.state.specExtractions = {};
+        this.generateDemoData();
+        this.applyFilters();
+        this.render();
+      } catch (e2) {
+        console.error('[Init] Fallback also failed:', e2);
+      }
+    }
+  },
+
+  /* ---- State Management ---- */
+  loadState() {
+    let data;
+    try {
+      data = StorageManager.load();
+    } catch (e) {
+      console.error('[loadState] StorageManager.load() failed:', e);
+      data = StorageManager.defaultData();
+    }
+    this.state.allNews = Array.isArray(data.news) ? data.news : [];
+    this.state.settings = data.settings || StorageManager.defaultData().settings;
+    this.state.specExtractions = (data.specExtractions && typeof data.specExtractions === 'object') ? data.specExtractions : {};
+    this.state.customChips = Array.isArray(data.customChips) ? data.customChips : [];
+    // Backfill missing fields on old data (single analyzeText call per item)
+    let needsSave = false;
+    try {
+    this.state.allNews.forEach(n => {
+      if (n.isPerformance === undefined || !n.competitor || !n.mentionedChips) {
+        const combined = (n.title || '') + ' ' + (n.summary || '');
+        const analysis = NewsEngine.analyzeText(combined);
+        if (n.isPerformance === undefined) { n.isPerformance = analysis.isPerformance; needsSave = true; }
+        if (!n.competitor) { n.competitor = analysis.competitor; needsSave = true; }
+        if (!n.mentionedChips) { n.mentionedChips = analysis.mentionedChips || []; needsSave = true; }
+      }
+      if (n.crossValidated === undefined) { n.crossValidated = false; needsSave = true; }
+      if (!n.crossValidationSources) { n.crossValidationSources = [n.source]; needsSave = true; }
+      if (!n.crossValidationCount) { n.crossValidationCount = 1; needsSave = true; }
+    });
+    } catch (e) {
+      console.error('[loadState] Backfill error:', e);
+      needsSave = false; // Don't save potentially corrupted state
+    }
+    // Flag spec extraction backfill to run after first paint (avoids blocking load)
+    try {
+      this._needsSpecBackfill = Object.keys(this.state.specExtractions).length === 0 && this.state.allNews.length > 0;
+      if (needsSave && !this._needsSpecBackfill) this.saveState();
+    } catch (e) {
+      console.error('[loadState] Save error:', e);
+    }
+
+    // 📦 Data version migration: clean up stale sources & blocked sources
+    this._didMigrate = false;
+    if ((data._dataVersion || 0) < DATA_VERSION) {
+      const before = this.state.allNews.length;
+      // Remove news from blocked sources (v3: expanded list includes WCCFTech, 快科技, etc.)
+      this.state.allNews = this.state.allNews.filter(function(n) {
+        return !BLOCKED_SOURCES.some(function(s) { return n.source.indexOf(s) >= 0; });
+      });
+      // Remove specExtractions from blocked sources
+      for (const chipKey of Object.keys(this.state.specExtractions)) {
+        for (const specKey of Object.keys(this.state.specExtractions[chipKey] || {})) {
+          this.state.specExtractions[chipKey][specKey] = (this.state.specExtractions[chipKey][specKey] || [])
+            .filter(e => !BLOCKED_SOURCES.some(s => e.source.includes(s)));
+        }
+      }
+      const removed = before - this.state.allNews.length;
+      if (removed > 0) {
+        this._didMigrate = true;
+        console.log(`[Migration] Cleaned up ${removed} items from blocked/removed sources`);
+      }
+      needsSave = true;
+    }
+    if (needsSave) {
+      const saveData = {
+        news: this.state.allNews,
+        settings: this.state.settings,
+        specExtractions: this.state.specExtractions,
+        lastFetch: Date.now(),
+        _dataVersion: DATA_VERSION
+      };
+      StorageManager.save(saveData);
+    }
+  },
+
+  // Run deferred spec extraction after initial render, chunked to avoid jank
+  runDeferredBackfill() {
+    if (!this._needsSpecBackfill) return;
+    this._needsSpecBackfill = false;
+
+    const items = this.state.allNews;
+    const CHUNK = 5; // Process 5 items per animation frame
+    let idx = 0;
+
+    const processChunk = () => {
+      const end = Math.min(idx + CHUNK, items.length);
+      const chunkExtractions = [];
+      for (let i = idx; i < end; i++) {
+        const extracted = SpecExtractor.extractSpecs(items[i]);
+        chunkExtractions.push(...extracted);
+      }
+      if (chunkExtractions.length > 0) {
+        this.state.specExtractions = SpecExtractor.mergeExtractions(
+          this.state.specExtractions, chunkExtractions
+        );
+      }
+      idx = end;
+      if (idx < items.length) {
+        requestAnimationFrame(processChunk);
+      } else {
+        // Done — save, detect new chips, and re-render comparison table if visible
+        this.saveState();
+        this.runNewChipDetection();
+        if (this.state.compareVisible) {
+          UIRenderer.renderComparisonTable(this.state.specExtractions);
+        }
+        console.log('[SpecExtractor] Deferred backfill complete:', SpecExtractor.countDynamicCells(this.state.specExtractions), 'cells');
+      }
+    };
+    requestAnimationFrame(processChunk);
+  },
+
+  saveState() {
+    StorageManager.save({
+      news: this.state.allNews,
+      settings: this.state.settings,
+      specExtractions: this.state.specExtractions,
+      customChips: this.state.customChips,
+      lastFetch: Date.now(),
+      _dataVersion: DATA_VERSION
+    });
+  },
+
+  // Restore user-added custom chips into the live registries on app init.
+  // Must be called BEFORE render() — pushes into CHIP_META, COMPETITOR_SPECS,
+  // CHIP_MODEL_PATTERNS, VENDOR_CHIPS, and COMPETITOR_KEYWORDS.
+  restoreCustomChips() {
+    var chips = this.state.customChips;
+    if (!chips || !chips.length) return;
+
+    // Build set of already-registered ids to avoid duplicates
+    var existingIds = {};
+    CHIP_META.forEach(function(c) { existingIds[c.id] = true; });
+
+    chips.forEach(function(chip) {
+      if (existingIds[chip.id]) return; // Already registered
+      existingIds[chip.id] = true;
+
+      // ① CHIP_META
+      CHIP_META.push({ id: chip.id, name: chip.name, color: chip.color, vendor: chip.vendor });
+
+      // ② COMPETITOR_SPECS — add empty placeholder for every row
+      COMPETITOR_SPECS.forEach(function(row) {
+        if (!(chip.id in row)) row[chip.id] = '-';
+      });
+
+      // ③ CHIP_MODEL_PATTERNS — force lazy init then extend
+      var patterns = SpecExtractor.CHIP_MODEL_PATTERNS; // triggers lazy init
+      if (!patterns[chip.id]) {
+        patterns[chip.id] = new RegExp(
+          chip.name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s*'),
+          'gi'
+        );
+      }
+
+      // ④ VENDOR_CHIPS — force lazy init then extend
+      var vendorChips = SpecExtractor.VENDOR_CHIPS; // triggers lazy init
+      var vendorKey = chip.vendor.toLowerCase().replace(/\s+/g, '_');
+      if (!vendorChips[vendorKey]) {
+        // Find an existing key for this vendor
+        var foundKey = null;
+        Object.keys(vendorChips).forEach(function(vk) {
+          if (vk.indexOf(vendorKey) >= 0 || vendorKey.indexOf(vk) >= 0) foundKey = vk;
+        });
+        vendorKey = foundKey || vendorKey;
+      }
+      if (vendorChips[vendorKey]) {
+        if (vendorChips[vendorKey].indexOf(chip.id) < 0) {
+          vendorChips[vendorKey].push(chip.id);
+        }
+      } else {
+        vendorChips[vendorKey] = [chip.id];
+      }
+
+      // ⑤ COMPETITOR_KEYWORDS — add chip name to vendor keywords
+      var vendorName = chip.vendor;
+      var kwKey = null;
+      Object.keys(COMPETITOR_KEYWORDS).forEach(function(k) {
+        var nameLower = vendorName.toLowerCase();
+        // Match by vendor name
+        if (k === 'ascend' && (nameLower === '华为' || nameLower === 'huawei')) kwKey = 'ascend';
+        if (k === 'nvidia' && (nameLower === 'nvidia')) kwKey = 'nvidia';
+        if (k === 'amd' && (nameLower === 'amd')) kwKey = 'amd';
+        if (k === 'intel' && (nameLower === 'intel')) kwKey = 'intel';
+        if (k === 'google' && (nameLower === 'google')) kwKey = 'google';
+        if (k === 'aws' && (nameLower === 'aws' || nameLower === 'amazon')) kwKey = 'aws';
+        if (k === 'microsoft' && (nameLower === 'microsoft' || nameLower === 'azure')) kwKey = 'microsoft';
+        if (k === 'cambricon' && (nameLower === '寒武纪' || nameLower === 'cambricon')) kwKey = 'cambricon';
+        if (k === 'hygon' && (nameLower === '海光' || nameLower === 'hygon')) kwKey = 'hygon';
+        if (k === 'baidu' && (nameLower === '百度' || nameLower === 'baidu')) kwKey = 'baidu';
+        if (k === 'enflame' && (nameLower === '燧原' || nameLower === 'enflame')) kwKey = 'enflame';
+        if (k === 'biren' && (nameLower === '壁仞' || nameLower === 'biren')) kwKey = 'biren';
+        if (k === 'moore' && (nameLower === '摩尔线程' || nameLower === 'moore threads')) kwKey = 'moore';
+      });
+      if (kwKey && COMPETITOR_KEYWORDS[kwKey]) {
+        if (COMPETITOR_KEYWORDS[kwKey].indexOf(chip.name) < 0) {
+          COMPETITOR_KEYWORDS[kwKey].push(chip.name);
+        }
+      }
+    });
+  },
+
+  // Add a single chip to all registries (user clicked "+" on a detected chip)
+  addCustomChip(name, vendor, color) {
+    // Generate a stable id from the chip name
+    var id = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    // Avoid id collision
+    var existingIds = {};
+    CHIP_META.forEach(function(c) { existingIds[c.id] = true; });
+    if (existingIds[id]) {
+      var suffix = 2;
+      while (existingIds[id + '_' + suffix]) suffix++;
+      id = id + '_' + suffix;
+    }
+
+    // Pick color if not provided
+    if (!color) {
+      var palette = ['#e67e22', '#2ecc71', '#9b59b6', '#1abc9c', '#e74c3c', '#3498db',
+                     '#f39c12', '#16a085', '#c0392b', '#2980b9', '#8e44ad', '#27ae60'];
+      color = palette[CHIP_META.length % palette.length];
+    }
+
+    var newChip = { id: id, name: name, color: color, vendor: vendor };
+
+    // ① CHIP_META
+    CHIP_META.push(newChip);
+
+    // ② COMPETITOR_SPECS
+    COMPETITOR_SPECS.forEach(function(row) {
+      if (!(id in row)) row[id] = '-';
+    });
+
+    // ③ CHIP_MODEL_PATTERNS (force lazy init)
+    var patterns = SpecExtractor.CHIP_MODEL_PATTERNS;
+    patterns[id] = new RegExp(
+      name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s*'),
+      'gi'
+    );
+
+    // ④ VENDOR_CHIPS (force lazy init)
+    var vendorChips = SpecExtractor.VENDOR_CHIPS;
+    var vendorKey = vendor.toLowerCase().replace(/\s+/g, '_');
+    // Try to find matching existing key
+    var matchedKey = null;
+    Object.keys(vendorChips).forEach(function(vk) {
+      if (vk.indexOf(vendorKey) >= 0 || vendorKey.indexOf(vk) >= 0) matchedKey = vk;
+    });
+    vendorKey = matchedKey || vendorKey;
+    if (!vendorChips[vendorKey]) vendorChips[vendorKey] = [];
+    if (vendorChips[vendorKey].indexOf(id) < 0) vendorChips[vendorKey].push(id);
+
+    // ⑤ COMPETITOR_KEYWORDS — add chip name to the best-matching vendor
+    var vendorNameLower = vendor.toLowerCase();
+    var kwKeyMap = {
+      '华为': 'ascend', 'huawei': 'ascend',
+      'nvidia': 'nvidia',
+      'amd': 'amd',
+      'intel': 'intel',
+      'google': 'google',
+      'aws': 'aws', 'amazon': 'aws',
+      'microsoft': 'microsoft', 'azure': 'microsoft',
+      '寒武纪': 'cambricon', 'cambricon': 'cambricon',
+      '海光': 'hygon', 'hygon': 'hygon',
+      '百度': 'baidu', 'baidu': 'baidu',
+      '燧原': 'enflame', 'enflame': 'enflame',
+      '壁仞': 'biren', 'biren': 'biren',
+      '摩尔线程': 'moore', 'moore threads': 'moore'
+    };
+    var kwKey = kwKeyMap[vendorNameLower] || null;
+    if (kwKey && COMPETITOR_KEYWORDS[kwKey]) {
+      if (COMPETITOR_KEYWORDS[kwKey].indexOf(name) < 0) {
+        COMPETITOR_KEYWORDS[kwKey].push(name);
+      }
+    }
+
+    // Persist
+    this.state.customChips.push({ id: id, name: name, color: color, vendor: vendor });
+    this.saveState();
+
+    // Remove from detected so it disappears from banner
+    this.state.detectedChips = this.state.detectedChips.filter(function(d) {
+      return d.name.toLowerCase() !== name.toLowerCase();
+    });
+
+    // Refresh UI
+    UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+    UIRenderer.renderNewChipBanner(this.state.detectedChips);
+    UIRenderer.renderComparisonTable(this.state.specExtractions);
+    // Also refresh competitor sidebar filters
+    UIRenderer.renderCompetitorFilters(this.state.allNews);
+
+    this.showToast('✅ 已添加 ' + name + ' 到对比表', 'success');
+  },
+
+  // Remove a user-added chip from all registries
+  removeChip(chipId) {
+    // Only user-added custom chips can be removed
+    var customChips = this.state.customChips;
+    var chipIndex = -1;
+    for (var i = 0; i < customChips.length; i++) {
+      if (customChips[i].id === chipId) { chipIndex = i; break; }
+    }
+    if (chipIndex < 0) return; // Not a user-added chip, refuse
+
+    var chipName = customChips[chipIndex].name;
+    var chipVendor = customChips[chipIndex].vendor;
+
+    // ① Remove from CHIP_META
+    for (var j = CHIP_META.length - 1; j >= 0; j--) {
+      if (CHIP_META[j].id === chipId) { CHIP_META.splice(j, 1); break; }
+    }
+
+    // ② Remove from COMPETITOR_SPECS (delete the key from each row)
+    COMPETITOR_SPECS.forEach(function(row) {
+      delete row[chipId];
+    });
+
+    // ③ Remove from CHIP_MODEL_PATTERNS + invalidate lazy cache
+    var patterns = SpecExtractor.CHIP_MODEL_PATTERNS;
+    delete patterns[chipId];
+    SpecExtractor._CHIP_MODEL_PATTERNS = patterns; // Keep cache alive but updated
+
+    // ④ Remove from VENDOR_CHIPS
+    var vendorChips = SpecExtractor.VENDOR_CHIPS;
+    Object.keys(vendorChips).forEach(function(vk) {
+      var arr = vendorChips[vk];
+      var idx = arr.indexOf(chipId);
+      if (idx >= 0) arr.splice(idx, 1);
+    });
+    SpecExtractor._VENDOR_CHIPS = vendorChips;
+
+    // ⑤ Remove from COMPETITOR_KEYWORDS (remove chipName from vendor keyword array)
+    var vendorNameLower = chipVendor.toLowerCase();
+    var kwKeyMap = {
+      '华为': 'ascend', 'huawei': 'ascend',
+      'nvidia': 'nvidia', 'amd': 'amd', 'intel': 'intel',
+      'google': 'google', 'aws': 'aws', 'amazon': 'aws',
+      'microsoft': 'microsoft', 'azure': 'microsoft',
+      '寒武纪': 'cambricon', 'cambricon': 'cambricon',
+      '海光': 'hygon', 'hygon': 'hygon',
+      '百度': 'baidu', 'baidu': 'baidu',
+      '燧原': 'enflame', 'enflame': 'enflame',
+      '壁仞': 'biren', 'biren': 'biren',
+      '摩尔线程': 'moore', 'moore threads': 'moore'
+    };
+    var kwKey = kwKeyMap[vendorNameLower] || null;
+    if (kwKey && COMPETITOR_KEYWORDS[kwKey]) {
+      var kwArr = COMPETITOR_KEYWORDS[kwKey];
+      var kwIdx = kwArr.indexOf(chipName);
+      if (kwIdx >= 0) kwArr.splice(kwIdx, 1);
+    }
+
+    // ⑥ Remove specExtractions for this chip
+    if (this.state.specExtractions[chipId]) {
+      delete this.state.specExtractions[chipId];
+    }
+
+    // ⑦ Remove from visibleChips if present
+    if (this.state.visibleChips && this.state.visibleChips.has(chipId)) {
+      this.state.visibleChips.delete(chipId);
+    }
+
+    // ⑧ Remove from customChips + persist
+    this.state.customChips.splice(chipIndex, 1);
+    this.saveState();
+
+    // Invalidate best-value cache since we removed a chip
+    SpecExtractor.invalidateCache();
+
+    // Refresh UI
+    UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+    UIRenderer.renderNewChipBanner(this.state.detectedChips);
+    UIRenderer.renderComparisonTable(this.state.specExtractions);
+    UIRenderer.renderCompetitorFilters(this.state.allNews);
+
+    this.showToast('🗑 已移除 ' + chipName + '', 'success');
+  },
+
+  // Scan all news for unregistered chip models and update the comparison banner
+  runNewChipDetection() {
+    var detected = SpecExtractor.detectNewChips(this.state.allNews);
+    this.state.detectedChips = detected;
+    if (detected.length > 0) {
+      console.log('[NewChip] Detected ' + detected.length + ' potential new chip(s):',
+        detected.map(function(d) { return d.name + ' (' + d.vendor + ')'; }).join(', '));
+    }
+    // Refresh banner if compare panel is open
+    if (this.state.compareVisible) {
+      UIRenderer.renderNewChipBanner(detected);
+    }
+  },
+
+  // Debounced save for frequent UI interactions — avoids blocking on every click
+  debouncedSave() {
+    if (this._saveTimer) clearTimeout(this._saveTimer);
+    var self = this;
+    this._saveTimer = setTimeout(function() {
+      self._saveTimer = null;
+      self.saveState();
+    }, 500);
+  },
+
+  /* ---- News Fetching ---- */
+  async fetchNews(showToast = true) {
+    if (this.state.isFetching) return;
+    this.state.isFetching = true;
+
+    const btnRefresh = document.getElementById('btnRefresh');
+    btnRefresh.disabled = true;
+    btnRefresh.innerHTML = '<span class="spinner" style="width:16px;height:16px;"></span> 获取中...';
+
+    try {
+      // Race fetchAll against a 12s safety timeout — prevents hanging if
+      // RSS proxies (rss2json, allorigins) are blocked or unreachable
+      const fetchTimer = new Promise(resolve => setTimeout(() => resolve([]), 12000));
+      const newItems = await Promise.race([
+        NewsEngine.fetchAll(this.state.settings).catch(() => []),
+        fetchTimer
+      ]);
+      console.log(`Fetched ${newItems.length} new items`);
+
+      if (newItems.length > 0) {
+        const before = this.state.allNews.length;
+        this.state.allNews = NewsEngine.mergeAndDedup(this.state.allNews, newItems);
+        const added = this.state.allNews.length - before;
+
+        // Extract specs from new items and merge into specExtractions
+        const allExtractions = [];
+        for (const item of newItems) {
+          const extracted = SpecExtractor.extractSpecs(item);
+          allExtractions.push(...extracted);
+        }
+        if (allExtractions.length > 0) {
+          this.state.specExtractions = SpecExtractor.mergeExtractions(
+            this.state.specExtractions, allExtractions
+          );
+          console.log(`[SpecExtractor] Extracted ${allExtractions.length} spec data points from news`);
+        }
+
+        this.saveState();
+        this.runNewChipDetection();
+
+        if (showToast) {
+          if (added > 0) {
+            this.showToast(`✅ 新增 ${added} 条新闻（共获取 ${newItems.length} 条原始数据）`, 'success');
+          } else if (newItems.length > 0) {
+            this.showToast(`已是最新（获取了 ${newItems.length} 条，无新增）`, 'success');
+          } else {
+            this.showToast('⚠ 未能获取到新闻，请检查网络或配置 API Key', 'error');
+          }
+        }
+      } else {
+        if (showToast) {
+          this.showToast('⚠ 所有新闻源暂时不可用，请在设置中添加 API Key 或自定义 RSS', 'error');
+        }
+      }
+
+      // Generate demo data if we have absolutely nothing
+      if (this.state.allNews.length === 0) {
+        this.generateDemoData();
+      }
+    } catch (err) {
+      console.error('Fetch failed:', err);
+      if (showToast) this.showToast('❌ 获取失败: ' + err.message, 'error');
+      if (this.state.allNews.length === 0) this.generateDemoData();
+    } finally {
+      this.state.isFetching = false;
+      btnRefresh.disabled = false;
+      btnRefresh.innerHTML = '<span>↻</span> 刷新';
+      this.applyFilters();
+      this.render();
+    }
+  },
+
+  /* ---- Demo Data (fallback) ---- */
+  generateDemoData() {
+    const now = Date.now();
+    const demos = [
+      // Ascend 910C spec leak
+      { title: 'Ascend 910C Benchmark Leak: 640 TFLOPS FP16, 1.2 TB/s HBM3e Bandwidth, Matching H100 in MLPerf Inference', source: 'Semiconductor Engineering [EN]', summary: 'Leaked benchmarks show Huawei Ascend 910C delivers 640 TFLOPS FP16 with 1.2 TB/s HBM3e memory bandwidth. MLPerf Inference v4.0 results show 92% of NVIDIA H100 performance on BERT-Large and 88% on GPT-3 175B inference — a 3.2× generational leap over 910B.', xv: false },
+
+
+      // Cross-validated pair #2: MLPerf results (3 sources)
+      { title: 'Huawei Ascend 910B vs NVIDIA A100: Independent Third-Party Benchmark Comparison Reveals Surprising Results', source: 'Tom\'s Hardware [EN]', summary: 'Independent benchmark comparison: Ascend 910B achieves 320 TFLOPS FP16 vs A100 312 TFLOPS. On Llama-3-70B inference, 910B reaches 85% of A100 throughput (1,250 vs 1,470 tokens/sec). Key weakness: software ecosystem maturity gap.', xv: true, xvSources: ['Tom\'s Hardware [EN]', '机器之心 [中文]', 'HPCwire [EN]'], xvCount: 3 },
+      { title: 'MLPerf Training 4.0：昇腾910B集群在BERT/ResNet/DLRM任务中达A100 80-90%，MindSpore扩展效率95%', source: '机器之心 [中文]', summary: 'MLPerf Training v4.0华为昇腾成绩：BERT-Large训练42秒（A100: 35秒），ResNet-50训练0.8分钟（A100: 0.65分钟），DLRM训练3.2分钟（A100: 2.8分钟）。MindSpore框架256卡扩展效率95%。', xv: true, xvSources: ['Tom\'s Hardware [EN]', '机器之心 [中文]', 'HPCwire [EN]'], xvCount: 3 },
+
+      // Single source stories (not cross-validated)
+      { title: 'SemiAnalysis深度报告：昇腾910B集群训练实测——性价比优势明显但互联带宽成瓶颈', source: 'SemiAnalysis [EN]', summary: '256卡昇腾910B集群在GPT-3 175B训练中达H100集群62%吞吐量，单片成本仅H100的40%。HCCS互联带宽（392 GB/s vs NVLink 900 GB/s）是最大瓶颈。', xv: false },
+      { title: '中国移动智算中心昇腾万卡集群实测：Llama-3训练效率达H100的78%，MFU达0.82', source: 'HPCwire [EN]', summary: 'China Mobile部署超10000片昇腾910B，Llama-3-70B训练效率达H100集群78%，成本仅62%。MFU达0.82，高于H100集群的0.48。', xv: false },
+      { title: 'SMIC 7nm N+2工艺深度分析：65M Tr/mm²晶体管密度，助力昇腾910C实现44B晶体管', source: 'AnandTech [EN]', summary: 'SMIC 7nm N+2工艺达65M Tr/mm²密度（TSMC N7为91M），良率约55%。昇腾910C芯片面积680mm²，集成约440亿晶体管，核心电压0.75V，基础频率1.8GHz。', xv: false },
+      { title: 'Huawei CANN 7.0 vs NVIDIA CUDA: 算子覆盖率达85%，自动迁移工具缩短移植周期至2-5天', source: 'The Register [EN]', summary: 'CANN 7.0支持2000+算子，覆盖85%常用CUDA算子。自动迁移工具将PyTorch模型移植从数周缩短至2-5天。仍缺乏稀疏注意力、FP8训练和NCCL级集合通信支持。', xv: false },
+      { title: 'Ascend 310P边缘AI芯片解析：20 TOPS INT8仅8W，性能功耗比超越Jetson Orin Nano', source: 'ServeTheHome [EN]', summary: '昇腾310P边缘推理芯片：20 TOPS INT8、8W TDP、12nm工艺、支持BF16推理。典型功耗6W下支持32路视频分析。性能功耗比优于NVIDIA Jetson Orin Nano（40 TOPS@15W）。', xv: false },
+      { title: '昇腾910C HBM3e显存子系统：6-Hi堆叠实现1.2TB/s带宽，HCCS互联达392GB/s每芯片', source: 'WCCFTech [EN]', summary: 'Ascend 910C采用6-Hi HBM3e堆叠（三星/铠侠供货），96GB总容量，1.2TB/s带宽。HCCS互联每链路392GB/s，3链路/芯片，支持4路全连接拓扑。NVLink 4.0仍领先（900GB/s）。', xv: false }
+    ];
+
+    demos.forEach((d, i) => {
+      const date = new Date(now - i * 86400000 * 0.6);
+      const combinedText = d.title + ' ' + d.summary;
+      const analysis = NewsEngine.analyzeText(combinedText);
+      const item = {
+        id: 'demo_' + i,
+        title: d.title,
+        link: 'https://www.baidu.com/s?wd=' + encodeURIComponent(d.title),
+        source: d.source,
+        sourceId: 'demo',
+        date: NewsEngine.formatDate(date),
+        timestamp: date.getTime(),
+        summary: '📌 演示数据 — ' + d.summary,
+        relevance: analysis.relevance,
+        isPerformance: analysis.isPerformance,
+        competitor: analysis.competitor,
+        mentionedChips: analysis.mentionedChips || [],
+        crossValidated: d.xv || false,
+        crossValidationCount: d.xvCount || 1,
+        crossValidationSources: d.xvSources || [d.source],
+        favorited: false,
+        fetchedAt: now,
+        isDemo: true
+      };
+      this.state.allNews.push(item);
+    });
+
+    this.state.allNews.sort((a, b) => b.timestamp - a.timestamp);
+
+    // Run spec extraction on demo data
+    const demoExtractions = [];
+    for (const item of this.state.allNews) {
+      const extracted = SpecExtractor.extractSpecs(item);
+      demoExtractions.push(...extracted);
+    }
+    if (demoExtractions.length > 0) {
+      this.state.specExtractions = SpecExtractor.mergeExtractions(
+        this.state.specExtractions, demoExtractions
+      );
+      console.log(`[SpecExtractor] Extracted ${demoExtractions.length} spec data points from demo data`);
+    }
+
+    this.saveState();
+  },
+
+  /* ---- Filtering & Sorting ---- */
+  applyFilters() {
+    const { allNews, dateFilter, sourceFilter, searchQuery, favOnly, verifiedOnly, perfOnly, competitorFilter, sortOrder } = this.state;
+    const q = searchQuery ? searchQuery.toLowerCase() : '';
+    const filtered = [];
+
+    // Single-pass filter — avoids creating intermediate arrays from chained .filter()
+    for (const n of allNews) {
+      if (dateFilter !== 'all' && n.date !== dateFilter) continue;
+      if (sourceFilter !== 'all' && n.source !== sourceFilter) continue;
+      if (q) {
+        if (!n.title.toLowerCase().includes(q) &&
+            !n.summary.toLowerCase().includes(q) &&
+            !n.source.toLowerCase().includes(q)) continue;
+      }
+      if (favOnly && !n.favorited) continue;
+      if (verifiedOnly && !n.crossValidated) continue;
+      if (perfOnly && !n.isPerformance) continue;
+      if (competitorFilter !== 'all' && (!n.competitor || !n.competitor.includes(competitorFilter))) continue;
+      filtered.push(n);
+    }
+
+    // Sort — only if needed
+    if (sortOrder === 'newest') {
+      filtered.sort((a, b) => b.timestamp - a.timestamp);
+    } else {
+      filtered.sort((a, b) => a.timestamp - b.timestamp);
+    }
+
+    this.state.filteredNews = filtered;
+    this.state.currentPage = 1;
+  },
+
+  /* ---- Render ---- */
+  render() {
+    const { filteredNews, currentPage } = this.state;
+    const pageSize = parseInt(this.state.settings.pageSize) || 20;
+
+    // Render each component independently — one failure won't block others
+    const safeRender = (fn, label) => { try { fn(); } catch (e) { console.error(`[render] ${label}:`, e); } };
+
+    safeRender(() => UIRenderer.renderStats(this.state.allNews, this.getFavorites()), 'stats');
+    safeRender(() => UIRenderer.renderDateNav(this.state.allNews), 'dateNav');
+    safeRender(() => UIRenderer.renderSourceFilters(this.state.allNews), 'sourceFilters');
+    safeRender(() => UIRenderer.renderCompetitorFilters(this.state.allNews), 'competitorFilters');
+    safeRender(() => UIRenderer.renderTrend(this.state.allNews), 'trend');
+    safeRender(() => UIRenderer.renderNewsList(filteredNews, currentPage, pageSize), 'newsList');
+    safeRender(() => UIRenderer.renderPagination(filteredNews.length, currentPage, pageSize), 'pagination');
+    safeRender(() => UIRenderer.renderFeedTitle(), 'feedTitle');
+    safeRender(() => {
+      if (this.state.compareVisible) {
+        UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+        UIRenderer.renderNewChipBanner(this.state.detectedChips);
+        UIRenderer.renderComparisonTable(this.state.specExtractions);
+      }
+    }, 'compareTable');
+  },
+
+  getFavorites() {
+    return this.state.allNews.filter(n => n.favorited);
+  },
+
+  /* ---- Event Binding ---- */
+  bindEvents() {
+    // Refresh button
+    document.getElementById('btnRefresh').addEventListener('click', () => this.fetchNews());
+
+    // Search
+    const searchInput = document.getElementById('searchInput');
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        this.state.searchQuery = searchInput.value.trim();
+        this.applyFilters();
+        this.render();
+      }, 300);
+    });
+
+    // Settings
+    document.getElementById('btnSettings').addEventListener('click', () => this.openSettings());
+    document.getElementById('btnSettingsCancel').addEventListener('click', () => this.closeSettings());
+    document.getElementById('btnSettingsSave').addEventListener('click', () => this.saveSettings());
+    document.getElementById('settingsModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) this.closeSettings();
+    });
+
+    // Sort buttons
+    document.querySelectorAll('[data-sort]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.state.sortOrder = btn.dataset.sort;
+        this.applyFilters();
+        this.render();
+      });
+    });
+
+    // Date nav clicks (delegated) + keyboard support
+    document.getElementById('dateNav').addEventListener('click', (e) => {
+      const item = e.target.closest('.date-nav-item');
+      if (!item) return;
+      this.state.dateFilter = item.dataset.date;
+      this.applyFilters();
+      this.render();
+    });
+    document.getElementById('dateNav').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const item = e.target.closest('.date-nav-item');
+        if (!item) return;
+        this.state.dateFilter = item.dataset.date;
+        this.applyFilters();
+        this.render();
+      }
+    });
+
+    // Source filter clicks (delegated) + keyboard support
+    document.getElementById('sourceFilters').addEventListener('click', (e) => {
+      const chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+      this.state.sourceFilter = chip.dataset.source;
+      this.applyFilters();
+      this.render();
+    });
+    document.getElementById('sourceFilters').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const chip = e.target.closest('.filter-chip');
+        if (!chip) return;
+        this.state.sourceFilter = chip.dataset.source;
+        this.applyFilters();
+        this.render();
+      }
+    });
+
+    // News card actions (delegated)
+    document.getElementById('newsList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+
+      if (btn.dataset.action === 'fav') {
+        const news = this.state.allNews.find(n => n.id === id);
+        if (news) {
+          news.favorited = !news.favorited;
+          this.debouncedSave();
+          this.applyFilters();
+          this.render();
+          this.showToast(news.favorited ? '⭐ 已收藏' : '取消收藏');
+        }
+      } else if (btn.dataset.action === 'share') {
+        const link = btn.dataset.link;
+        if (link && link !== '#') {
+          this._copyToClipboard(link);
+        }
+      }
+    });
+
+    // Pagination clicks (delegated)
+    document.getElementById('pagination').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-page]');
+      if (!btn || btn.disabled) return;
+      const page = parseInt(btn.dataset.page);
+      const pageSize = parseInt(this.state.settings.pageSize) || 20;
+      const totalPages = Math.ceil(this.state.filteredNews.length / pageSize);
+      if (page >= 1 && page <= totalPages) {
+        this.state.currentPage = page;
+        this.render();
+        document.getElementById('newsFeed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    // Export button
+    document.getElementById('btnExport').addEventListener('click', () => this.showExportModal());
+
+    // Import button — triggers hidden file input
+    const importInput = document.getElementById('importFileInput');
+    document.getElementById('btnImport').addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', (e) => this.importData(e));
+
+    // Comparison panel toggle
+    document.getElementById('btnCompareToggle').addEventListener('click', () => {
+      this.state.compareVisible = !this.state.compareVisible;
+      const panel = document.getElementById('comparePanel');
+      const btn = document.getElementById('btnCompareToggle');
+      if (this.state.compareVisible) {
+        panel.style.display = 'block';
+        btn.classList.add('active');
+        UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+        UIRenderer.renderComparisonTable(this.state.specExtractions);
+      } else {
+        panel.style.display = 'none';
+        btn.classList.remove('active');
+      }
+    });
+
+    // Chip column toggle: click to show/hide, "×" sub-button to remove custom chips
+    document.getElementById('chipToggles').addEventListener('click', function(e) {
+      // Check if clicking the "×" remove button
+      var removeBtn = e.target.closest('.chip-remove');
+      if (removeBtn) {
+        e.stopPropagation();
+        var removeId = removeBtn.getAttribute('data-chip');
+        if (removeId && confirm('确定要删除 "' + removeId + '" 芯片吗？\n将从对比表、芯片识别和存储中永久移除。')) {
+          App.removeChip(removeId);
+        }
+        return;
+      }
+
+      // Normal toggle behavior
+      var btn = e.target.closest('.chip-toggle');
+      if (!btn) return;
+      var chipId = btn.dataset.chip;
+      if (!App.state.visibleChips) {
+        // First click: initialize with all chips, then toggle off the clicked one
+        App.state.visibleChips = new Set(CHIP_META.map(function(c) { return c.id; }));
+      }
+      if (App.state.visibleChips.has(chipId)) {
+        App.state.visibleChips.delete(chipId);
+      } else {
+        App.state.visibleChips.add(chipId);
+      }
+      UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+      UIRenderer.renderNewChipBanner(App.state.detectedChips);
+      UIRenderer.renderComparisonTable(App.state.specExtractions);
+    });
+    // Select all
+    document.getElementById('btnChipSelectAll').addEventListener('click', function() {
+      App.state.visibleChips = null; // null = all visible
+      UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+      UIRenderer.renderNewChipBanner(App.state.detectedChips);
+      UIRenderer.renderComparisonTable(App.state.specExtractions);
+    });
+    // Clear all
+    document.getElementById('btnChipClearAll').addEventListener('click', function() {
+      App.state.visibleChips = new Set(); // empty = none visible
+      UIRenderer.renderChipToggles();
+    UIRenderer.renderVendorToggles();
+      UIRenderer.renderNewChipBanner(App.state.detectedChips);
+      UIRenderer.renderComparisonTable(App.state.specExtractions);
+    });
+
+    // Vendor quick-select: toggle all chips from a vendor on/off
+    var vendorTogglesEl = document.getElementById('vendorToggles');
+    if (vendorTogglesEl) {
+      vendorTogglesEl.addEventListener('click', function(e) {
+        var btn = e.target.closest('.vendor-toggle');
+        if (!btn) return;
+        var vendor = btn.getAttribute('data-vendor');
+        // Collect all chip ids for this vendor
+        var vendorChipIds = [];
+        CHIP_META.forEach(function(c) {
+          if (c.vendor === vendor) vendorChipIds.push(c.id);
+        });
+        if (!vendorChipIds.length) return;
+        // Initialize visibleChips if null (all visible)
+        var vis = App.state.visibleChips;
+        var allOn = !vis;
+        if (vis) {
+          allOn = true;
+          for (var i = 0; i < vendorChipIds.length; i++) {
+            if (!vis.has(vendorChipIds[i])) { allOn = false; break; }
+          }
+        }
+        if (!vis) {
+          vis = new Set();
+          CHIP_META.forEach(function(c) { vis.add(c.id); });
+          App.state.visibleChips = vis;
+        }
+        if (allOn) {
+          // Turn this vendor OFF
+          for (var j = 0; j < vendorChipIds.length; j++) { vis.delete(vendorChipIds[j]); }
+        } else {
+          // Turn this vendor ON
+          for (var k = 0; k < vendorChipIds.length; k++) { vis.add(vendorChipIds[k]); }
+        }
+        UIRenderer.renderChipToggles();
+        UIRenderer.renderVendorToggles();
+        UIRenderer.renderNewChipBanner(App.state.detectedChips);
+        UIRenderer.renderComparisonTable(App.state.specExtractions);
+      });
+    }
+
+    // Add custom chip from banner (delegated click on .add-chip-btn buttons)
+    var newChipBanner = document.getElementById('newChipBanner');
+    if (newChipBanner) {
+      newChipBanner.addEventListener('click', function(e) {
+        var btn = e.target.closest('.add-chip-btn');
+        if (!btn) return;
+        var chipName = btn.getAttribute('data-chip-name');
+        var chipVendor = btn.getAttribute('data-chip-vendor');
+        if (chipName) {
+          App.addCustomChip(chipName, chipVendor || '未知');
+        }
+      });
+    }
+
+    // Competitor chip filter (delegated) + keyboard support
+    const competitorFilterHandler = (chip) => {
+      const competitor = chip.dataset.competitor;
+      this.state.competitorFilter = competitor;
+      // Update active state + aria-pressed
+      document.querySelectorAll('#competitorFilters .filter-chip').forEach(c => {
+        c.classList.remove('active');
+        c.setAttribute('aria-pressed', 'false');
+      });
+      chip.classList.add('active');
+      chip.setAttribute('aria-pressed', 'true');
+      this.applyFilters();
+      this.render();
+    };
+    document.getElementById('competitorFilters').addEventListener('click', (e) => {
+      const chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+      competitorFilterHandler(chip);
+    });
+    document.getElementById('competitorFilters').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const chip = e.target.closest('.filter-chip');
+        if (!chip) return;
+        competitorFilterHandler(chip);
+      }
+    });
+
+    // Verified only toggle
+    document.getElementById('btnVerifiedOnly').addEventListener('click', () => {
+      this.state.verifiedOnly = !this.state.verifiedOnly;
+      const btn = document.getElementById('btnVerifiedOnly');
+      if (this.state.verifiedOnly) {
+        btn.classList.add('active');
+        btn.textContent = '✅ 已验证 (开)';
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '✅ 已验证';
+      }
+      this.applyFilters();
+      this.render();
+    });
+
+    // Performance only toggle
+    document.getElementById('btnPerfOnly').addEventListener('click', () => {
+      this.state.perfOnly = !this.state.perfOnly;
+      const btn = document.getElementById('btnPerfOnly');
+      if (this.state.perfOnly) {
+        btn.classList.add('active');
+        btn.textContent = '⚡ 性能 (开)';
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '⚡ 性能';
+      }
+      this.applyFilters();
+      this.render();
+    });
+
+    // Favorites only toggle
+    document.getElementById('btnFavOnly').addEventListener('click', () => {
+      this.state.favOnly = !this.state.favOnly;
+      const btn = document.getElementById('btnFavOnly');
+      if (this.state.favOnly) {
+        btn.classList.add('active');
+        btn.textContent = '⭐ 收藏 (开)';
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '⭐ 收藏';
+      }
+      this.applyFilters();
+      this.render();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        e.preventDefault();
+        this.fetchNews();
+      }
+      // Escape key closes any open modal
+      if (e.key === 'Escape') {
+        const settingsModal = document.getElementById('settingsModal');
+        const exportModal = document.getElementById('exportModal');
+        if (settingsModal.classList.contains('open')) {
+          this.closeSettings();
+        }
+        if (exportModal.classList.contains('open')) {
+          exportModal.classList.remove('open');
+        }
+      }
+    });
+  },
+
+  /* ---- Settings ---- */
+  openSettings() {
+    document.getElementById('settingNewsApiKey').value = this.state.settings.newsApiKey || '';
+    document.getElementById('settingGnewsKey').value = this.state.settings.gnewsKey || '';
+    document.getElementById('settingAutoRefresh').value = this.state.settings.autoRefresh || 30;
+    document.getElementById('settingPageSize').value = this.state.settings.pageSize || 20;
+    document.getElementById('settingCustomRSS').value = this.state.settings.customSources || '';
+    document.getElementById('settingsModal').classList.add('open');
+  },
+
+  closeSettings() {
+    document.getElementById('settingsModal').classList.remove('open');
+  },
+
+  saveSettings() {
+    this.state.settings.newsApiKey = document.getElementById('settingNewsApiKey').value.trim();
+    this.state.settings.gnewsKey = document.getElementById('settingGnewsKey').value.trim();
+    this.state.settings.autoRefresh = parseInt(document.getElementById('settingAutoRefresh').value);
+    this.state.settings.pageSize = parseInt(document.getElementById('settingPageSize').value);
+    this.state.settings.customSources = document.getElementById('settingCustomRSS').value.trim();
+
+    this.saveState();
+    this.closeSettings();
+    this.setupAutoRefresh();
+    this.applyFilters();
+    this.render();
+    this.showToast('✅ 设置已保存', 'success');
+
+    // Offer to re-fetch with new API keys
+    if (this.state.settings.newsApiKey || this.state.settings.gnewsKey) {
+      this.fetchNews();
+    }
+  },
+
+  applySettings() {
+    this.setupAutoRefresh();
+  },
+
+  /* ---- Auto Refresh ---- */
+  setupAutoRefresh() {
+    if (this._refreshTimer) {
+      clearInterval(this._refreshTimer);
+      this._refreshTimer = null;
+    }
+
+    const interval = parseInt(this.state.settings.autoRefresh) || 0;
+    if (interval > 0) {
+      this._refreshTimer = setInterval(() => {
+        console.log('[AutoRefresh] Fetching news...');
+        this.fetchNews(false);
+      }, interval * 60000);
+    }
+  },
+
+  /* ---- Export ---- */
+  /* ---- Import / Export ---- */
+  importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        // Validate: must have a 'news' array
+        if (!data.news || !Array.isArray(data.news)) {
+          this.showToast('❌ 无效的导入文件：缺少 news 数组', 'error');
+          return;
+        }
+        const before = this.state.allNews.length;
+        // Merge imported news into existing (uses same dedup logic as fetch)
+        this.state.allNews = NewsEngine.mergeAndDedup(this.state.allNews, data.news);
+        const added = this.state.allNews.length - before;
+
+        // Merge specExtractions if present (avoid flatMap for older Android compat)
+        if (data.specExtractions && typeof data.specExtractions === 'object') {
+          var importedExtractions = [];
+          var chips = Object.keys(data.specExtractions);
+          for (var ci = 0; ci < chips.length; ci++) {
+            var chip = data.specExtractions[chips[ci]];
+            if (chip && typeof chip === 'object') {
+              var specKeys = Object.keys(chip);
+              for (var si = 0; si < specKeys.length; si++) {
+                var arr = chip[specKeys[si]];
+                if (Array.isArray(arr)) importedExtractions = importedExtractions.concat(arr);
+              }
+            }
+          }
+          if (importedExtractions.length > 0) {
+            this.state.specExtractions = SpecExtractor.mergeExtractions(
+              this.state.specExtractions, importedExtractions
+            );
+          }
+        }
+
+        // Merge settings if present (only non-empty values)
+        if (data.settings) {
+          for (const [k, v] of Object.entries(data.settings)) {
+            if (v && !this.state.settings[k]) this.state.settings[k] = v;
+          }
+        }
+
+        this.saveState();
+        this.applyFilters();
+        this.render();
+        this.showToast(`✅ 成功导入 ${added} 条新新闻（共 ${data.news.length} 条）`, 'success');
+      } catch (err) {
+        this.showToast('❌ 文件解析失败：' + err.message, 'error');
+      }
+    };
+    reader.readAsText(file);
+    // Reset input so same file can be re-imported
+    event.target.value = '';
+  },
+
+  showExportModal() {
+    const count = this.state.filteredNews.length;
+    document.getElementById('exportCount').textContent = count;
+    document.getElementById('exportModal').classList.add('open');
+
+    // Bind export modal events (one-time setup)
+    if (!this._exportBound) {
+      this._exportBound = true;
+      document.getElementById('btnExportCancel').addEventListener('click', () => {
+        document.getElementById('exportModal').classList.remove('open');
+      });
+      document.getElementById('exportModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) document.getElementById('exportModal').classList.remove('open');
+      });
+      document.getElementById('btnExportDo').addEventListener('click', () => this.doExport());
+    }
+  },
+
+  doExport() {
+    const format = document.getElementById('exportFormat').value;
+    const scope = document.getElementById('exportScope').value;
+
+    let news;
+    if (scope === 'filtered') {
+      news = this.state.filteredNews;
+    } else if (scope === 'favs') {
+      news = this.state.allNews.filter(n => n.favorited);
+    } else {
+      news = this.state.allNews;
+    }
+
+    if (!news.length) {
+      this.showToast('⚠ 没有可导出的数据', 'error');
+      return;
+    }
+
+    let content, filename, mimeType;
+
+    if (format === 'json') {
+      content = JSON.stringify(news.map(n => ({
+        title: n.title,
+        source: n.source,
+        date: n.date,
+        link: n.link,
+        summary: n.summary,
+        favorited: n.favorited
+      })), null, 2);
+      filename = `ascend-news-${NewsEngine.formatDate(new Date())}.json`;
+      mimeType = 'application/json';
+    } else if (format === 'csv') {
+      const header = '标题,来源,日期,链接,摘要,已收藏';
+      const rows = news.map(n =>
+        `"${n.title.replace(/"/g, '""')}","${n.source}","${n.date}","${n.link}","${(n.summary || '').replace(/"/g, '""')}","${n.favorited ? '是' : '否'}"`
+      );
+      content = '﻿' + header + '\n' + rows.join('\n'); // BOM for Excel UTF-8
+      filename = `ascend-news-${NewsEngine.formatDate(new Date())}.csv`;
+      mimeType = 'text/csv;charset=utf-8';
+    } else if (format === 'md') {
+      const lines = [
+        `# 华为昇腾芯片新闻追踪`,
+        `> 导出日期: ${NewsEngine.formatDate(new Date())}  |  共 ${news.length} 条`,
+        '',
+        '---',
+        ''
+      ];
+      news.forEach((n, i) => {
+        lines.push(`## ${i + 1}. ${n.title}`);
+        lines.push('');
+        lines.push(`- **来源**: ${n.source}`);
+        lines.push(`- **日期**: ${n.date}`);
+        lines.push(`- **链接**: ${n.link}`);
+        if (n.summary) lines.push(`- **摘要**: ${n.summary}`);
+        if (n.favorited) lines.push(`- ⭐ 已收藏`);
+        lines.push('');
+        lines.push('---');
+        lines.push('');
+      });
+      content = lines.join('\n');
+      filename = `ascend-news-${NewsEngine.formatDate(new Date())}.md`;
+      mimeType = 'text/markdown;charset=utf-8';
+    }
+
+    // Download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    document.getElementById('exportModal').classList.remove('open');
+    this.showToast(`✅ 已导出 ${news.length} 条新闻 (${format.toUpperCase()})`, 'success');
+  },
+
+  /* ---- Toast Notifications ---- */
+  // Cross-platform clipboard copy — works on iOS Safari, Android Chrome, desktop
+  _copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        this.showToast('📋 链接已复制到剪贴板', 'success');
+      }).catch(() => this._fallbackCopy(text));
+    } else {
+      this._fallbackCopy(text);
+    }
+  },
+  _fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.left = '-9999px'; ta.style.top = '-9999px';
+    ta.setAttribute('readonly', '');
+    document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0, 99999);
+    try { document.execCommand('copy'); this.showToast('📋 链接已复制', 'success'); }
+    catch(e) { this.showToast('复制失败：' + text.substring(0, 40) + '…', 'error'); }
+    document.body.removeChild(ta);
+  },
+
+  showToast(message, type = '') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+};
+
+/* ============================================================
+   Boot
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => App.init());
+
+})();
+</script>
+
+</body>
+</html>
