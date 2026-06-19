@@ -728,6 +728,8 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
       <span style="font-size:0.75rem;color:var(--text-muted)">选择对比：</span>
       <button class="btn btn-sm active" id="btnChipSelectAll" style="font-size:0.7rem">全部</button>
       <button class="btn btn-sm" id="btnChipClearAll" style="font-size:0.7rem">清空</button>
+      <button class="btn btn-sm" id="btnSortByYear" style="font-size:0.7rem" title="按上市年份降序排列（同年份内按性能降序）">📅 按年份</button>
+      <button class="btn btn-sm" id="btnExportImage" style="font-size:0.7rem" title="将对比表导出为高清PNG图片">📸 导出图片</button>
       <span style="font-size:0.7rem;color:var(--text-muted);margin-left:4px">· 厂商：</span>
       <span id="vendorToggles" style="display:flex;gap:3px;flex-wrap:wrap"></span>
       <span id="chipToggles" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;width:100%"></span>
@@ -1114,6 +1116,11 @@ const RELEVANCE_KEYWORDS = [
   '寒武纪', '思元', 'Siyuan', '590', '海光', 'Hygon', 'DCU', 'Z100',
   '昆仑芯', 'Kunlun', '燧原', '云燧', 'Yunsui', '壁仞', 'BR100', 'BIREN',
   '摩尔线程', 'MTT', 'MUSA',
+  // 2026-2027 roadmap chips
+  'Ascend 960', 'Rubin', 'Vera Rubin', 'Rubin Ultra', 'Vera Rubin R100',
+  'MI500', 'Jaguar Shores', 'TPU v8', 'Sunfish', 'Trainium4',
+  'Maia 280', '思元790', '深算四号', '深算4号', 'M100', 'M300',
+  '昆仑芯 M100', '昆仑芯 M300', 'BR20X',
 
   // ── 性能指标类 (高权重) ──
   'TFLOPS', 'TOPS', 'FLOPS', '算力', 'performance', 'benchmark', '基准测试',
@@ -1194,7 +1201,20 @@ const CHIP_META = [
   { id: 'shensuan3', name: '深算三号',      color: '#3399ff', vendor: '海光' },
   { id: 'yunsuiL600',name: '燧原L600',      color: '#33ccff', vendor: '燧原' },
   { id: 'mi400',     name: 'MI400',          color: '#ff6666', vendor: 'AMD' },
-  { id: 'bili20x',   name: '壁砺20X',       color: '#9b30ff', vendor: '壁仞' }
+  { id: 'bili20x',   name: '壁砺20X',       color: '#9b30ff', vendor: '壁仞' },
+  // ── 2026-2027 Roadmap chips (新增路线图芯片) ──
+  { id: 'a960',     name: 'Ascend 960',    color: '#00f5ff', vendor: '华为' },
+  { id: 'rubin',    name: 'Vera Rubin R100',color: '#b2ff59', vendor: 'NVIDIA' },
+  { id: 'rubinUltra',name:'Rubin Ultra',    color: '#ccff90', vendor: 'NVIDIA' },
+  { id: 'mi500',    name: 'MI500',          color: '#ff8888', vendor: 'AMD' },
+  { id: 'jaguarShores',name:'Jaguar Shores',color: '#4fc3f7', vendor: 'Intel' },
+  { id: 'tpuv8t',   name: 'TPU v8t Sunfish',color: '#8ab4f8', vendor: 'Google' },
+  { id: 'trainium4',name: 'Trainium4',      color: '#ffb74d', vendor: 'AWS' },
+  { id: 'maia280',  name: 'Maia 280',       color: '#9575cd', vendor: 'Microsoft' },
+  { id: 'siyuan790',name: '思元790',         color: '#ff9e5e', vendor: '寒武纪' },
+  { id: 'shensuan4',name: '深算四号',        color: '#5c9ce6', vendor: '海光' },
+  { id: 'kunlunM100',name:'昆仑芯 M100',     color: '#ff7070', vendor: '百度' },
+  { id: 'kunlunM300',name:'昆仑芯 M300',     color: '#ff9090', vendor: '百度' }
 ];
 
 // Pre-built chip lookup maps (avoids repeated iteration over CHIP_META)
@@ -1209,39 +1229,39 @@ CHIP_META.forEach(function(c) {
 // Add a new chip → add its id to every row below + add the id to CHIP_META above.
 const COMPETITOR_SPECS = [
   // 国产芯片新增：寒武纪590 / 海光DCU Z100 / 昆仑芯2 / 燧原T20 / 壁仞BR100 / 摩尔线程S4000
-  { key: 'vendor',      label: '厂商',           a910b:'华为',     a910c:'华为',      h100:'NVIDIA',     h200:'NVIDIA',     b200:'NVIDIA',     mi300x:'AMD',       gaudi3:'Intel',     tpuv6:'Google',     trainium3:'AWS',       maia200:'Microsoft',  siyuan590:'寒武纪',  dcuz100:'海光',    kunlun2:'百度',    yunsuiT20:'燧原',    br100:'壁仞',      mttS4000:'摩尔线程', a950pr:'华为', a950dt:'华为', b300:'NVIDIA', mi355x:'AMD', tpuv7:'Google', siyuan690:'寒武纪', mttS5000:'摩尔线程', kunlunP800:'百度', shensuan3:'海光', yunsuiL600:'燧原', mi400:'AMD', bili20x:'壁仞' },
-  { key: 'chip',        label: '芯片代号',       a910b:'Ascend 910B', a910c:'Ascend 910C', h100:'H100 SXM',   h200:'H200 SXM',   b200:'B200 (Blackwell)', mi300x:'MI300X', gaudi3:'Gaudi 3', tpuv6:'TPU v6e Trillium', trainium3:'Trainium3', maia200:'Maia 200',  siyuan590:'思元590',  dcuz100:'DCU Z100', kunlun2:'昆仑芯2',  yunsuiT20:'云燧T20', br100:'BR100',     mttS4000:'MTT S4000', a950pr:'Ascend 950PR', a950dt:'Ascend 950DT', b300:'B300 (Blackwell Ultra)', mi355x:'MI355X', tpuv7:'TPU v7 Ironwood', siyuan690:'思元690', mttS5000:'MTT S5000', kunlunP800:'昆仑芯P800', shensuan3:'深算三号', yunsuiL600:'燧原L600', mi400:'MI400', bili20x:'壁砺20X' },
-  { key: 'release',     label: '上市时间',       a910b:'2023 H2', a910c:'2024 H2', h100:'2023 Q1', h200:'2024 Q2', b200:'2024 H2', mi300x:'2023 H2', gaudi3:'2024 Q2', tpuv6:'2024 H2', trainium3:'2025 Q4', maia200:'2024 H2', siyuan590:'2023', dcuz100:'2023', kunlun2:'2022', yunsuiT20:'2023', br100:'2022', mttS4000:'2023', a950pr:'2026 Q1', a950dt:'2026 Q4 (预期)', b300:'2025 H2', mi355x:'2025 H2', tpuv7:'2025 H2', siyuan690:'2026 (预期)', mttS5000:'2025 H2', kunlunP800:'2025', shensuan3:'2025 H2', yunsuiL600:'2025 H2', mi400:'2026 (预期)', bili20x:'2026 (预期)' },
-  { key: 'process',     label: '制程工艺',       a910b:'7nm (SMIC N+1)', a910c:'7nm++ (SMIC N+2)', h100:'4nm (TSMC)', h200:'4nm (TSMC)', b200:'4nm (TSMC)', mi300x:'5nm/6nm (TSMC)', gaudi3:'5nm (TSMC)', tpuv6:'5nm',       trainium3:'5nm (TSMC)',  maia200:'5nm (TSMC)',  siyuan590:'7nm (TSMC)', dcuz100:'7nm',      kunlun2:'7nm',      yunsuiT20:'12nm (GF)', br100:'7nm (TSMC)', mttS4000:'12nm', a950pr:'7nm (SMIC N+2)', a950dt:'7nm (SMIC N+2)', b300:'4nm (TSMC 4NP)', mi355x:'3nm (TSMC N3P)', tpuv7:'5nm', siyuan690:'7nm', mttS5000:'12nm', kunlunP800:'7nm', shensuan3:'7nm', yunsuiL600:'12nm (GF)', mi400:'2nm (TSMC 预期)', bili20x:'7nm (TSMC)' },
-  { key: 'transistors', label: '晶体管数',       a910b:'~30B (估)',  a910c:'~44B (估)', h100:'80B',        h200:'80B',        b200:'208B',       mi300x:'153B',      gaudi3:'~90B (估)', tpuv6:'~50B',     trainium3:'~100B',       maia200:'~80B',       siyuan590:'~50B (估)', dcuz100:'~30B (估)', kunlun2:'~25B (估)', yunsuiT20:'~15B (估)', br100:'~77B',     mttS4000:'~22B (估)', a950pr:'~55B (估)', a950dt:'~65B (估)', b300:'208B', mi355x:'185B', tpuv7:'~80B (估)', siyuan690:'~60B (估)', mttS5000:'~30B (估)', kunlunP800:'~35B (估)', shensuan3:'~40B (估)', yunsuiL600:'~25B (估)', mi400:'~300B (估)', bili20x:'~90B (估)' },
-  { key: 'die_size',    label: '芯片面积',       a910b:'~580mm²',   a910c:'~680mm²',  h100:'814mm²',     h200:'814mm²',     b200:'~820mm²×2',  mi300x:'~1017mm²',  gaudi3:'~750mm²',  tpuv6:'~350mm²',  trainium3:'~600mm²',     maia200:'~500mm²',    siyuan590:'~600mm²', dcuz100:'~500mm²',  kunlun2:'~400mm²',  yunsuiT20:'~500mm²', br100:'~800mm²',  mttS4000:'~450mm²', a950pr:'~750mm²', a950dt:'~820mm²', b300:'~820mm²×2', mi355x:'~900mm²', tpuv7:'~500mm²', siyuan690:'~650mm²', mttS5000:'~550mm²', kunlunP800:'~500mm²', shensuan3:'~550mm²', yunsuiL600:'~600mm²', mi400:'~1,200mm²', bili20x:'~850mm²' },
-  { key: 'fp16',        label: 'FP16/BF16 算力', a910b:'320 TFLOPS', a910c:'640 TFLOPS', h100:'990 TFLOPS', h200:'990 TFLOPS', b200:'2,250 TFLOPS', mi300x:'1,307 TFLOPS', gaudi3:'1,835 TFLOPS (FP8)', tpuv6:'918 TFLOPS (BF16)', trainium3:'~800 TFLOPS', maia200:'~700 TFLOPS', siyuan590:'~256 TFLOPS(估)', dcuz100:'~100 TFLOPS', kunlun2:'~32 TFLOPS', yunsuiT20:'~160 TFLOPS', br100:'~512 TFLOPS(估)', mttS4000:'~50 TFLOPS', a950pr:'~1,600 TFLOPS (估)', a950dt:'~1,800 TFLOPS (估)', b300:'3,500 TFLOPS', mi355x:'2,500 TFLOPS', tpuv7:'~2,300 TFLOPS (BF16)', siyuan690:'~600 TFLOPS', mttS5000:'500 TFLOPS', kunlunP800:'~345 TFLOPS', shensuan3:'376 TFLOPS', yunsuiL600:'~256 TFLOPS', mi400:'~10,000 TFLOPS (估)', bili20x:'~700 TFLOPS (估)' },
-  { key: 'fp8',         label: 'FP8 算力',       a910b:'不支持',     a910c:'~1,200 TFLOPS (估)', h100:'1,980 TFLOPS', h200:'1,980 TFLOPS', b200:'4,500 TFLOPS', mi300x:'2,614 TFLOPS (FP8)', gaudi3:'1,835 TFLOPS', tpuv6:'不支持',  trainium3:'~1,600 TFLOPS', maia200:'~1,400 TFLOPS', siyuan590:'不支持',    dcuz100:'不支持',   kunlun2:'不支持',   yunsuiT20:'不支持',   br100:'不支持',    mttS4000:'不支持', a950pr:'~1,000 TFLOPS (1 PFLOPS)', a950dt:'~1,000 TFLOPS (1 PFLOPS)', b300:'7,000 TFLOPS', mi355x:'4,600 TFLOPS', tpuv7:'4,614 TFLOPS', siyuan690:'~1,200 TFLOPS (估)', mttS5000:'~1,000 TFLOPS', kunlunP800:'~700 TFLOPS (估)', shensuan3:'~750 TFLOPS (估)', yunsuiL600:'~512 TFLOPS (估)', mi400:'20,000 TFLOPS (20 PFLOPS)', bili20x:'~1,400 TFLOPS (估)' },
-  { key: 'fp4',         label: 'FP4 算力',       a910b:'不支持',     a910c:'不支持',   h100:'不支持',      h200:'不支持',       b200:'9,000 TFLOPS', mi300x:'不支持',    gaudi3:'不支持',   tpuv6:'不支持',   trainium3:'不支持',      maia200:'不支持',      siyuan590:'不支持',   dcuz100:'不支持',  kunlun2:'不支持',   yunsuiT20:'不支持',   br100:'不支持',   mttS4000:'不支持', a950pr:'2,000 TFLOPS (2 PFLOPS)', a950dt:'2,000 TFLOPS (2 PFLOPS)', b300:'15,000 TFLOPS', mi355x:'9,200 TFLOPS', tpuv7:'不支持', siyuan690:'不支持', mttS5000:'不支持', kunlunP800:'不支持', shensuan3:'不支持', yunsuiL600:'不支持', mi400:'40,000 TFLOPS (40 PFLOPS)', bili20x:'~2,800 TFLOPS (估)' },
-  { key: 'memory',      label: '显存容量',       a910b:'64 GB HBM2e', a910c:'96 GB HBM3e', h100:'80 GB HBM3',  h200:'141 GB HBM3e', b200:'192 GB HBM3e', mi300x:'192 GB HBM3', gaudi3:'128 GB HBM2e', tpuv6:'32 GB HBM', trainium3:'96 GB HBM3',  maia200:'64 GB HBM3',  siyuan590:'80 GB HBM2e', dcuz100:'32 GB HBM2', kunlun2:'16 GB HBM2', yunsuiT20:'32 GB HBM2e', br100:'64 GB HBM2e', mttS4000:'32 GB GDDR6', a950pr:'128 GB HiBL 1.0', a950dt:'144 GB HiZQ 2.0', b300:'288 GB HBM3e', mi355x:'288 GB HBM3e', tpuv7:'192 GB HBM3e', siyuan690:'96 GB HBM2e', mttS5000:'64 GB HBM2e', kunlunP800:'64 GB HBM2e', shensuan3:'64 GB HBM2e', yunsuiL600:'144 GB HBM2e', mi400:'432 GB HBM4', bili20x:'96 GB HBM2e' },
-  { key: 'mem_bw',      label: '显存带宽',       a910b:'1.6 TB/s',   a910c:'1.2 TB/s',  h100:'3.35 TB/s',   h200:'4.8 TB/s',    b200:'8.0 TB/s',    mi300x:'5.3 TB/s',  gaudi3:'3.7 TB/s', tpuv6:'1.64 TB/s', trainium3:'2.5 TB/s',   maia200:'2.0 TB/s',   siyuan590:'~1.6 TB/s', dcuz100:'~1.0 TB/s', kunlun2:'~0.5 TB/s', yunsuiT20:'~1.2 TB/s', br100:'~2.3 TB/s', mttS4000:'~768 GB/s', a950pr:'1.6 TB/s', a950dt:'4.0 TB/s', b300:'8.0 TB/s', mi355x:'8.0 TB/s', tpuv7:'7.2 TB/s', siyuan690:'~2.0 TB/s', mttS5000:'~1.5 TB/s', kunlunP800:'~1.8 TB/s', shensuan3:'~1.8 TB/s', yunsuiL600:'~2.0 TB/s', mi400:'19.6 TB/s', bili20x:'~3.0 TB/s (估)' },
-  { key: 'interconnect',label: '芯片互联',       a910b:'HCCS 392GB/s', a910c:'HCCS 392GB/s×3', h100:'NVLink4 900GB/s', h200:'NVLink4 900GB/s', b200:'NVLink5 1.8TB/s', mi300x:'Infinity Fabric 896GB/s', gaudi3:'RoCE 200GbE×24', tpuv6:'ICI ~800GB/s', trainium3:'NeuronLink v3', maia200:'Ethernet 400GbE', siyuan590:'MLU-Link ~200GB/s', dcuz100:'PCIe 4.0 x16', kunlun2:'PCIe 4.0 x16', yunsuiT20:'TopsLink ~200GB/s', br100:'BLink ~500GB/s', mttS4000:'PCIe 5.0 x16', a950pr:'灵衢 2 TB/s', a950dt:'灵衢 2 TB/s', b300:'NVLink5 1.8TB/s', mi355x:'Infinity Fabric 1,075GB/s', tpuv7:'ICI 1.2Tbps', siyuan690:'MLU-Link ~400GB/s', mttS5000:'PCIe 5.0 x16', kunlunP800:'PCIe 5.0 x16', shensuan3:'PCIe 5.0 x16', yunsuiL600:'TopsLink ~400GB/s', mi400:'Infinity Fabric 300GB/s', bili20x:'BLink ~800GB/s' },
-  { key: 'tdp',         label: 'TDP 功耗',       a910b:'~350W',      a910c:'~450W',     h100:'700W',       h200:'700W',        b200:'1,000W',      mi300x:'750W',      gaudi3:'900W',     tpuv6:'~150W',    trainium3:'~500W',       maia200:'~450W',      siyuan590:'~350W',    dcuz100:'~300W',   kunlun2:'~150W',   yunsuiT20:'~250W',    br100:'~550W',    mttS4000:'~250W', a950pr:'~600W', a950dt:'~750W', b300:'1,400W', mi355x:'1,400W', tpuv7:'~450W', siyuan690:'~400W', mttS5000:'~300W', kunlunP800:'~250W', shensuan3:'~350W', yunsuiL600:'~300W', mi400:'~1,800W (估)', bili20x:'~600W' },
-  { key: 'energy_eff',  label: '能效 (TF/W @FP16)', a910b:'~0.91',   a910c:'~1.42',     h100:'~1.41',      h200:'~1.41',       b200:'~2.25',       mi300x:'~1.74',     gaudi3:'~2.04 (FP8)', tpuv6:'~6.12 (BF16)', trainium3:'~1.6',   maia200:'~1.56',    siyuan590:'~0.73',    dcuz100:'~0.33',   kunlun2:'~0.21',   yunsuiT20:'~0.64',    br100:'~0.93',    mttS4000:'~0.20', a950pr:'~2.67', a950dt:'~2.40', b300:'~2.50', mi355x:'~1.79', tpuv7:'~10.25 (BF16)', siyuan690:'~1.50', mttS5000:'~1.67', kunlunP800:'~1.38', shensuan3:'~1.07', yunsuiL600:'~0.85', mi400:'~5.56', bili20x:'~1.17' },
-  { key: 'mlperf',      label: 'MLPerf 相对性能', a910b:'A100 80-90%', a910c:'H100 85-92% (估)', h100:'基准',    h200:'H100 110%',   b200:'H100 180-250%', mi300x:'H100 70-90%', gaudi3:'H100 95-170%', tpuv6:'H100 100-160%', trainium3:'H100 60-80%', maia200:'H100 50-70%', siyuan590:'未参与',     dcuz100:'未参与',   kunlun2:'未参与',   yunsuiT20:'未参与',     br100:'未参与',    mttS4000:'未参与', a950pr:'未参与', a950dt:'未参与', b300:'H100 300-400%', mi355x:'H100 200-280% (估)', tpuv7:'H100 200-300% (估)', siyuan690:'未参与', mttS5000:'未参与', kunlunP800:'未参与', shensuan3:'未参与', yunsuiL600:'未参与', mi400:'未发布', bili20x:'未参与' },
-  { key: 'ecosystem',   label: '软件生态',       a910b:'CANN/MindSpore', a910c:'CANN 7.0/MindSpore 2.0', h100:'CUDA 12.x', h200:'CUDA 12.x', b200:'CUDA 12.x', mi300x:'ROCm 6.x', gaudi3:'SynapseAI', tpuv6:'JAX/TF (Google Cloud)', trainium3:'Neuron SDK', maia200:'Maia SDK (Azure)', siyuan590:'Cambricon Neuware', dcuz100:'ROCm兼容', kunlun2:'PaddlePaddle', yunsuiT20:'TopsRider', br100:'BIREN SUPA', mttS4000:'MUSA', a950pr:'CANN 8.0 / MindSpore 3.0', a950dt:'CANN 8.0 / MindSpore 3.0', b300:'CUDA 12.x', mi355x:'ROCm 7.x', tpuv7:'JAX/TF (Google Cloud)', siyuan690:'Cambricon Neuware 2.0', mttS5000:'MUSA 2.0', kunlunP800:'PaddlePaddle / XPU', shensuan3:'ROCm兼容 (365模型适配)', yunsuiL600:'TopsRider 2.0', mi400:'ROCm 8.x (预期)', bili20x:'BIREN SUPA 2.0' },
+  { key: 'vendor',      label: '厂商',           a910b:'华为',     a910c:'华为',      h100:'NVIDIA',     h200:'NVIDIA',     b200:'NVIDIA',     mi300x:'AMD',       gaudi3:'Intel',     tpuv6:'Google',     trainium3:'AWS',       maia200:'Microsoft',  siyuan590:'寒武纪',  dcuz100:'海光',    kunlun2:'百度',    yunsuiT20:'燧原',    br100:'壁仞',      mttS4000:'摩尔线程', a950pr:'华为', a950dt:'华为', b300:'NVIDIA', mi355x:'AMD', tpuv7:'Google', siyuan690:'寒武纪', mttS5000:'摩尔线程', kunlunP800:'百度', shensuan3:'海光', yunsuiL600:'燧原', mi400:'AMD', bili20x:'壁仞', a960:'华为', rubin:'NVIDIA', rubinUltra:'NVIDIA', mi500:'AMD', jaguarShores:'Intel', tpuv8t:'Google', trainium4:'AWS', maia280:'Microsoft', siyuan790:'寒武纪', shensuan4:'海光', kunlunM100:'百度', kunlunM300:'百度' },
+  { key: 'chip',        label: '芯片代号',       a910b:'Ascend 910B', a910c:'Ascend 910C', h100:'H100 SXM',   h200:'H200 SXM',   b200:'B200 (Blackwell)', mi300x:'MI300X', gaudi3:'Gaudi 3', tpuv6:'TPU v6e Trillium', trainium3:'Trainium3', maia200:'Maia 200',  siyuan590:'思元590',  dcuz100:'DCU Z100', kunlun2:'昆仑芯2',  yunsuiT20:'云燧T20', br100:'BR100',     mttS4000:'MTT S4000', a950pr:'Ascend 950PR', a950dt:'Ascend 950DT', b300:'B300 (Blackwell Ultra)', mi355x:'MI355X', tpuv7:'TPU v7 Ironwood', siyuan690:'思元690', mttS5000:'MTT S5000', kunlunP800:'昆仑芯P800', shensuan3:'深算三号', yunsuiL600:'燧原L600', mi400:'MI400', bili20x:'壁砺20X', a960:'Ascend 960', rubin:'Vera Rubin R100', rubinUltra:'Rubin Ultra', mi500:'MI500', jaguarShores:'Jaguar Shores', tpuv8t:'TPU v8t Sunfish', trainium4:'Trainium4', maia280:'Maia 280', siyuan790:'思元790', shensuan4:'深算四号', kunlunM100:'昆仑芯 M100', kunlunM300:'昆仑芯 M300' },
+  { key: 'release',     label: '上市时间',       a910b:'2023 H2', a910c:'2024 H2', h100:'2023 Q1', h200:'2024 Q2', b200:'2024 H2', mi300x:'2023 H2', gaudi3:'2024 Q2', tpuv6:'2024 H2', trainium3:'2025 Q4', maia200:'2024 H2', siyuan590:'2023', dcuz100:'2023', kunlun2:'2022', yunsuiT20:'2023', br100:'2022', mttS4000:'2023', a950pr:'2026 Q1', a950dt:'2026 Q4', b300:'2025 H2', mi355x:'2025 H2', tpuv7:'2026 Q1', siyuan690:'2026 (预期)', mttS5000:'2025 H2', kunlunP800:'2025', shensuan3:'2025 H2', yunsuiL600:'2025 H2', mi400:'2026 (预期)', bili20x:'2026 (预期)', a960:'2027 Q4 (预期)', rubin:'2026 H2 (预期)', rubinUltra:'2027 H2 (预期)', mi500:'2027 (预期)', jaguarShores:'2026 (预期)', tpuv8t:'2027 (预期)', trainium4:'2027 (预期)', maia280:'2027 (预期)', siyuan790:'2027 (预期)', shensuan4:'2026 H2 (预期)', kunlunM100:'2026 (预期)', kunlunM300:'2027 (预期)' },
+  { key: 'process',     label: '制程工艺',       a910b:'7nm (SMIC N+1)', a910c:'7nm++ (SMIC N+2)', h100:'4nm (TSMC)', h200:'4nm (TSMC)', b200:'4nm (TSMC)', mi300x:'5nm/6nm (TSMC)', gaudi3:'5nm (TSMC)', tpuv6:'5nm',       trainium3:'5nm (TSMC)',  maia200:'5nm (TSMC)',  siyuan590:'7nm (TSMC)', dcuz100:'7nm',      kunlun2:'7nm',      yunsuiT20:'12nm (GF)', br100:'7nm (TSMC)', mttS4000:'12nm', a950pr:'7nm (SMIC N+2)', a950dt:'7nm (SMIC N+2)', b300:'4nm (TSMC 4NP)', mi355x:'3nm (TSMC N3P)', tpuv7:'5nm', siyuan690:'7nm', mttS5000:'12nm', kunlunP800:'7nm', shensuan3:'7nm', yunsuiL600:'12nm (GF)', mi400:'2nm (TSMC 预期)', bili20x:'7nm (TSMC)', a960:'7nm (SMIC N+2)', rubin:'3nm (TSMC N3P)', rubinUltra:'3nm (TSMC N3P)', mi500:'2nm (TSMC 预期)', jaguarShores:'5nm', tpuv8t:'2nm (TSMC 预期)', trainium4:'3nm (TSMC 预期)', maia280:'3nm (TSMC 预期)', siyuan790:'7nm', shensuan4:'7nm (SMIC N+2)', kunlunM100:'7nm (TSMC)', kunlunM300:'7nm (TSMC)' },
+  { key: 'transistors', label: '晶体管数',       a910b:'~30B (估)',  a910c:'~44B (估)', h100:'80B',        h200:'80B',        b200:'208B',       mi300x:'153B',      gaudi3:'~90B (估)', tpuv6:'~50B',     trainium3:'~100B',       maia200:'~80B',       siyuan590:'~50B (估)', dcuz100:'~30B (估)', kunlun2:'~25B (估)', yunsuiT20:'~15B (估)', br100:'~77B',     mttS4000:'~22B (估)', a950pr:'~55B (估)', a950dt:'~65B (估)', b300:'208B', mi355x:'185B', tpuv7:'~80B (估)', siyuan690:'~60B (估)', mttS5000:'~30B (估)', kunlunP800:'~35B (估)', shensuan3:'~40B (估)', yunsuiL600:'~25B (估)', mi400:'~300B (估)', bili20x:'~90B (估)', a960:'~70B (估)', rubin:'~300B (估)', rubinUltra:'~400B (估)', mi500:'~400B (估)', jaguarShores:'~120B (估)', tpuv8t:'~120B (估)', trainium4:'~150B (估)', maia280:'~100B (估)', siyuan790:'~70B (估)', shensuan4:'~50B (估)', kunlunM100:'~40B (估)', kunlunM300:'~55B (估)' },
+  { key: 'die_size',    label: '芯片面积',       a910b:'~580mm²',   a910c:'~680mm²',  h100:'814mm²',     h200:'814mm²',     b200:'~820mm²×2',  mi300x:'~1017mm²',  gaudi3:'~750mm²',  tpuv6:'~350mm²',  trainium3:'~600mm²',     maia200:'~500mm²',    siyuan590:'~600mm²', dcuz100:'~500mm²',  kunlun2:'~400mm²',  yunsuiT20:'~500mm²', br100:'~800mm²',  mttS4000:'~450mm²', a950pr:'~750mm²', a950dt:'~820mm²', b300:'~820mm²×2', mi355x:'~900mm²', tpuv7:'~500mm²', siyuan690:'~650mm²', mttS5000:'~550mm²', kunlunP800:'~500mm²', shensuan3:'~550mm²', yunsuiL600:'~600mm²', mi400:'~1,200mm²', bili20x:'~850mm²', a960:'~900mm² (估)', rubin:'~1,200mm² (估)', rubinUltra:'~1,400mm² (估)', mi500:'~1,300mm² (估)', jaguarShores:'~800mm² (估)', tpuv8t:'~400mm² (估)', trainium4:'~650mm² (估)', maia280:'~550mm² (估)', siyuan790:'~700mm² (估)', shensuan4:'~580mm² (估)', kunlunM100:'~520mm² (估)', kunlunM300:'~580mm² (估)' },
+  { key: 'fp16',        label: 'FP16/BF16 算力', a910b:'320 TFLOPS', a910c:'640 TFLOPS', h100:'990 TFLOPS', h200:'990 TFLOPS', b200:'2,250 TFLOPS', mi300x:'1,307 TFLOPS', gaudi3:'1,835 TFLOPS (FP8)', tpuv6:'918 TFLOPS (BF16)', trainium3:'~800 TFLOPS', maia200:'~700 TFLOPS', siyuan590:'~256 TFLOPS(估)', dcuz100:'~100 TFLOPS', kunlun2:'~32 TFLOPS', yunsuiT20:'~160 TFLOPS', br100:'~512 TFLOPS(估)', mttS4000:'~50 TFLOPS', a950pr:'~1,600 TFLOPS (估)', a950dt:'~1,800 TFLOPS (估)', b300:'3,500 TFLOPS', mi355x:'2,500 TFLOPS', tpuv7:'~2,300 TFLOPS (BF16)', siyuan690:'~600 TFLOPS', mttS5000:'500 TFLOPS', kunlunP800:'~345 TFLOPS', shensuan3:'376 TFLOPS', yunsuiL600:'~256 TFLOPS', mi400:'~10,000 TFLOPS (估)', bili20x:'~700 TFLOPS (估)', a960:'~3,200 TFLOPS (估)', rubin:'~12,500 TFLOPS (估)', rubinUltra:'~25,000 TFLOPS (估)', mi500:'~20,000 TFLOPS (估)', jaguarShores:'~2,000 TFLOPS (估)', tpuv8t:'~4,600 TFLOPS (估)', trainium4:'~2,500 TFLOPS (估)', maia280:'~1,500 TFLOPS (估)', siyuan790:'~1,000 TFLOPS (估)', shensuan4:'~750 TFLOPS (估)', kunlunM100:'~500 TFLOPS (估)', kunlunM300:'~800 TFLOPS (估)' },
+  { key: 'fp8',         label: 'FP8 算力',       a910b:'不支持',     a910c:'~1,200 TFLOPS (估)', h100:'1,980 TFLOPS', h200:'1,980 TFLOPS', b200:'4,500 TFLOPS', mi300x:'2,614 TFLOPS (FP8)', gaudi3:'1,835 TFLOPS', tpuv6:'不支持',  trainium3:'~1,600 TFLOPS', maia200:'~1,400 TFLOPS', siyuan590:'不支持',    dcuz100:'不支持',   kunlun2:'不支持',   yunsuiT20:'不支持',   br100:'不支持',    mttS4000:'不支持', a950pr:'~1,000 TFLOPS (1 PFLOPS)', a950dt:'~1,000 TFLOPS (1 PFLOPS)', b300:'7,000 TFLOPS', mi355x:'4,600 TFLOPS', tpuv7:'4,614 TFLOPS', siyuan690:'~1,200 TFLOPS (估)', mttS5000:'~1,000 TFLOPS', kunlunP800:'~700 TFLOPS (估)', shensuan3:'~750 TFLOPS (估)', yunsuiL600:'~512 TFLOPS (估)', mi400:'20,000 TFLOPS (20 PFLOPS)', bili20x:'~1,400 TFLOPS (估)', a960:'~2,000 TFLOPS (估)', rubin:'~25,000 TFLOPS (估)', rubinUltra:'~50,000 TFLOPS (估)', mi500:'~40,000 TFLOPS (估)', jaguarShores:'~4,000 TFLOPS (估)', tpuv8t:'~9,200 TFLOPS (估)', trainium4:'~5,000 TFLOPS (估)', maia280:'~3,000 TFLOPS (估)', siyuan790:'~2,000 TFLOPS (估)', shensuan4:'~1,500 TFLOPS (估)', kunlunM100:'~1,000 TFLOPS (估)', kunlunM300:'~1,600 TFLOPS (估)' },
+  { key: 'fp4',         label: 'FP4 算力',       a910b:'不支持',     a910c:'不支持',   h100:'不支持',      h200:'不支持',       b200:'9,000 TFLOPS', mi300x:'不支持',    gaudi3:'不支持',   tpuv6:'不支持',   trainium3:'不支持',      maia200:'不支持',      siyuan590:'不支持',   dcuz100:'不支持',  kunlun2:'不支持',   yunsuiT20:'不支持',   br100:'不支持',   mttS4000:'不支持', a950pr:'2,000 TFLOPS (2 PFLOPS)', a950dt:'2,000 TFLOPS (2 PFLOPS)', b300:'15,000 TFLOPS', mi355x:'9,200 TFLOPS', tpuv7:'不支持', siyuan690:'不支持', mttS5000:'不支持', kunlunP800:'不支持', shensuan3:'不支持', yunsuiL600:'不支持', mi400:'40,000 TFLOPS (40 PFLOPS)', bili20x:'~2,800 TFLOPS (估)', a960:'~4,000 TFLOPS (估)', rubin:'50,000 TFLOPS (50 PFLOPS)', rubinUltra:'~100,000 TFLOPS (估)', mi500:'~80,000 TFLOPS (估)', jaguarShores:'~8,000 TFLOPS (估)', tpuv8t:'~18,400 TFLOPS (估)', trainium4:'~15,000 TFLOPS (估)', maia280:'~6,000 TFLOPS (估)', siyuan790:'~4,000 TFLOPS (估)', shensuan4:'~3,000 TFLOPS (估)', kunlunM100:'~2,000 TFLOPS (估)', kunlunM300:'~3,200 TFLOPS (估)' },
+  { key: 'memory',      label: '显存容量',       a910b:'64 GB HBM2e', a910c:'96 GB HBM3e', h100:'80 GB HBM3',  h200:'141 GB HBM3e', b200:'192 GB HBM3e', mi300x:'192 GB HBM3', gaudi3:'128 GB HBM2e', tpuv6:'32 GB HBM', trainium3:'96 GB HBM3',  maia200:'64 GB HBM3',  siyuan590:'80 GB HBM2e', dcuz100:'32 GB HBM2', kunlun2:'16 GB HBM2', yunsuiT20:'32 GB HBM2e', br100:'64 GB HBM2e', mttS4000:'32 GB GDDR6', a950pr:'128 GB HiBL 1.0', a950dt:'144 GB HiZQ 2.0', b300:'288 GB HBM3e', mi355x:'288 GB HBM3e', tpuv7:'192 GB HBM3e', siyuan690:'96 GB HBM2e', mttS5000:'64 GB HBM2e', kunlunP800:'64 GB HBM2e', shensuan3:'64 GB HBM2e', yunsuiL600:'144 GB HBM2e', mi400:'432 GB HBM4', bili20x:'96 GB HBM2e', a960:'192 GB HBM (估)', rubin:'288 GB HBM4', rubinUltra:'288 GB HBM4E', mi500:'576 GB HBM4E (估)', jaguarShores:'256 GB HBM3e (估)', tpuv8t:'256 GB HBM3e (估)', trainium4:'288 GB HBM (估)', maia280:'144 GB HBM3e (估)', siyuan790:'128 GB HBM3 (估)', shensuan4:'128 GB HBM3 (估)', kunlunM100:'96 GB HBM2e (估)', kunlunM300:'128 GB HBM3 (估)' },
+  { key: 'mem_bw',      label: '显存带宽',       a910b:'1.6 TB/s',   a910c:'1.2 TB/s',  h100:'3.35 TB/s',   h200:'4.8 TB/s',    b200:'8.0 TB/s',    mi300x:'5.3 TB/s',  gaudi3:'3.7 TB/s', tpuv6:'1.64 TB/s', trainium3:'2.5 TB/s',   maia200:'2.0 TB/s',   siyuan590:'~1.6 TB/s', dcuz100:'~1.0 TB/s', kunlun2:'~0.5 TB/s', yunsuiT20:'~1.2 TB/s', br100:'~2.3 TB/s', mttS4000:'~768 GB/s', a950pr:'1.6 TB/s', a950dt:'4.0 TB/s', b300:'8.0 TB/s', mi355x:'8.0 TB/s', tpuv7:'7.2 TB/s', siyuan690:'~2.0 TB/s', mttS5000:'~1.5 TB/s', kunlunP800:'~1.8 TB/s', shensuan3:'~1.8 TB/s', yunsuiL600:'~2.0 TB/s', mi400:'19.6 TB/s', bili20x:'~3.0 TB/s (估)', a960:'~5.0 TB/s (估)', rubin:'~15 TB/s', rubinUltra:'~18 TB/s (估)', mi500:'~25 TB/s (估)', jaguarShores:'~5.0 TB/s (估)', tpuv8t:'~9.6 TB/s (估)', trainium4:'~20 TB/s (估)', maia280:'~3.0 TB/s (估)', siyuan790:'~2.5 TB/s (估)', shensuan4:'~3.0 TB/s (估)', kunlunM100:'~2.0 TB/s (估)', kunlunM300:'~2.5 TB/s (估)' },
+  { key: 'interconnect',label: '芯片互联',       a910b:'HCCS 392GB/s', a910c:'HCCS 392GB/s×3', h100:'NVLink4 900GB/s', h200:'NVLink4 900GB/s', b200:'NVLink5 1.8TB/s', mi300x:'Infinity Fabric 896GB/s', gaudi3:'RoCE 200GbE×24', tpuv6:'ICI ~800GB/s', trainium3:'NeuronLink v3', maia200:'Ethernet 400GbE', siyuan590:'MLU-Link ~200GB/s', dcuz100:'PCIe 4.0 x16', kunlun2:'PCIe 4.0 x16', yunsuiT20:'TopsLink ~200GB/s', br100:'BLink ~500GB/s', mttS4000:'PCIe 5.0 x16', a950pr:'灵衢 2 TB/s', a950dt:'灵衢 2 TB/s', b300:'NVLink5 1.8TB/s', mi355x:'Infinity Fabric 1,075GB/s', tpuv7:'ICI 1.2Tbps', siyuan690:'MLU-Link ~400GB/s', mttS5000:'PCIe 5.0 x16', kunlunP800:'PCIe 5.0 x16', shensuan3:'PCIe 5.0 x16', yunsuiL600:'TopsLink ~400GB/s', mi400:'Infinity Fabric 300GB/s', bili20x:'BLink ~800GB/s', a960:'灵衢 4 TB/s', rubin:'NVLink 6 3.6 TB/s', rubinUltra:'NVSwitch 7', mi500:'Infinity Fabric 4.0', jaguarShores:'Xe Link', tpuv8t:'ICI 2.0', trainium4:'NeuronLink v4', maia280:'Ethernet 800GbE', siyuan790:'MLU-Link ~600GB/s', shensuan4:'自研 Switch 4.8T', kunlunM100:'天池256', kunlunM300:'天池512' },
+  { key: 'tdp',         label: 'TDP 功耗',       a910b:'~350W',      a910c:'~450W',     h100:'700W',       h200:'700W',        b200:'1,000W',      mi300x:'750W',      gaudi3:'900W',     tpuv6:'~150W',    trainium3:'~500W',       maia200:'~450W',      siyuan590:'~350W',    dcuz100:'~300W',   kunlun2:'~150W',   yunsuiT20:'~250W',    br100:'~550W',    mttS4000:'~250W', a950pr:'~600W', a950dt:'~750W', b300:'1,400W', mi355x:'1,400W', tpuv7:'~450W', siyuan690:'~400W', mttS5000:'~300W', kunlunP800:'~250W', shensuan3:'~350W', yunsuiL600:'~300W', mi400:'~1,800W (估)', bili20x:'~600W', a960:'~900W (估)', rubin:'~1,500W (估)', rubinUltra:'~1,800W (估)', mi500:'~2,000W (估)', jaguarShores:'~800W (估)', tpuv8t:'~500W (估)', trainium4:'~800W (估)', maia280:'~500W (估)', siyuan790:'~500W (估)', shensuan4:'~400W (估)', kunlunM100:'~280W (估)', kunlunM300:'~350W (估)' },
+  { key: 'energy_eff',  label: '能效 (TF/W @FP16)', a910b:'~0.91',   a910c:'~1.42',     h100:'~1.41',      h200:'~1.41',       b200:'~2.25',       mi300x:'~1.74',     gaudi3:'~2.04 (FP8)', tpuv6:'~6.12 (BF16)', trainium3:'~1.6',   maia200:'~1.56',    siyuan590:'~0.73',    dcuz100:'~0.33',   kunlun2:'~0.21',   yunsuiT20:'~0.64',    br100:'~0.93',    mttS4000:'~0.20', a950pr:'~2.67', a950dt:'~2.40', b300:'~2.50', mi355x:'~1.79', tpuv7:'~10.25 (BF16)', siyuan690:'~1.50', mttS5000:'~1.67', kunlunP800:'~1.38', shensuan3:'~1.07', yunsuiL600:'~0.85', mi400:'~5.56', bili20x:'~1.17', a960:'~3.56 (估)', rubin:'~8.33 (估)', rubinUltra:'~13.89 (估)', mi500:'~10.00 (估)', jaguarShores:'~2.50 (估)', tpuv8t:'~9.20 (估)', trainium4:'~3.13 (估)', maia280:'~3.00 (估)', siyuan790:'~2.00 (估)', shensuan4:'~1.88 (估)', kunlunM100:'~1.79 (估)', kunlunM300:'~2.29 (估)' },
+  { key: 'mlperf',      label: 'MLPerf 相对性能', a910b:'A100 80-90%', a910c:'H100 85-92% (估)', h100:'基准',    h200:'H100 110%',   b200:'H100 180-250%', mi300x:'H100 70-90%', gaudi3:'H100 95-170%', tpuv6:'H100 100-160%', trainium3:'H100 60-80%', maia200:'H100 50-70%', siyuan590:'未参与',     dcuz100:'未参与',   kunlun2:'未参与',   yunsuiT20:'未参与',     br100:'未参与',    mttS4000:'未参与', a950pr:'未参与', a950dt:'未参与', b300:'H100 300-400%', mi355x:'H100 200-280% (估)', tpuv7:'H100 200-300% (估)', siyuan690:'未参与', mttS5000:'未参与', kunlunP800:'未参与', shensuan3:'未参与', yunsuiL600:'未参与', mi400:'未发布', bili20x:'未参与', a960:'未发布', rubin:'未发布', rubinUltra:'未发布', mi500:'未发布', jaguarShores:'未发布', tpuv8t:'未发布', trainium4:'未发布', maia280:'未发布', siyuan790:'未发布', shensuan4:'未发布', kunlunM100:'未发布', kunlunM300:'未发布' },
+  { key: 'ecosystem',   label: '软件生态',       a910b:'CANN/MindSpore', a910c:'CANN 7.0/MindSpore 2.0', h100:'CUDA 12.x', h200:'CUDA 12.x', b200:'CUDA 12.x', mi300x:'ROCm 6.x', gaudi3:'SynapseAI', tpuv6:'JAX/TF (Google Cloud)', trainium3:'Neuron SDK', maia200:'Maia SDK (Azure)', siyuan590:'Cambricon Neuware', dcuz100:'ROCm兼容', kunlun2:'PaddlePaddle', yunsuiT20:'TopsRider', br100:'BIREN SUPA', mttS4000:'MUSA', a950pr:'CANN 8.0 / MindSpore 3.0', a950dt:'CANN 8.0 / MindSpore 3.0', b300:'CUDA 12.x', mi355x:'ROCm 7.x', tpuv7:'JAX/TF (Google Cloud)', siyuan690:'Cambricon Neuware 2.0', mttS5000:'MUSA 2.0', kunlunP800:'PaddlePaddle / XPU', shensuan3:'ROCm兼容 (365模型适配)', yunsuiL600:'TopsRider 2.0', mi400:'ROCm 8.x (预期)', bili20x:'BIREN SUPA 2.0', a960:'CANN 9.0 / MindSpore 4.0', rubin:'CUDA 13.x', rubinUltra:'CUDA 14.x', mi500:'ROCm 9.x', jaguarShores:'oneAPI', tpuv8t:'JAX/TF (Google Cloud)', trainium4:'Neuron SDK', maia280:'Maia SDK (Azure)', siyuan790:'Cambricon Neuware 3.0', shensuan4:'ROCm兼容 (自研增强)', kunlunM100:'PaddlePaddle / XPU', kunlunM300:'PaddlePaddle / XPU' },
 ];
 
 // Competitor chip keywords for news tagging
 const COMPETITOR_KEYWORDS = {
-ascend:    ['华为', '昇腾', 'Ascend', '910B', '910C', '310P', 'CANN', 'MindSpore', '达芬奇', 'HCCS', '海思', 'HiSilicon', '鲲鹏', 'a950pr', 'a950dt', '950PR', '950DT', 'HiBL', 'HiZQ', '灵衢'],
-cambricon: ['寒武纪', '思元', 'Siyuan', '590', 'Cambricon', 'Neuware', 'MLU', 'siyuan690', '思元690', '690'],
-hygon:     ['海光', 'DCU', 'Z100', 'Hygon', '深算', 'ROCm', 'shensuan3', '深算三号', '深算3号'],
-baidu:     ['百度', '昆仑芯', 'Kunlun', 'PaddlePaddle', 'XPU', 'kunlunP800', '昆仑芯P800', 'P800', '天池'],
+ascend:    ['华为', '昇腾', 'Ascend', '910B', '910C', '310P', 'CANN', 'MindSpore', '达芬奇', 'HCCS', '海思', 'HiSilicon', '鲲鹏', 'a950pr', 'a950dt', '950PR', '950DT', 'HiBL', 'HiZQ', '灵衢', 'a960', 'Ascend 960', '昇腾960'],
+cambricon: ['寒武纪', '思元', 'Siyuan', '590', 'Cambricon', 'Neuware', 'MLU', 'siyuan690', '思元690', '690', 'siyuan790', '思元790', '790'],
+hygon:     ['海光', 'DCU', 'Z100', 'Hygon', '深算', 'ROCm', 'shensuan3', '深算三号', '深算3号', 'shensuan4', '深算四号', '深算4号'],
+baidu:     ['百度', '昆仑芯', 'Kunlun', 'PaddlePaddle', 'XPU', 'kunlunP800', '昆仑芯P800', 'P800', '天池', 'kunlunM100', '昆仑芯M100', 'M100', 'kunlunM300', '昆仑芯M300', 'M300'],
 enflame:   ['燧原', '云燧', 'Yunsui', 'T20', 'TopsRider', 'TopsLink', 'yunsuiL600', 'L600', '燧原L600'],
 biren:     ['壁仞', 'BR100', 'BIREN', 'SUPA', 'BLink', 'bili20x', '壁砺20X', 'BR20X'],
 moore:     ['摩尔线程', 'MTT S4000', 'Moore Threads', 'MUSA', 'mttS5000', 'MTT S5000', 'S5000'],
-nvidia:    ['NVIDIA', 'H100', 'H200', 'B200', 'B100', 'A100', 'GH200', 'GB200', 'GB300', 'CUDA', 'NVLink', 'Blackwell', 'Hopper', 'TensorRT', 'b300', 'B300', 'GB300', 'Blackwell Ultra'],
-amd:       ['AMD', 'MI300', 'MI300X', 'MI250', 'Instinct', 'ROCm', 'Infinity Fabric', 'CDNA', 'mi355x', 'mi400', 'MI355X', 'MI400', 'CDNA4'],
-  intel:     ['Intel', 'Gaudi', 'Gaudi 3', 'Gaudi 2', 'Falcon Shores', 'Ponte Vecchio', 'SynapseAI', 'Habana'],
-google:    ['Google TPU', 'TPU v5', 'TPU v6', 'Trillium', 'Ironwood', 'TPU v7', 'Cloud TPU', 'JAX', 'Systolic Array', 'tpuv7', 'Ironwood', 'TPU v7'],
-  aws:       ['AWS', 'Trainium', 'Trainium2', 'Trainium3', 'Inferentia', 'Neuron', 'NeuronLink'],
-  microsoft: ['Microsoft', 'Maia', 'Maia 200', 'Azure AI', 'Cobalt']
+nvidia:    ['NVIDIA', 'H100', 'H200', 'B200', 'B100', 'A100', 'GH200', 'GB200', 'GB300', 'CUDA', 'NVLink', 'Blackwell', 'Hopper', 'TensorRT', 'b300', 'B300', 'GB300', 'Blackwell Ultra', 'rubin', 'rubinUltra', 'Rubin', 'Vera Rubin', 'Rubin Ultra', 'VR200', 'VR300'],
+amd:       ['AMD', 'MI300', 'MI300X', 'MI250', 'Instinct', 'ROCm', 'Infinity Fabric', 'CDNA', 'mi355x', 'mi400', 'MI355X', 'MI400', 'CDNA4', 'mi500', 'MI500', 'CDNA6', 'UDNA'],
+  intel:     ['Intel', 'Gaudi', 'Gaudi 3', 'Gaudi 2', 'Falcon Shores', 'Ponte Vecchio', 'SynapseAI', 'Habana', 'jaguarShores', 'Jaguar Shores', 'Crescent Island'],
+google:    ['Google TPU', 'TPU v5', 'TPU v6', 'Trillium', 'Ironwood', 'TPU v7', 'Cloud TPU', 'JAX', 'Systolic Array', 'tpuv7', 'Ironwood', 'TPU v7', 'tpuv8t', 'TPU v8', 'Sunfish', 'Zebrafish'],
+  aws:       ['AWS', 'Trainium', 'Trainium2', 'Trainium3', 'Inferentia', 'Neuron', 'NeuronLink', 'trainium4', 'Trainium4'],
+  microsoft: ['Microsoft', 'Maia', 'Maia 200', 'Azure AI', 'Cobalt', 'maia280', 'Maia 280']
 };
 
 // Pre-lowered COMPETITOR_KEYWORDS for performance (deep conversion)
@@ -1425,11 +1445,12 @@ class NewsEngine {
   static buildChipQueries() {
     // Priority chips (newest / most important) — always include
     var priority = [
-      'Ascend 950PR', 'Ascend 950DT', 'Ascend 910C', 'Ascend 910B',
-      'B300', 'B200', 'H200', 'H100',
-      'MI355X', 'MI400', 'MI300X',
-      'TPU v7 Ironwood', 'TPU v6e',
-      'Trainium3', 'Gaudi 3', 'Maia 200'
+      'Ascend 960', 'Ascend 950PR', 'Ascend 950DT', 'Ascend 910C', 'Ascend 910B',
+      'Vera Rubin R100', 'Rubin Ultra', 'B300', 'B200', 'H200', 'H100',
+      'MI500', 'MI400', 'MI355X', 'MI300X',
+      'TPU v8t Sunfish', 'TPU v7 Ironwood', 'TPU v6e',
+      'Trainium4', 'Trainium3', 'Gaudi 3', 'Jaguar Shores',
+      'Maia 280', 'Maia 200'
     ];
     // Batch into groups of 5 to stay under API query limits
     var batches = [];
@@ -1437,7 +1458,7 @@ class NewsEngine {
       batches.push(priority.slice(i, i + 5).join(' OR '));
     }
     // Add Chinese chip batch
-    batches.push('思元690 OR 思元590 OR 昆仑芯P800 OR 昆仑芯2 OR 深算三号 OR DCU Z100 OR 燧原L600 OR 云燧T20 OR MTT S5000 OR MTT S4000 OR BR100 OR 壁砺20X');
+    batches.push('思元790 OR 思元690 OR 思元590 OR 昆仑芯M300 OR 昆仑芯M100 OR 昆仑芯P800 OR 昆仑芯2 OR 深算四号 OR 深算三号 OR DCU Z100 OR 燧原L600 OR 云燧T20 OR MTT S5000 OR MTT S4000 OR BR100 OR 壁砺20X');
     return batches;
   }
 
@@ -2007,7 +2028,8 @@ class UIRenderer {
     }
 
     var html = '';
-    CHIP_META.forEach(function(c) {
+    var toggleChips = App.state.sortByYear ? UIRenderer._getYearSortedChips() : CHIP_META;
+    toggleChips.forEach(function(c) {
       var isOn = !visible || visible.has(c.id);
       var isCustom = !!customIds[c.id];
       html += '<button class="btn btn-sm chip-toggle' + (isOn ? ' active' : '') +
@@ -2044,6 +2066,60 @@ class UIRenderer {
       UIRenderer._vendorMapLen = currentLen;
     }
     return UIRenderer._vendorMapCache;
+  }
+
+  /**
+   * Return CHIP_META entries sorted by release year (ASC) then FP16 (DESC).
+   * Chips with unparseable years go to the end. Memoized on CHIP_META length.
+   */
+  static _getYearSortedChips() {
+    var currentLen = CHIP_META.length;
+    if (UIRenderer._yearSortCache && UIRenderer._yearSortCacheLen === currentLen) {
+      return UIRenderer._yearSortCache;
+    }
+    // Look up release and fp16 rows from COMPETITOR_SPECS
+    var releaseRow = null;
+    var fp16Row = null;
+    for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
+      var s = COMPETITOR_SPECS[si];
+      if (s.key === 'release') releaseRow = s;
+      if (s.key === 'fp16') fp16Row = s;
+      if (releaseRow && fp16Row) break;
+    }
+    // Build sort data for each chip
+    var chips = CHIP_META.slice(); // shallow copy for sorting
+    var yearMap = {};
+    var fpMap = {};
+    for (var ci = 0; ci < chips.length; ci++) {
+      var cid = chips[ci].id;
+      // Extract year (first 4-digit number) from release string
+      var relVal = (releaseRow && releaseRow[cid]) ? releaseRow[cid] : '';
+      var yearMatch = relVal.match(/\d{4}/);
+      yearMap[cid] = yearMatch ? parseInt(yearMatch[0], 10) : 9999;
+      // Extract FP16 numeric value
+      if (fp16Row && fp16Row[cid]) {
+        var fpVal = fp16Row[cid];
+        if (fpVal.indexOf('不支持') >= 0) {
+          fpMap[cid] = -1;
+        } else {
+          var nums = fpVal.match(/[\d,]+/g);
+          var raw = (nums && nums.length > 0) ? parseFloat(nums[nums.length - 1].replace(/,/g, '')) || 0 : 0;
+          if (fpVal.indexOf('~') >= 0 || fpVal.indexOf('估') >= 0) raw *= 0.95;
+          fpMap[cid] = raw;
+        }
+      } else {
+        fpMap[cid] = 0;
+      }
+    }
+    chips.sort(function(a, b) {
+      var yA = yearMap[a.id];
+      var yB = yearMap[b.id];
+      if (yA !== yB) return yB - yA;           // year DESC (latest first)
+      return fpMap[b.id] - fpMap[a.id];         // FP16 DESC within same year
+    });
+    UIRenderer._yearSortCache = chips;
+    UIRenderer._yearSortCacheLen = currentLen;
+    return chips;
   }
 
   static renderVendorToggles() {
@@ -2158,31 +2234,45 @@ class UIRenderer {
     var allChips = CHIP_META;
     var chips = visibleChips ? allChips.filter(function(c) { return visibleChips.has(c.id); }) : allChips;
 
-    // Pre-compute FP16 TFLOPS for every chip (O(n) once, vs O(n log n) inside sort comparator)
-    var fp16Row = null;
-    for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
-      if (COMPETITOR_SPECS[si].key === 'fp16') { fp16Row = COMPETITOR_SPECS[si]; break; }
-    }
-    var tfopsCache = {};
-    for (var tfi = 0; tfi < chips.length; tfi++) {
-      var tfcId = chips[tfi].id;
-      if (fp16Row && fp16Row[tfcId]) {
-        var tfcVal = fp16Row[tfcId];
-        if (tfcVal.indexOf('不支持') >= 0) {
-          tfopsCache[tfcId] = -1;
-        } else {
-          var tfcNums = tfcVal.match(/[\d,]+/g);
-          var rawTF = (tfcNums && tfcNums.length > 0) ? parseFloat(tfcNums[tfcNums.length - 1].replace(/,/g, '')) || 0 : 0;
-          if (tfcVal.indexOf('~') >= 0 || tfcVal.indexOf('估') >= 0) rawTF *= 0.95;
-          tfopsCache[tfcId] = rawTF;
-        }
-      } else {
-        tfopsCache[tfcId] = 0;
+    // Sort: year-based (if enabled), otherwise FP16 performance descending
+    if (App.state.sortByYear) {
+      // Use year-sorted order — already includes FP16 DESC within same year
+      var yearSorted = UIRenderer._getYearSortedChips();
+      // Build position index for O(1) rank lookup
+      var rankMap = {};
+      for (var yi = 0; yi < yearSorted.length; yi++) {
+        rankMap[yearSorted[yi].id] = yi;
       }
+      chips.sort(function(a, b) {
+        return (rankMap[a.id] != null ? rankMap[a.id] : 9999) - (rankMap[b.id] != null ? rankMap[b.id] : 9999);
+      });
+    } else {
+      // Default: FP16 TFLOPS descending
+      var fp16Row = null;
+      for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
+        if (COMPETITOR_SPECS[si].key === 'fp16') { fp16Row = COMPETITOR_SPECS[si]; break; }
+      }
+      var tfopsCache = {};
+      for (var tfi = 0; tfi < chips.length; tfi++) {
+        var tfcId = chips[tfi].id;
+        if (fp16Row && fp16Row[tfcId]) {
+          var tfcVal = fp16Row[tfcId];
+          if (tfcVal.indexOf('不支持') >= 0) {
+            tfopsCache[tfcId] = -1;
+          } else {
+            var tfcNums = tfcVal.match(/[\d,]+/g);
+            var rawTF = (tfcNums && tfcNums.length > 0) ? parseFloat(tfcNums[tfcNums.length - 1].replace(/,/g, '')) || 0 : 0;
+            if (tfcVal.indexOf('~') >= 0 || tfcVal.indexOf('估') >= 0) rawTF *= 0.95;
+            tfopsCache[tfcId] = rawTF;
+          }
+        } else {
+          tfopsCache[tfcId] = 0;
+        }
+      }
+      chips.sort(function(a, b) {
+        return tfopsCache[b.id] - tfopsCache[a.id];
+      });
     }
-    chips.sort(function(a, b) {
-      return tfopsCache[b.id] - tfopsCache[a.id];
-    });
 
     var table = document.getElementById('compareTable');
     if (!table) return;
@@ -2373,6 +2463,138 @@ class UIRenderer {
   }
 
   /**
+   * Export the comparison table as a high-resolution PNG image.
+   * Loads html2canvas dynamically from CDN on first use.
+   */
+  static exportTableAsImage() {
+    if (typeof html2canvas === 'undefined') {
+      App.showToast('⏳ 正在加载图片导出库…', 'info');
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+      script.onload = function () {
+        App.showToast('✅ 库加载完成，正在生成图片…', 'success');
+        UIRenderer._doExportImage();
+      };
+      script.onerror = function () {
+        App.showToast('❌ 图片库加载失败，请检查网络连接', 'error');
+      };
+      document.head.appendChild(script);
+      return;
+    }
+    UIRenderer._doExportImage();
+  }
+
+  /**
+   * Internal: perform the actual html2canvas capture and download.
+   * Requires html2canvas to be already loaded on the page.
+   */
+  static _doExportImage() {
+    App.showToast('⏳ 正在渲染图片（高清晰度）…', 'info');
+
+    var panel = document.getElementById('comparePanel');
+    if (!panel) {
+      App.showToast('❌ 未找到对比表面板', 'error');
+      return;
+    }
+
+    // ── Clone the panel and prepare for capture ──
+    var clone = panel.cloneNode(true);
+
+    // Override scroll-hint pseudo-element (::after on mobile) — remove it
+    var wrapEl = clone.querySelector('.compare-table-wrap');
+    if (wrapEl) {
+      wrapEl.style.overflow = 'visible';
+      wrapEl.style.webkitOverflowScrolling = 'auto';
+    }
+
+    // Remove sticky positioning (html2canvas doesn't render it correctly)
+    var stickyEls = clone.querySelectorAll('th, td');
+    for (var si = 0; si < stickyEls.length; si++) {
+      stickyEls[si].style.position = 'static';
+    }
+
+    // Force table to full width — no scroll clipping
+    var tbl = clone.querySelector('.compare-table');
+    if (tbl) {
+      tbl.style.width = 'auto';
+      tbl.style.tableLayout = 'auto';
+    }
+
+    // Hide the new-chip banner (irrelevant for export)
+    var banner = clone.querySelector('#newChipBanner');
+    if (banner) { banner.style.display = 'none'; }
+
+    // ── Light-theme override for clean document/chart export ──
+    clone.style.cssText =
+      'position:fixed;left:-9999px;top:0;z-index:-1;' +
+      'width:auto;max-width:none;' +
+      'background:#ffffff;color:#1a1a2e;padding:24px;' +
+      '--bg-primary:#ffffff;--bg-secondary:#f5f7fa;--bg-card:#ffffff;' +
+      '--bg-card-hover:#f0f2f5;--border:#d0d5dd;--border-light:#e0e4e8;' +
+      '--text-primary:#1a1a2e;--text-secondary:#3a3d4a;--text-muted:#6b7280;' +
+      '--accent:#0088a0;--accent-glow:rgba(0,136,160,0.08);';
+
+    // Button text on light bg — dim them (they're interactive only in the live page)
+    var btns = clone.querySelectorAll('.btn-sm');
+    for (var bi = 0; bi < btns.length; bi++) {
+      btns[bi].style.opacity = '0.6';
+    }
+
+    // Make the chip-toggle active state readable on white
+    var chipToggles = clone.querySelectorAll('.chip-toggle.active');
+    for (var cti = 0; cti < chipToggles.length; cti++) {
+      chipToggles[cti].style.background = '#e0f2fe';
+      chipToggles[cti].style.borderColor = '#00c8e8';
+      chipToggles[cti].style.color = '#005f73';
+    }
+
+    // Make legend dots visible on white
+    var dots = clone.querySelectorAll('.legend-dot');
+    for (var di = 0; di < dots.length; di++) {
+      dots[di].style.width = '10px';
+      dots[di].style.height = '10px';
+    }
+
+    document.body.appendChild(clone);
+
+    // ── Capture at high DPI (≥2× for mobile readability) ──
+    var dpr = window.devicePixelRatio || 1;
+    var scale = dpr >= 2 ? dpr : 2;          // min 2× even on 1× displays
+    if (scale > 3) scale = 3;                // cap at 3× to avoid memory pressure
+
+    try {
+      html2canvas(clone, {
+        scale: scale,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        allowTaint: true
+      }).then(function (canvas) {
+        // Clean up clone
+        if (clone.parentNode) document.body.removeChild(clone);
+
+        // Trigger download
+        var link = document.createElement('a');
+        var today = new Date();
+        var m = ('0' + (today.getMonth() + 1)).slice(-2);
+        var d = ('0' + today.getDate()).slice(-2);
+        link.download = '芯片规格对比_' + today.getFullYear() + '-' + m + '-' + d + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        App.showToast('✅ 图片已导出（' + canvas.width + '×' + canvas.height + 'px）', 'success');
+      }).catch(function (err) {
+        if (clone.parentNode) document.body.removeChild(clone);
+        App.showToast('❌ 导出失败: ' + (err && err.message ? err.message : '渲染错误'), 'error');
+      });
+    } catch (e) {
+      // html2canvas itself threw synchronously
+      if (clone.parentNode) document.body.removeChild(clone);
+      App.showToast('❌ 导出失败: ' + (e && e.message ? e.message : '未知错误'), 'error');
+    }
+  }
+
+  /**
    * Escape HTML entities to prevent XSS in innerHTML.
    * Uses string replacement instead of DOM creation — 6–8× faster.
    */
@@ -2475,6 +2697,19 @@ class SpecExtractor {
     yunsuiL600: /\b(?:云燧|Yunsui)\s*L600\b|燧原\s*L600/gi,
     mi400: /\bMI400\b|MI\s*400/gi,
     bili20x: /\b壁砺\s*20X?\b|BR20X/gi,
+	    // ── 2026-2027 Roadmap chips ──
+	    a960: /\b(?:Ascend\s*)?960\b|昇腾\s*960/gi,
+	    rubin: /\bVera\s*Rubin\b|Rubin\s*R100\b|VR200/gi,
+	    rubinUltra: /\bRubin\s*Ultra\b|VR300/gi,
+	    mi500: /\bMI500\b|MI\s*500|CDNA\s*6/gi,
+	    jaguarShores: /\bJaguar\s*Shores\b|Intel\s*Jaguar/gi,
+	    tpuv8t: /\bTPU\s*v8[tT]\b|Sunfish|TPU v8/gi,
+	    trainium4: /\bTrainium\s*4\b|Trainium4/gi,
+	    maia280: /\bMaia\s*280\b/gi,
+	    siyuan790: /\b(?:思元|Siyuan)\s*790\b|寒武纪\s*790/gi,
+	    shensuan4: /\b深算\s*四号\b|深算\s*4号|海光\s*四号/gi,
+	    kunlunM100: /\b昆仑芯?\s*M100\b|Kunlun\s*M100/gi,
+	    kunlunM300: /\b昆仑芯?\s*M300\b|Kunlun\s*M300/gi,
   };
     return this._CHIP_MODEL_PATTERNS;
   }
@@ -2482,19 +2717,19 @@ class SpecExtractor {
   /* ---- Vendor→chipKeys mapping (lazily initialized) ---- */
   static get VENDOR_CHIPS() {
     if (!this._VENDOR_CHIPS) this._VENDOR_CHIPS = {
-	    ascend:    ['a910b', 'a910c', 'a950pr', 'a950dt'],
-	    cambricon: ['siyuan590', 'siyuan690'],
-	    hygon:     ['dcuz100', 'shensuan3'],
-	    baidu:     ['kunlun2', 'kunlunP800'],
+	    ascend:    ['a910b', 'a910c', 'a950pr', 'a950dt', 'a960'],
+	    cambricon: ['siyuan590', 'siyuan690', 'siyuan790'],
+	    hygon:     ['dcuz100', 'shensuan3', 'shensuan4'],
+	    baidu:     ['kunlun2', 'kunlunP800', 'kunlunM100', 'kunlunM300'],
 	    enflame:   ['yunsuiT20', 'yunsuiL600'],
 	    biren:     ['br100', 'bili20x'],
 	    moore:     ['mttS4000', 'mttS5000'],
-	    nvidia:    ['h100', 'h200', 'b200', 'b300'],
-	    amd:       ['mi300x', 'mi355x', 'mi400'],
-    intel:     ['gaudi3'],
-	    google:    ['tpuv6', 'tpuv7'],
-    aws:       ['trainium3'],
-    microsoft: ['maia200']
+	    nvidia:    ['h100', 'h200', 'b200', 'b300', 'rubin', 'rubinUltra'],
+	    amd:       ['mi300x', 'mi355x', 'mi400', 'mi500'],
+    intel:     ['gaudi3', 'jaguarShores'],
+	    google:    ['tpuv6', 'tpuv7', 'tpuv8t'],
+    aws:       ['trainium3', 'trainium4'],
+    microsoft: ['maia200', 'maia280']
   };
     return this._VENDOR_CHIPS;
   }
@@ -3004,6 +3239,7 @@ const App = {
     competitorFilter: 'all',
     compareVisible: true,
     visibleChips: null,     // null = all visible; Set of chip IDs when filtered
+    sortByYear: false,      // false = FP16 sort; true = year ASC → FP16 DESC
     detectedChips: [],      // New chips discovered from news text
     customChips: [],        // User-added chips persisted to localStorage
     currentPage: 1,
@@ -3861,6 +4097,23 @@ const App = {
     document.getElementById('btnChipClearAll').addEventListener('click', function() {
       App.state.visibleChips = new Set(); // empty = none visible
       UIRenderer._refreshCompareUI();
+    });
+    // Sort by year toggle
+    document.getElementById('btnSortByYear').addEventListener('click', function() {
+      App.state.sortByYear = !App.state.sortByYear;
+      var btn = document.getElementById('btnSortByYear');
+      if (App.state.sortByYear) {
+        btn.textContent = '📅 年份 ✓';
+        btn.classList.add('active');
+      } else {
+        btn.textContent = '📅 按年份';
+        btn.classList.remove('active');
+      }
+      UIRenderer._refreshCompareUI();
+    });
+    // Export comparison table as image
+    document.getElementById('btnExportImage').addEventListener('click', function () {
+      UIRenderer.exportTableAsImage();
     });
 
     // Vendor quick-select: toggle all chips from a vendor on/off
