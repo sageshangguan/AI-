@@ -1245,6 +1245,11 @@ const COMPETITOR_SPECS = [
   { key: 'energy_eff',  label: '能效 (TF/W @FP16)', a910b:'~0.91',   a910c:'~1.42',     h100:'~1.41',      h200:'~1.41',       b200:'~2.25',       mi300x:'~1.74',     gaudi3:'~2.04 (FP8)', tpuv6:'~6.12 (BF16)', trainium3:'~1.6',   maia200:'~1.56',    siyuan590:'~0.73',    dcuz100:'~0.33',   kunlun2:'~0.21',   yunsuiT20:'~0.64',    br100:'~0.93',    mttS4000:'~0.20', a950pr:'~2.67', a950dt:'~2.40', b300:'~2.50', mi355x:'~1.79', tpuv7:'~10.25 (BF16)', siyuan690:'~1.50', mttS5000:'~1.67', kunlunP800:'~1.38', shensuan3:'~1.07', yunsuiL600:'~0.85', mi400:'~5.56', bili20x:'~1.17', a960:'~3.56 (估)', rubin:'~8.33 (估)', rubinUltra:'~13.89 (估)', mi500:'~10.00 (估)', jaguarShores:'~2.50 (估)', tpuv8t:'~9.20 (估)', trainium4:'~3.13 (估)', maia280:'~3.00 (估)', siyuan790:'~2.00 (估)', shensuan4:'~1.88 (估)', kunlunM100:'~1.79 (估)', kunlunM300:'~2.29 (估)' },
   { key: 'mlperf',      label: 'MLPerf 相对性能', a910b:'A100 80-90%', a910c:'H100 85-92% (估)', h100:'基准',    h200:'H100 110%',   b200:'H100 180-250%', mi300x:'H100 70-90%', gaudi3:'H100 95-170%', tpuv6:'H100 100-160%', trainium3:'H100 60-80%', maia200:'H100 50-70%', siyuan590:'未参与',     dcuz100:'未参与',   kunlun2:'未参与',   yunsuiT20:'未参与',     br100:'未参与',    mttS4000:'未参与', a950pr:'未参与', a950dt:'未参与', b300:'H100 300-400%', mi355x:'H100 200-280% (估)', tpuv7:'H100 200-300% (估)', siyuan690:'未参与', mttS5000:'未参与', kunlunP800:'未参与', shensuan3:'未参与', yunsuiL600:'未参与', mi400:'未发布', bili20x:'未参与', a960:'未发布', rubin:'未发布', rubinUltra:'未发布', mi500:'未发布', jaguarShores:'未发布', tpuv8t:'未发布', trainium4:'未发布', maia280:'未发布', siyuan790:'未发布', shensuan4:'未发布', kunlunM100:'未发布', kunlunM300:'未发布' },
   { key: 'ecosystem',   label: '软件生态',       a910b:'CANN/MindSpore', a910c:'CANN 7.0/MindSpore 2.0', h100:'CUDA 12.x', h200:'CUDA 12.x', b200:'CUDA 12.x', mi300x:'ROCm 6.x', gaudi3:'SynapseAI', tpuv6:'JAX/TF (Google Cloud)', trainium3:'Neuron SDK', maia200:'Maia SDK (Azure)', siyuan590:'Cambricon Neuware', dcuz100:'ROCm兼容', kunlun2:'PaddlePaddle', yunsuiT20:'TopsRider', br100:'BIREN SUPA', mttS4000:'MUSA', a950pr:'CANN 8.0 / MindSpore 3.0', a950dt:'CANN 8.0 / MindSpore 3.0', b300:'CUDA 12.x', mi355x:'ROCm 7.x', tpuv7:'JAX/TF (Google Cloud)', siyuan690:'Cambricon Neuware 2.0', mttS5000:'MUSA 2.0', kunlunP800:'PaddlePaddle / XPU', shensuan3:'ROCm兼容 (365模型适配)', yunsuiL600:'TopsRider 2.0', mi400:'ROCm 8.x (预期)', bili20x:'BIREN SUPA 2.0', a960:'CANN 9.0 / MindSpore 4.0', rubin:'CUDA 13.x', rubinUltra:'CUDA 14.x', mi500:'ROCm 9.x', jaguarShores:'oneAPI', tpuv8t:'JAX/TF (Google Cloud)', trainium4:'Neuron SDK', maia280:'Maia SDK (Azure)', siyuan790:'Cambricon Neuware 3.0', shensuan4:'ROCm兼容 (自研增强)', kunlunM100:'PaddlePaddle / XPU', kunlunM300:'PaddlePaddle / XPU' },
+  { key: 'mem_bus_width',label: '显存位宽',       a910b:'4096-bit HBM2e', a910c:'6144-bit HBM3e', h100:'5120-bit HBM3', h200:'6144-bit HBM3e', b200:'8192-bit HBM3e', mi300x:'8192-bit HBM3', gaudi3:'4096-bit HBM2e', tpuv6:'3072-bit HBM', trainium3:'4096-bit HBM', maia200:'4096-bit HBM3', siyuan590:'4096-bit HBM2e', dcuz100:'4096-bit HBM2', kunlun2:'2048-bit HBM2', yunsuiT20:'4096-bit HBM2e', br100:'4096-bit HBM2e', mttS4000:'256-bit GDDR6', a950pr:'6144-bit HBM3e', a950dt:'8192-bit HBM3e', b300:'8192-bit HBM3e', mi355x:'8192-bit HBM3e', tpuv7:'6144-bit HBM3e', siyuan690:'4096-bit HBM2e', mttS5000:'384-bit GDDR6X', kunlunP800:'4096-bit HBM2e', shensuan3:'4096-bit HBM2e', yunsuiL600:'4096-bit HBM2e', mi400:'8192-bit HBM4 (估)', bili20x:'4096-bit HBM2e', a960:'8192-bit HBM3e (估)', rubin:'8192-bit HBM4', rubinUltra:'8192-bit HBM4E', mi500:'8192-bit HBM4E (估)', jaguarShores:'6144-bit HBM3e (估)', tpuv8t:'6144-bit HBM3e (估)', trainium4:'6144-bit HBM4 (估)', maia280:'6144-bit HBM3e (估)', siyuan790:'4096-bit HBM3 (估)', shensuan4:'6144-bit HBM3 (估)', kunlunM100:'4096-bit HBM2e (估)', kunlunM300:'4096-bit HBM3 (估)' },
+  { key: 'precision',   label: '稀疏率/INT8算力', a910b:'不支持稀疏, INT8 ~640 TOPS', a910c:'不支持稀疏, INT8 ~1,280 TOPS', h100:'2:4稀疏 2×, INT8 1,980 TOPS', h200:'2:4稀疏 2×, INT8 1,980 TOPS', b200:'2:4稀疏 2×, INT8 9,000 TOPS', mi300x:'2:4稀疏 2×, INT8 5,228 TOPS', gaudi3:'不支持稀疏, INT8 ~3,668 TOPS', tpuv6:'不支持稀疏, INT8 1,836 TOPS', trainium3:'不支持稀疏, INT8 ~1,600 TOPS', maia200:'不支持稀疏, INT8 ~1,400 TOPS', siyuan590:'不支持稀疏', dcuz100:'不支持稀疏', kunlun2:'不支持稀疏', yunsuiT20:'不支持稀疏', br100:'不支持稀疏', mttS4000:'不支持稀疏', a950pr:'2:4稀疏 2×, INT8 2,000 TOPS', a950dt:'2:4稀疏 2×, INT8 2,000 TOPS', b300:'2:4稀疏 2×, INT8 ~14,000 TOPS', mi355x:'2:4稀疏 2×, INT8 9,200 TOPS', tpuv7:'不支持稀疏, INT8 4,614 TOPS', siyuan690:'不支持稀疏, INT8 ~2,400 TOPS (估)', mttS5000:'不支持稀疏', kunlunP800:'不支持稀疏', shensuan3:'不支持稀疏, INT8 ~750 TOPS', yunsuiL600:'不支持稀疏, INT8 ~512 TOPS', mi400:'2:4稀疏 2×, INT8 40,000 TOPS (估)', bili20x:'2:4稀疏 2× (估)', a960:'2:4稀疏 2×, INT8 ~4,000 TOPS (估)', rubin:'2:4稀疏 2×, INT8 ~25,000 TOPS (估)', rubinUltra:'2:4稀疏 2×, INT8 ~50,000 TOPS (估)', mi500:'2:4稀疏 2× (估)', jaguarShores:'2:4稀疏 (估)', tpuv8t:'不支持稀疏 (估)', trainium4:'不支持稀疏 (估)', maia280:'不支持稀疏 (估)', siyuan790:'2:4稀疏 (估)', shensuan4:'2:4稀疏 (估)', kunlunM100:'不支持稀疏 (估)', kunlunM300:'2:4稀疏 (估)' },
+  { key: 'max_scale',   label: '最大集群规模',    a910b:'~4K 节点 (Atlas 900)', a910c:'~16K 节点', h100:'32K GPU (NVSwitch4)', h200:'32K GPU (NVSwitch4)', b200:'~16K GPU (NVL72/IB)', mi300x:'~8K GPU', gaudi3:'~8K 加速器 (OSFP 800)', tpuv6:'64K 切片 (ICI)', trainium3:'~64K 芯片 (NeuronLink)', maia200:'~10K 加速器', siyuan590:'~2K 节点', dcuz100:'~1K 节点', kunlun2:'~1K 节点', yunsuiT20:'~2K 节点', br100:'~4K 节点', mttS4000:'~2K 节点', a950pr:'~32K 节点 (估)', a950dt:'~64K 节点 (估)', b300:'~10K GPU (NVL72/XDR IB)', mi355x:'~16K GPU (RoCE)', tpuv7:'64K 切片 (ICI 1.2T)', siyuan690:'~4K 节点', mttS5000:'~2K 节点', kunlunP800:'~2K 节点', shensuan3:'~4K 节点', yunsuiL600:'~4K 节点', mi400:'~32K GPU (估)', bili20x:'~8K 节点', a960:'~64K 节点 (估)', rubin:'~100K GPU (NVL144 估)', rubinUltra:'~100K GPU (估)', mi500:'~64K GPU (估)', jaguarShores:'~16K 加速器 (估)', tpuv8t:'64K 切片 (估)', trainium4:'~100K 芯片 (估)', maia280:'~20K 加速器 (估)', siyuan790:'~8K 节点 (估)', shensuan4:'~8K 节点 (估)', kunlunM100:'~4K 节点 (估)', kunlunM300:'~8K 节点 (估)' },
+  { key: 'cooling',     label: '散热方案',        a910b:'风冷/液冷', a910c:'风冷/液冷', h100:'风冷/液冷', h200:'风冷/液冷', b200:'液冷', mi300x:'风冷/液冷', gaudi3:'风冷/液冷', tpuv6:'液冷', trainium3:'风冷/液冷', maia200:'风冷/液冷', siyuan590:'风冷', dcuz100:'风冷', kunlun2:'风冷', yunsuiT20:'风冷', br100:'风冷', mttS4000:'风冷', a950pr:'液冷', a950dt:'液冷', b300:'液冷', mi355x:'液冷', tpuv7:'液冷', siyuan690:'风冷/液冷', mttS5000:'风冷', kunlunP800:'风冷', shensuan3:'风冷/液冷', yunsuiL600:'风冷', mi400:'液冷 (估)', bili20x:'风冷/液冷', a960:'液冷 (估)', rubin:'液冷', rubinUltra:'液冷', mi500:'液冷 (估)', jaguarShores:'风冷/液冷 (估)', tpuv8t:'液冷 (估)', trainium4:'液冷 (估)', maia280:'液冷 (估)', siyuan790:'风冷/液冷 (估)', shensuan4:'风冷/液冷 (估)', kunlunM100:'风冷 (估)', kunlunM300:'风冷/液冷 (估)' },
+  { key: 'form_factor', label: '产品形态',        a910b:'自研板卡 (SXM 类似)', a910c:'自研板卡 (SXM 类似)', h100:'SXM5 / PCIe Gen5', h200:'SXM5', b200:'SXM6 (NVL72 托盘)', mi300x:'OAM (OCP)', gaudi3:'OAM (OCP) / HL-338', tpuv6:'自研托盘 (TPU Pod)', trainium3:'自研板卡 (Trn2 机架)', maia200:'自研板卡 (Azure 机架)', siyuan590:'PCIe Gen4 x16 (MLU-Boost)', dcuz100:'PCIe Gen4 x16', kunlun2:'PCIe Gen4 x16', yunsuiT20:'PCIe Gen4 x16', br100:'OAM (OCP)', mttS4000:'PCIe Gen5 x16', a950pr:'自研板卡 (SXM 类似)', a950dt:'自研板卡 (SXM 类似)', b300:'SXM6 (NVL72 托盘)', mi355x:'OAM (OCP)', tpuv7:'自研托盘 (TPU Pod)', siyuan690:'PCIe Gen5 x16 / OAM', mttS5000:'PCIe Gen5 x16', kunlunP800:'PCIe Gen5 x16', shensuan3:'PCIe Gen5 x16 / OAM', yunsuiL600:'PCIe Gen5 x16', mi400:'OAM 2.0 (估)', bili20x:'OAM (OCP)', a960:'自研板卡 (估)', rubin:'SXM (NVL144 估)', rubinUltra:'SXM', mi500:'OAM 2.0 (估)', jaguarShores:'OAM (OCP 估)', tpuv8t:'自研托盘 (估)', trainium4:'自研板卡 (估)', maia280:'自研板卡 (估)', siyuan790:'PCIe Gen5 / OAM (估)', shensuan4:'OAM (估)', kunlunM100:'PCIe Gen5 x16 (估)', kunlunM300:'PCIe Gen5 / OAM (估)' },
 ];
 
 // Competitor chip keywords for news tagging
@@ -2222,6 +2227,20 @@ class UIRenderer {
       if (n <= 500) return 'val-good';
       if (n >= 900) return 'val-mid';
     }
+    if (key === 'mem_bus_width') {
+      if (n >= 8192) return 'val-best';
+      if (n >= 4096) return 'val-good';
+    }
+    if (key === 'max_scale') {
+      if (n >= 32) return 'val-best';     // 32K+
+      if (n >= 8) return 'val-good';      // 8K+
+      if (n <= 2) return 'val-mid';       // 2K or less
+    }
+    if (key === 'precision') {
+      if (val.indexOf('2:4稀疏 2×') >= 0) return 'val-best';
+      if (val.indexOf('2:4稀疏') >= 0) return 'val-good';
+      if (val.indexOf('不支持稀疏') >= 0) return 'val-mid';
+    }
     return '';
   }
 
@@ -2661,6 +2680,38 @@ class SpecExtractor {
       specKey: 'die_size',
       regex: /~?(\d[\d,]+)\s*mm[²2]\s*(?:芯片面积|die\s*size|die\s*area)?/gi,
       normalize: (m) => ({ numValue: parseFloat(m[1].replace(/,/g, '')), unit: 'mm²' })
+    },
+    {
+      specKey: 'mem_bus_width',
+      regex: /(\d[\d,]*)\s*[-–]bit\s*(?:HBM\d[eE]?|GDDR\dX?|显存位宽|总线位宽|bus\s*width)/gi,
+      normalize: (m) => ({ numValue: parseInt(m[1].replace(/,/g, '')), unit: 'bit' })
+    },
+    {
+      specKey: 'precision',
+      regex: /(?:2:4\s*(?:稀疏|sparsity)(?:\s*[，（(]\s*)?(\d[\d,.]*)\s*[×xX倍]\s*(?:算力|性能|speedup|throughput)?|INT8\s*[：:≈~]?\s*(\d[\d,.]*)\s*(?:K\s*)?TOPS|稀疏.*?(\d[\d,.]*)\s*[×xX倍])/gi,
+      normalize: (m) => {
+        var sparseNum = m[1] ? parseFloat(m[1].replace(/,/g, '')) : (m[3] ? parseFloat(m[3].replace(/,/g, '')) : null);
+        var int8Num = m[2] ? parseFloat(m[2].replace(/,/g, '')) : null;
+        return { numValue: sparseNum || int8Num || 0, unit: '×' };
+      }
+    },
+    {
+      specKey: 'max_scale',
+      regex: /(\d[\d,]*)\s*[Kk万]\s*(?:GPU|节点|芯片|加速器|切片|计算节点|cluster|scale|集群)/gi,
+      normalize: (m) => ({
+        numValue: parseFloat(m[1].replace(/,/g, '')),
+        unit: 'GPU/Node'
+      })
+    },
+    {
+      specKey: 'cooling',
+      regex: /(?:散热|冷却|cooling)\s*(?:方案|方式|system)?[：:≈~]?\s*(风冷|液冷|浸没[式液]?冷|air\s*cool|LC|DLC|direct\s*liquid)/gi,
+      normalize: (m) => ({ numValue: 0, unit: m[1] })
+    },
+    {
+      specKey: 'form_factor',
+      regex: /(?:产品形态|封装形式|板卡类型|form\s*factor|package)[：:≈~]?\s*(SXM\d?|OAM|PCIe\s*Gen\d|自研[板托]|HGX|NVL\d+)/gi,
+      normalize: (m) => ({ numValue: 0, unit: m[1] })
     }
   ];
     return this._SPEC_PATTERNS;
