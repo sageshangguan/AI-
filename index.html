@@ -409,6 +409,8 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 
 .compare-table-wrap {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 70vh;
   -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -428,10 +430,10 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   font-weight: 600;
   color: var(--text-primary);
   border-bottom: 2px solid var(--border-light);
-  z-index: 2;
+  z-index: 4;
 }
 .compare-table thead th:first-child {
-  position: -webkit-sticky; position: sticky; left: 0; z-index: 3;
+  position: -webkit-sticky; position: sticky; left: 0; z-index: 5;
   border-radius: var(--radius) 0 0 0;
 }
 .compare-table thead th:last-child { border-radius: 0 var(--radius) 0 0; }
@@ -720,7 +722,7 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   .modal { padding: 20px; width: 95%; }
   .compare-panel { padding: 0 10px; }
   /* Scroll hint for comparison table on mobile — bottom-right badge, auto-fades */
-  .compare-table-wrap { -webkit-overflow-scrolling: touch; position: relative; }
+  .compare-table-wrap { -webkit-overflow-scrolling: touch; position: relative; max-height: 55vh; overflow-y: auto; }
   .compare-table-wrap::after {
     content: '← 滑动查看 →';
     position: absolute; right: 4px; bottom: 4px; z-index: 1;
@@ -794,14 +796,20 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
       <span class="legend-dot" style="background:#0071c5"></span> Intel
       <span class="legend-dot" style="background:#4285f4"></span> Google TPU
     </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <span style="font-size:0.75rem;color:var(--text-muted)">选择对比：</span>
-      <button class="btn btn-sm active" id="btnChipSelectAll" style="font-size:0.7rem">全部</button>
-      <button class="btn btn-sm" id="btnChipClearAll" style="font-size:0.7rem">清空</button>
-      <button class="btn btn-sm" id="btnSortByYear" style="font-size:0.7rem" title="按上市年份降序排列（同年份内按性能降序）">📅 按年份</button>
-      <button class="btn btn-sm" id="btnExportImage" style="font-size:0.7rem" title="将对比表导出为高清PNG图片">📸 导出图片</button>
-      <span style="font-size:0.7rem;color:var(--text-muted);margin-left:4px">· 厂商：</span>
-      <span id="vendorToggles" style="display:flex;gap:3px;flex-wrap:wrap"></span>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:0.75rem;color:var(--text-muted)">规格表：</span>
+        <button class="btn btn-sm active" id="btnSortByYear" style="font-size:0.7rem" title="按上市年份降序排列（同年份内按性能降序）。点击切换为纯性能排序">📅 按年份排序 ✓</button>
+        <button class="btn btn-sm" id="btnExportImage" style="font-size:0.7rem" title="将对比表导出为高清PNG图片">📸 导出图片</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+        <span style="font-size:0.7rem;color:var(--text-muted);white-space:nowrap">厂商：</span>
+        <span id="vendorToggles" style="display:flex;gap:3px;flex-wrap:wrap"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+        <span style="font-size:0.7rem;color:var(--text-muted);white-space:nowrap">年份：</span>
+        <span id="yearToggles" style="display:flex;gap:3px;flex-wrap:wrap"></span>
+      </div>
     </div>
   </div>
   <div id="newChipBanner" style="display:none;background:var(--amber);color:#000;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-size:0.78rem;line-height:1.5"></div>
@@ -815,7 +823,7 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 
   <!-- ── 芯片列选择（在规格表与 MLPerf 表之间）── -->
   <div class="chip-toggles-section" id="chipTogglesSection" style="margin:12px 0;padding:10px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
       <span style="font-size:0.75rem;color:var(--text-muted)">🔍 芯片列选择：</span>
     </div>
     <span id="chipToggles" style="display:flex;gap:4px;flex-wrap:wrap;width:100%"></span>
@@ -1365,7 +1373,8 @@ const COMPETITOR_SPECS = [
   { key: 'form_factor', label: '产品形态',        a910b:'自研板卡 (SXM 类似)', a910c:'自研板卡 (SXM 类似)', h100:'SXM5 / PCIe Gen5', h200:'SXM5', b200:'SXM6 (NVL72 托盘)', mi300x:'OAM (OCP)', gaudi3:'OAM (OCP) / HL-338', tpuv6:'自研托盘 (TPU Pod)', trainium3:'自研板卡 (Trn2 机架)', maia200:'自研板卡 (Azure 机架)', siyuan590:'PCIe Gen4 x16 (MLU-Boost)', dcuz100:'PCIe Gen4 x16', kunlun2:'PCIe Gen4 x16', yunsuiT20:'PCIe Gen4 x16', br100:'OAM (OCP)', mttS4000:'PCIe Gen5 x16', a950pr:'自研板卡 (SXM 类似)', a950dt:'自研板卡 (SXM 类似)', b300:'SXM6 (NVL72 托盘)', mi355x:'OAM (OCP)', tpuv7:'自研托盘 (TPU Pod)', siyuan690:'PCIe Gen5 x16 / OAM', mttS5000:'PCIe Gen5 x16', kunlunP800:'PCIe Gen5 x16', shensuan3:'PCIe Gen5 x16 / OAM', yunsuiL600:'PCIe Gen5 x16', mi400:'OAM 2.0 (估)', bili20x:'OAM (OCP)', a960:'自研板卡 (估)', rubin:'SXM (NVL144 估)', rubinUltra:'SXM', mi500:'OAM 2.0 (估)', jaguarShores:'OAM (OCP 估)', tpuv8t:'自研托盘 (估)', trainium4:'自研板卡 (估)', maia280:'自研板卡 (估)', siyuan790:'PCIe Gen5 / OAM (估)', shensuan4:'OAM (估)', kunlunM100:'PCIe Gen5 x16 (估)', kunlunM300:'PCIe Gen5 / OAM (估)' },
   { key: 'interconnect_latency_die', label: '互联延迟·Die间', a910b:'单die', a910c:'单die', h100:'单die', h200:'单die', b200:'~25ns (NV-HBI 双die)', mi300x:'~50ns (IF Chiplet)', gaudi3:'单die', tpuv6:'单die', trainium3:'单die', maia200:'单die', siyuan590:'单die', dcuz100:'单die', kunlun2:'单die', yunsuiT20:'单die', br100:'单die', mttS4000:'单die', a950pr:'~50ns (多die 估)', a950dt:'~50ns (多die 估)', b300:'~25ns (NV-HBI 双die)', mi355x:'~25ns (双die)', tpuv7:'单die', siyuan690:'单die', mttS5000:'单die', kunlunP800:'单die', shensuan3:'单die', yunsuiL600:'单die', mi400:'~20ns (Chiplet 估)', bili20x:'单die', a960:'~40ns (多die 估)', rubin:'~20ns (双die 估)', rubinUltra:'~20ns (四die 估)', mi500:'~15ns (Chiplet 估)', jaguarShores:'~30ns (Chiplet 估)', tpuv8t:'~30ns (Chiplet 估)', trainium4:'~25ns (多die 估)', maia280:'单die (估)', siyuan790:'单die', shensuan4:'单die', kunlunM100:'单die', kunlunM300:'单die' },
   { key: 'interconnect_latency', label: '互联延迟·片间', a910b:'~400ns (HCCS)', a910c:'~400ns (HCCS)', h100:'~300ns (NVLink4)', h200:'~300ns (NVLink4)', b200:'~300ns (NVLink5)', mi300x:'~500ns (Infinity Fabric)', gaudi3:'~1-2μs (RoCE 200GbE)', tpuv6:'~500ns (ICI)', trainium3:'~500ns (NeuronLink)', maia200:'~2μs (Ethernet 400GbE)', siyuan590:'~500ns (MLU-Link)', dcuz100:'~1μs (PCIe 4.0)', kunlun2:'~1μs (PCIe 4.0)', yunsuiT20:'~500ns (TopsLink)', br100:'~400ns (BLink)', mttS4000:'~1μs (PCIe 5.0)', a950pr:'~200ns (灵衢)', a950dt:'~200ns (灵衢)', b300:'~300ns (NVLink5)', mi355x:'~400ns (Infinity Fabric 4)', tpuv7:'~400ns (ICI 1.2T)', siyuan690:'~400ns (MLU-Link 2)', mttS5000:'~800ns (PCIe 5.0)', kunlunP800:'~800ns (PCIe 5.0)', shensuan3:'~800ns (PCIe 5.0)', yunsuiL600:'~400ns (TopsLink 2)', mi400:'~300ns (IF 4.0 估)', bili20x:'~300ns (BLink 2 估)', a960:'~150ns (灵衢 2 估)', rubin:'~200ns (NVLink6 估)', rubinUltra:'~200ns (NVSwitch7 估)', mi500:'~200ns (IF 5 估)', jaguarShores:'~500ns (Xe Link 估)', tpuv8t:'~300ns (ICI 2.0 估)', trainium4:'~300ns (NeuronLink 2 估)', maia280:'~1μs (Ethernet 800GbE 估)', siyuan790:'~300ns (MLU-Link 3 估)', shensuan4:'~200ns (自研 Switch 估)', kunlunM100:'~500ns (天池256 估)', kunlunM300:'~400ns (天池512 估)' },
-  { key: 'interconnect_latency_node', label: '互联延迟·柜间', a910b:'~3μs (RoCE 100GbE)', a910c:'~2μs (RoCE 200GbE)', h100:'~2μs (IB NDR)', h200:'~2μs (IB NDR)', b200:'~2μs (IB NDR/Spectrum-X)', mi300x:'~3μs (RoCEv2)', gaudi3:'~2μs (RoCE 200GbE)', tpuv6:'~2μs (ICI 跨Pod)', trainium3:'~2μs (EFA)', maia200:'~3μs (Ethernet 400GbE)', siyuan590:'~5μs (PCIe/RoCE)', dcuz100:'~5μs (PCIe/RoCE)', kunlun2:'~5μs (PCIe/RoCE)', yunsuiT20:'~5μs (PCIe/RoCE)', br100:'~5μs (PCIe/RoCE)', mttS4000:'~5μs (PCIe)', a950pr:'~1.5μs (灵衢+RoCE)', a950dt:'~1.5μs (灵衢+RoCE)', b300:'~1.5μs (IB XDR)', mi355x:'~2μs (RoCEv2/UEC)', tpuv7:'~1.5μs (ICI 1.2T 跨Pod)', siyuan690:'~3μs (MLU-Link+RoCE)', mttS5000:'~5μs (PCIe)', kunlunP800:'~3μs (PCIe/RoCE)', shensuan3:'~3μs (PCIe/RoCE)', yunsuiL600:'~3μs (TopsLink+RoCE)', mi400:'~1.5μs (IF 4.0 估)', bili20x:'~3μs (BLink+PCIe)', a960:'~1μs (灵衢 2 估)', rubin:'~1μs (NVLink6+XDR 估)', rubinUltra:'~1μs (NVSwitch7 估)', mi500:'~1μs (IF 5 估)', jaguarShores:'~2μs (Xe Link+IB 估)', tpuv8t:'~1μs (ICI 2.0 跨Pod 估)', trainium4:'~1.5μs (EFA 估)', maia280:'~2μs (Ethernet 800GbE 估)', siyuan790:'~2μs (MLU-Link 3 估)', shensuan4:'~1.5μs (自研 Switch 估)', kunlunM100:'~3μs (天池256 估)', kunlunM300:'~2μs (天池512 估)' },
+  { key: 'interconnect_latency_rack', label: '互联延迟·柜内', a910b:'~2-4μs (RoCE ToR)', a910c:'~2-3μs (RoCE 200GbE ToR)', h100:'~2-3μs (IB NDR ToR)', h200:'~2-3μs (IB NDR ToR)', b200:'~1.5-2.5μs (Spectrum-X ToR)', mi300x:'~2-4μs (RoCEv2 ToR)', gaudi3:'~3-5μs (RoCE 200GbE ToR)', tpuv6:'~2-3μs (ICI ToR)', trainium3:'~2-3μs (EFA ToR)', maia200:'~3-5μs (Ethernet 400GbE ToR)', siyuan590:'~5-10μs (PCIe/RoCE ToR)', dcuz100:'~5-10μs (PCIe/RoCE ToR)', kunlun2:'~5-10μs (PCIe/RoCE ToR)', yunsuiT20:'~5-10μs (PCIe/RoCE ToR)', br100:'~4-8μs (BLink+PCIe ToR)', mttS4000:'~5-10μs (PCIe ToR)', a950pr:'~1.5-2.5μs (灵衢+RoCE ToR)', a950dt:'~1.5-2.5μs (灵衢+RoCE ToR)', b300:'~1-2μs (IB XDR ToR)', mi355x:'~2-4μs (RoCEv2/UEC ToR)', tpuv7:'~2-3μs (ICI 1.2T ToR)', siyuan690:'~3-5μs (MLU-Link+RoCE ToR)', mttS5000:'~5-8μs (PCIe 5.0 ToR)', kunlunP800:'~3-5μs (PCIe/RoCE ToR)', shensuan3:'~3-5μs (PCIe/RoCE ToR)', yunsuiL600:'~3-5μs (TopsLink+RoCE ToR)', mi400:'~1.5-2.5μs (IF 4.0 估)', bili20x:'~3-5μs (BLink+PCIe ToR)', a960:'~1-2μs (灵衢 2 估)', rubin:'~1-1.5μs (NVLink6+XDR 估)', rubinUltra:'~1-1.5μs (NVSwitch7 估)', mi500:'~1-2μs (IF 5 估)', jaguarShores:'~2-4μs (Xe Link+IB 估)', tpuv8t:'~1-2μs (ICI 2.0 估)', trainium4:'~2-3μs (EFA 估)', maia280:'~3-5μs (Ethernet 800GbE 估)', siyuan790:'~2-4μs (MLU-Link 3 估)', shensuan4:'~2-3μs (自研 Switch 估)', kunlunM100:'~3-5μs (天池256 估)', kunlunM300:'~2-3μs (天池512 估)' },
+  { key: 'interconnect_latency_node', label: '互联延迟·柜间', a910b:'~15-25μs (RoCE 跨Spine)', a910c:'~12-20μs (RoCE 200GbE 跨Spine)', h100:'~8-15μs (IB NDR 跨Spine)', h200:'~8-15μs (IB NDR 跨Spine)', b200:'~6-12μs (Spectrum-X 跨Spine)', mi300x:'~10-20μs (RoCEv2 跨Spine)', gaudi3:'~12-20μs (RoCE 200GbE 跨Spine)', tpuv6:'~8-12μs (ICI 跨Pod)', trainium3:'~8-12μs (EFA 跨Spine)', maia200:'~15-25μs (Ethernet 跨Spine)', siyuan590:'~25-50μs (PCIe/RoCE 跨Spine)', dcuz100:'~25-50μs (PCIe/RoCE 跨Spine)', kunlun2:'~25-50μs (PCIe/RoCE 跨Spine)', yunsuiT20:'~25-50μs (PCIe/RoCE 跨Spine)', br100:'~20-40μs (BLink+PCIe 跨Spine)', mttS4000:'~25-50μs (PCIe 跨Spine)', a950pr:'~8-15μs (灵衢+RoCE 跨Spine)', a950dt:'~8-15μs (灵衢+RoCE 跨Spine)', b300:'~5-10μs (IB XDR 跨Spine)', mi355x:'~8-15μs (RoCEv2/UEC 跨Spine)', tpuv7:'~6-12μs (ICI 1.2T 跨Pod)', siyuan690:'~12-20μs (MLU-Link+RoCE 跨Spine)', mttS5000:'~20-35μs (PCIe 5.0 跨Spine)', kunlunP800:'~12-20μs (PCIe/RoCE 跨Spine)', shensuan3:'~12-20μs (PCIe/RoCE 跨Spine)', yunsuiL600:'~12-20μs (TopsLink+RoCE 跨Spine)', mi400:'~6-10μs (IF 4.0 估)', bili20x:'~15-25μs (BLink+PCIe 跨Spine)', a960:'~5-10μs (灵衢 2 估)', rubin:'~3-6μs (NVLink6+XDR 估)', rubinUltra:'~3-6μs (NVSwitch7 估)', mi500:'~4-8μs (IF 5 估)', jaguarShores:'~10-18μs (Xe Link+IB 估)', tpuv8t:'~5-10μs (ICI 2.0 跨Pod 估)', trainium4:'~6-12μs (EFA 估)', maia280:'~10-18μs (Ethernet 800GbE 估)', siyuan790:'~8-15μs (MLU-Link 3 估)', shensuan4:'~6-12μs (自研 Switch 估)', kunlunM100:'~12-20μs (天池256 估)', kunlunM300:'~8-15μs (天池512 估)' },
   { key: 'area_eff',  label: '面效比 (TF/mm² @FP16)', a910b:'~0.55', a910c:'~0.94', h100:'~1.22', h200:'~1.22', b200:'~1.37 (双die)', mi300x:'~1.29', gaudi3:'~2.45 (FP8)', tpuv6:'~2.62 (BF16)', trainium3:'~1.33', maia200:'~1.40', siyuan590:'~0.43', dcuz100:'~0.20', kunlun2:'~0.08', yunsuiT20:'~0.32', br100:'~0.64', mttS4000:'~0.11', a950pr:'~2.13', a950dt:'~2.20', b300:'~2.13 (双die)', mi355x:'~2.78', tpuv7:'~4.60 (BF16)', siyuan690:'~0.92', mttS5000:'~0.91', kunlunP800:'~0.69', shensuan3:'~0.68', yunsuiL600:'~0.43', mi400:'~8.33', bili20x:'~0.82', a960:'~3.56 (估)', rubin:'~10.42 (估)', rubinUltra:'~17.86 (估)', mi500:'~15.38 (估)', jaguarShores:'~2.50 (估)', tpuv8t:'~11.50 (估)', trainium4:'~3.85 (估)', maia280:'~2.73 (估)', siyuan790:'~1.43 (估)', shensuan4:'~1.29 (估)', kunlunM100:'~0.96 (估)', kunlunM300:'~1.38 (估)' },
   { key: 'tco_price', label: '芯片单价 (千美元, 估)', a910b:'~$15-20K (受限)', a910c:'~$20-25K (受限)', h100:'~$25-30K', h200:'~$30-35K', b200:'~$40-50K', mi300x:'~$15-18K', gaudi3:'~$12-15K', tpuv6:'仅云 ($/chip-hr)', trainium3:'仅云 ($/chip-hr)', maia200:'仅云 (Azure)', siyuan590:'~$8-12K (估)', dcuz100:'~$5-8K (估)', kunlun2:'~$3-5K (估)', yunsuiT20:'~$5-8K (估)', br100:'~$10-15K (估)', mttS4000:'~$2-4K (估)', a950pr:'~$20-25K (受限估)', a950dt:'~$25-30K (受限估)', b300:'~$50-60K', mi355x:'~$20-25K (估)', tpuv7:'仅云 ($/chip-hr)', siyuan690:'~$10-15K (估)', mttS5000:'~$3-5K (估)', kunlunP800:'~$5-8K (估)', shensuan3:'~$8-12K (估)', yunsuiL600:'~$8-12K (估)', mi400:'未定价', bili20x:'~$12-18K (估)', a960:'未定价', rubin:'未定价', rubinUltra:'未定价', mi500:'未定价', jaguarShores:'未定价', tpuv8t:'仅云 (估)', trainium4:'仅云 (估)', maia280:'仅云 (Azure 估)', siyuan790:'未定价', shensuan4:'未定价', kunlunM100:'未定价', kunlunM300:'未定价' },
   { key: 'tco_tf_per_dollar', label: '算力成本 ($/TFLOPS FP16)', a910b:'~$54.7', a910c:'~$35.2', h100:'~$27.8', h200:'~$32.8', b200:'~$20.0', mi300x:'~$12.6', gaudi3:'~$7.4 (FP8)', tpuv6:'仅云', trainium3:'仅云', maia200:'仅云', siyuan590:'~$39.1 (估)', dcuz100:'~$65.0 (估)', kunlun2:'~$125 (估)', yunsuiT20:'~$40.6 (估)', br100:'~$24.4 (估)', mttS4000:'~$60.0 (估)', a950pr:'~$14.1 (估)', a950dt:'~$15.3 (估)', b300:'~$15.7', mi355x:'~$9.0 (估)', tpuv7:'仅云', siyuan690:'~$20.8 (估)', mttS5000:'~$8.0 (估)', kunlunP800:'~$18.8 (估)', shensuan3:'~$26.6 (估)', yunsuiL600:'~$39.1 (估)', mi400:'未定价', bili20x:'~$21.4 (估)', a960:'未定价', rubin:'未定价', rubinUltra:'未定价', mi500:'未定价', jaguarShores:'未定价', tpuv8t:'仅云', trainium4:'仅云', maia280:'仅云', siyuan790:'未定价', shensuan4:'未定价', kunlunM100:'未定价', kunlunM300:'未定价' },
@@ -1376,7 +1385,7 @@ const SPEC_CATEGORIES = [
   { id: 'basic',         label: '📋 基础信息',       keys: ['vendor','chip','release','form_factor'] },
   { id: 'compute',       label: '⚡ 计算性能',       keys: ['fp16','fp8','fp4','precision','area_eff'] },
   { id: 'memory',        label: '🧠 显存子系统',     keys: ['memory','mem_bw','mem_bus_width'] },
-  { id: 'interconnect',  label: '🔗 互联架构',       keys: ['interconnect','interconnect_latency_die','interconnect_latency','interconnect_latency_node'] },
+  { id: 'interconnect',  label: '🔗 互联架构',       keys: ['interconnect','interconnect_latency_die','interconnect_latency','interconnect_latency_rack','interconnect_latency_node'] },
   { id: 'physics',      label: '⚙️ 物理规格',       keys: ['process','transistors','die_size','tdp','energy_eff','cooling'] },
   { id: 'deploy',       label: '🏗️ 集群部署',       keys: ['max_scale'] },
   { id: 'tco',          label: '💰 TCO成本',       keys: ['tco_price','tco_tf_per_dollar'], desc: '总拥有成本 (Total Cost of Ownership)：包含硬件采购、电力、散热、运维等全生命周期成本。本表仅列芯片单价与单位算力成本，实际TCO因部署规模、电价、基础设施差异显著。云厂商自研芯片(TPU/Trainium/Maia)不零售，标注"仅云"。' },
@@ -1388,6 +1397,8 @@ var SPEC_TOOLTIPS = {
   tco_price: '芯片单位售价估算（千美元）。云厂商自研芯片（TPU/Trainium/Maia）不对外零售，标注"仅云"。未发布芯片标注"未定价"。受出口管制芯片标注"受限"。',
   tco_tf_per_dollar: '单位算力成本 = 芯片单价 ÷ FP16 TFLOPS。数值越低性价比越高，是采购选型核心指标。云厂商芯片无法直接比较，标注"仅云"。',
   tco_node_price: '8卡训练节点硬件成本估算 = 8 × 芯片单价 + 网络/存储/机柜（通常 +20~30%）。仅作参考，实际报价因规模折扣差异大。',
+  interconnect_latency_rack: '同机柜内节点间单跳通信延迟（经柜顶 ToR 交换机）。仅一次交换机转发，延迟低。反映柜内 scale-out 效率。',
+  interconnect_latency_node: '跨机柜通信延迟（经脊交换机 Spine + 柜顶交换机多跳转发）。跳数多、延迟显著高于柜内，是千卡以上集群训练效率的关键瓶颈。',
 };
 
 // ── MLPerf 基准测试数据（8-GPU 节点，训练时间 ↓ 越低越好 / 推理吞吐 ↑ 越高越好）──
@@ -2158,11 +2169,42 @@ class UIRenderer {
    * Refresh all compare-panel sub-components in one call (used by 7+ event handlers).
    */
   static _refreshCompareUI() {
+    UIRenderer.renderYearToggles();
     UIRenderer.renderChipToggles();
     UIRenderer.renderVendorToggles();
     UIRenderer.renderNewChipBanner(App.state.detectedChips);
     UIRenderer.renderComparisonTable(App.state.specExtractions);
     UIRenderer.renderMLPerfTable();
+  }
+
+  // ── Cross-selection helpers (year + chip filters) ──
+  static _buildChipYearMap() {
+    var releaseRow = null;
+    for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
+      if (COMPETITOR_SPECS[si].key === 'release') { releaseRow = COMPETITOR_SPECS[si]; break; }
+    }
+    var map = {};
+    for (var ci = 0; ci < CHIP_META.length; ci++) {
+      var cid = CHIP_META[ci].id;
+      var relVal = releaseRow && releaseRow[cid] ? releaseRow[cid] : '';
+      var ym = relVal.match(/\d{4}/);
+      map[cid] = ym ? parseInt(ym[0], 10) : 9999;
+    }
+    UIRenderer._chipYearMap = map;
+  }
+  static _isChipVisible(chipId) {
+    // Check chip-level visibility
+    var vis = App.state.visibleChips; // null = all, Set = filtered
+    if (vis && !vis.has(chipId)) return false;
+    // Check year-level eligibility
+    var yrs = App.state.selectedYears; // null = all years
+    if (yrs) {
+      if (!UIRenderer._chipYearMap) UIRenderer._buildChipYearMap();
+      var chipYear = UIRenderer._chipYearMap[chipId];
+      if (chipYear == null) { UIRenderer._buildChipYearMap(); chipYear = UIRenderer._chipYearMap[chipId]; }
+      if (!yrs.has(chipYear)) return false;
+    }
+    return true;
   }
 
   /**
@@ -2182,10 +2224,32 @@ class UIRenderer {
       }
     }
 
+    // Invalidate chip→year cache when CHIP_META changes
+    if (UIRenderer._chipYearMap && Object.keys(UIRenderer._chipYearMap).length !== CHIP_META.length) {
+      UIRenderer._chipYearMap = null;
+    }
     var html = '';
+    // "全部" toggle button for chips (skip year-ineligible when checking)
+    var yrs = App.state.selectedYears;
+    var chipAllOn = !visible;
+    if (visible) {
+      chipAllOn = true;
+      if (yrs && !UIRenderer._chipYearMap) UIRenderer._buildChipYearMap();
+      for (var aci = 0; aci < CHIP_META.length; aci++) {
+        var acid = CHIP_META[aci].id;
+        if (yrs) {
+          var acy = UIRenderer._chipYearMap[acid] || 9999;
+          if (!yrs.has(acy)) continue;
+        }
+        if (!visible.has(acid)) { chipAllOn = false; break; }
+      }
+    }
+    html += '<button class="btn btn-sm chip-toggle chip-all' + (chipAllOn ? ' active' : '') +
+      '" data-chip="__all__" style="font-size:0.65rem;padding:3px 8px;font-weight:600" ' +
+      'title="' + (chipAllOn ? '全部芯片已选 · 点击清空' : '仅部分芯片 · 点击全选') + '">全部</button>';
     var toggleChips = App.state.sortByYear ? UIRenderer._getYearSortedChips() : CHIP_META;
     toggleChips.forEach(function(c) {
-      var isOn = !visible || visible.has(c.id);
+      var isOn = UIRenderer._isChipVisible(c.id);
       var isCustom = !!customIds[c.id];
       html += '<button class="btn btn-sm chip-toggle' + (isOn ? ' active' : '') +
         '" data-chip="' + c.id + '" style="font-size:0.65rem;padding:3px 6px;border-left:3px solid ' + c.color + '">' +
@@ -2199,6 +2263,66 @@ class UIRenderer {
       }
       html += '</button>';
     });
+    container.innerHTML = html;
+  }
+
+  /**
+   * Render year quick-select buttons for chip filtering.
+   * Extracts unique years from COMPETITOR_SPECS release row.
+   * Clicking a year toggles it on/off; chips from unselected years are hidden.
+   */
+  static renderYearToggles() {
+    var container = document.getElementById('yearToggles');
+    if (!container) return;
+    var selected = App.state.selectedYears; // null = all; Set = filtered
+    var vis = App.state.visibleChips;        // null = all; Set = filtered
+    // Extract unique years + their chip lists from release row
+    var releaseRow = null;
+    for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
+      if (COMPETITOR_SPECS[si].key === 'release') { releaseRow = COMPETITOR_SPECS[si]; break; }
+    }
+    if (!releaseRow) return;
+    var yearMap = {}; // year → { chips: [chipId] }
+    var years = [];
+    for (var ci = 0; ci < CHIP_META.length; ci++) {
+      var cid = CHIP_META[ci].id;
+      var relVal = releaseRow[cid] || '';
+      var ym = relVal.match(/\d{4}/);
+      if (ym) {
+        var y = parseInt(ym[0], 10);
+        if (!yearMap[y]) { yearMap[y] = { chips: [] }; years.push(y); }
+        yearMap[y].chips.push(cid);
+      }
+    }
+    years.sort(function(a, b) { return a - b; }); // ascending
+    var html = '';
+    // "全部" toggle button
+    var allActive = !selected;
+    html += '<button class="btn btn-sm year-toggle' + (allActive ? ' active' : '') +
+      '" data-year="all" style="font-size:0.6rem;padding:2px 6px" ' +
+      'title="' + (allActive ? '全部年份已选 · 点击清空' : '点击恢复全选年份') + '">全部</button>';
+    for (var yi = 0; yi < years.length; yi++) {
+      var y = years[yi];
+      var isOn = !selected || selected.has(y);
+      // If chip/vendor filter active, dim years with zero visible chips
+      var hasVisible = true;
+      if (vis) {
+        hasVisible = false;
+        var yChips = yearMap[y].chips;
+        for (var yci = 0; yci < yChips.length; yci++) {
+          if (vis.has(yChips[yci])) { hasVisible = true; break; }
+        }
+      }
+      var dimStyle = '';
+      var dimTitle = '';
+      if (!hasVisible) {
+        // Visual dim only — keep clickable for multi-select
+        dimStyle = ';opacity:0.35';
+        dimTitle = ' title="当前芯片筛选中无此年份芯片"';
+      }
+      html += '<button class="btn btn-sm year-toggle' + (isOn ? ' active' : '') +
+        '" data-year="' + y + '" style="font-size:0.6rem;padding:2px 6px' + dimStyle + '"' + dimTitle + '>' + y + '</button>';
+    }
     container.innerHTML = html;
   }
 
@@ -2283,21 +2407,67 @@ class UIRenderer {
 
     var vendorMap = this._getVendorToggleMap();
     var visible = App.state.visibleChips; // null = all
+    var yrs = App.state.selectedYears;    // null = all years
+    // Ensure chip→year map is built for year-aware eligibility checks
+    if (yrs && !UIRenderer._chipYearMap) UIRenderer._buildChipYearMap();
     var parts = [];
+    // "全部" toggle button for vendors
+    var vendorAllOn = !visible;
+    if (visible) {
+      vendorAllOn = true;
+      for (var aci = 0; aci < CHIP_META.length; aci++) {
+        var acid = CHIP_META[aci].id;
+        if (yrs) {
+          var acy = UIRenderer._chipYearMap[acid] || 9999;
+          if (!yrs.has(acy)) continue;
+        }
+        if (!visible.has(acid)) { vendorAllOn = false; break; }
+      }
+    }
+    parts.push('<button class="btn btn-sm vendor-toggle vendor-all' + (vendorAllOn ? ' active' : '') +
+      '" data-vendor="__all__" style="font-size:0.62rem;padding:2px 7px;font-weight:600" ' +
+      'title="' + (vendorAllOn ? '全部厂商已选 · 点击清空' : '仅部分厂商 · 点击全选') + '">全部</button>');
     for (var v in vendorMap) {
       if (!vendorMap.hasOwnProperty(v)) continue;
       var info = vendorMap[v];
-      // Check if ALL chips from this vendor are currently visible
+      // Count year-eligible chips for this vendor
+      var eligibleCount = info.ids.length;
+      if (yrs) {
+        eligibleCount = 0;
+        for (var ei = 0; ei < info.ids.length; ei++) {
+          var chipYr = UIRenderer._chipYearMap[info.ids[ei]] || 9999;
+          if (yrs.has(chipYr)) eligibleCount++;
+        }
+      }
+      // Dim vendors with zero eligible chips under current year filter (keep clickable)
+      if (eligibleCount === 0) {
+        parts.push('<button class="btn btn-sm vendor-toggle" data-vendor="' + v +
+          '" style="font-size:0.62rem;padding:2px 7px;border-left:3px solid ' + info.color +
+          ';opacity:0.3" title="' + v + ' 在所选年份中无芯片（点击可预选，切换年份后生效）">' +
+          v + ' <span style="opacity:0.5;font-size:0.55rem">0</span></button>');
+        continue;
+      }
+      // Check if all YEAR-ELIGIBLE chips from this vendor are currently visible
       var allOn = !visible;
       if (visible) {
         allOn = true;
         for (var ii = 0; ii < info.ids.length; ii++) {
+          // Skip chips that are year-ineligible (they aren't affectable by vendor toggle)
+          if (yrs) {
+            var cy = UIRenderer._chipYearMap[info.ids[ii]] || 9999;
+            if (!yrs.has(cy)) continue;
+          }
           if (!visible.has(info.ids[ii])) { allOn = false; break; }
         }
       }
+      // Show eligible/total when year filter active, else just total
+      var countStr = yrs
+        ? '<span style="opacity:0.5;font-size:0.55rem">' + eligibleCount + '/' + info.count + '</span>'
+        : '<span style="opacity:0.5;font-size:0.55rem">' + info.count + '</span>';
+      var titleAttr = yrs ? ' title="' + v + ' · 当前年份筛选下有 ' + eligibleCount + ' 款芯片"' : '';
       parts.push('<button class="btn btn-sm vendor-toggle' + (allOn ? ' active' : '') +
-        '" data-vendor="' + v + '" style="font-size:0.62rem;padding:2px 7px;border-left:3px solid ' + info.color + '">' +
-        v + ' <span style="opacity:0.5;font-size:0.55rem">' + info.count + '</span></button>');
+        '" data-vendor="' + v + '" style="font-size:0.62rem;padding:2px 7px;border-left:3px solid ' + info.color + '"' + titleAttr + '>' +
+        v + ' ' + countStr + '</button>');
     }
     container.innerHTML = parts.join('');
   }
@@ -2406,10 +2576,15 @@ class UIRenderer {
       if (n >= 1) return 'val-good';       // ≥1 TF/mm²
       if (n <= 0.3) return 'val-mid';      // ≤0.3 TF/mm²
     }
+    if (key === 'interconnect_latency_rack') {
+      if (n <= 2000) return 'val-best';    // ≤2μs 柜内单跳
+      if (n <= 4000) return 'val-good';    // ≤4μs
+      if (n >= 8000) return 'val-mid';     // ≥8μs
+    }
     if (key === 'interconnect_latency_node') {
-      if (n <= 1000) return 'val-best';    // ≤1μs
-      if (n <= 2000) return 'val-good';    // ≤2μs
-      if (n >= 5000) return 'val-mid';     // ≥5μs
+      if (n <= 6000) return 'val-best';    // ≤6μs 柜间跨Spine
+      if (n <= 15000) return 'val-good';   // ≤15μs
+      if (n >= 25000) return 'val-mid';    // ≥25μs
     }
     if (key === 'tco_tf_per_dollar' && val.indexOf('仅云') < 0 && val.indexOf('未定价') < 0) {
       if (n <= 15) return 'val-best';      // ≤$15/TF
@@ -2431,7 +2606,7 @@ class UIRenderer {
     // Filter chips by visibility
     var visibleChips = App.state.visibleChips;
     var allChips = CHIP_META;
-    var chips = visibleChips ? allChips.filter(function(c) { return visibleChips.has(c.id); }) : allChips;
+    var chips = allChips.filter(function(c) { return UIRenderer._isChipVisible(c.id); });
 
     // Sort: year-based (if enabled), otherwise FP16 performance descending
     if (App.state.sortByYear) {
@@ -2511,7 +2686,12 @@ class UIRenderer {
     }
 
     // Header
-    var headerParts = ['<thead><tr><th>规格项</th>'];
+    var headerParts = ['<thead><tr><th style="white-space:nowrap">规格项 ' +
+      '<span class="cat-expand-all" title="展开所有分类" style="cursor:pointer;font-size:0.75rem;margin-left:4px;opacity:0.5" ' +
+      'onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.5\'">🔽</span>' +
+      '<span class="cat-collapse-all" title="折叠所有分类" style="cursor:pointer;font-size:0.75rem;margin-left:2px;opacity:0.5" ' +
+      'onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.5\'">🔼</span>' +
+      '</th>'];
     for (var hi = 0; hi < chips.length; hi++) {
       headerParts.push('<th class="chip-col" style="color:' + chips[hi].color + '">' + chips[hi].name + '</th>');
     }
@@ -2545,6 +2725,9 @@ class UIRenderer {
         headerParts.push('<tr class="' + (isAscendRow ? 'highlight-row ' : '') + 'cat-child' + (isCollapsed ? ' cat-hidden' : '') + '" data-cat="' + cat.id + '">');
         var labelTip = SPEC_TOOLTIPS[specKey] ? ' title="' + this.escapeHtml(SPEC_TOOLTIPS[specKey]) + '"' : '';
         headerParts.push('<td' + labelTip + '>' + specRow.label + '</td>');
+        // Methodology note for cross-rack latency cells
+        var isCrossRackRow = specRow.key === 'interconnect_latency_node';
+        var methodNote = '\n\n📐 柜间延时估算方法：\n    片间延迟 + ToR交换机转发 + Spine交换机多跳\n    基于典型Fat-Tree拓扑 2-3级交换跳数估算\n    含每跳交换机转发(~0.5-2μs) + 光纤传输(~0.1μs/100m)\n    实际值因集群规模/交换机型号/拥塞程度而异';
         var rowData = cellMatrix[ri];
         for (var ci = 0; ci < rowData.length; ci++) {
           var cell = rowData[ci];
@@ -2558,9 +2741,12 @@ class UIRenderer {
               tt += '\n  • ' + d.sources[si2].source + ' (' + d.sources[si2].articleDate + ')';
               tt += '\n    置信度: ' + Math.round(d.sources[si2].confidence * 100) + '%';
             }
+            if (isCrossRackRow) tt += methodNote;
             headerParts.push('<td class="' + cell.cls + '" title="' + this.escapeHtml(tt) + '">' + this.escapeHtml(d.value) + badge + '</td>');
           } else {
-            headerParts.push('<td class="' + cell.cls + '" title="📌 静态默认值（尚未从新闻中提取到数据）">' + cell.staticVal + '</td>');
+            var stt = '📌 静态默认值（尚未从新闻中提取到数据）';
+            if (isCrossRackRow) stt += methodNote;
+            headerParts.push('<td class="' + cell.cls + '" title="' + this.escapeHtml(stt) + '">' + cell.staticVal + '</td>');
           }
         }
         headerParts.push('</tr>');
@@ -2603,9 +2789,7 @@ class UIRenderer {
 
     // ── Determine visible chips (same logic as main table) ──
     var visibleChips = App.state.visibleChips;
-    var chips = visibleChips
-      ? CHIP_META.filter(function (c) { return visibleChips.has(c.id); })
-      : CHIP_META.slice();
+    var chips = CHIP_META.filter(function (c) { return UIRenderer._isChipVisible(c.id); });
 
     // ── Sort: year-based (if enabled), otherwise FP16 descending ──
     if (App.state.sortByYear) {
@@ -3010,6 +3194,14 @@ class SpecExtractor {
     {
       specKey: 'interconnect_latency',
       regex: /(?:互联|interconnect|NVLink|HCCS|ICI|link)\s*(?:延迟|latency)[：:≈~]?\s*~?(\d[\d,.]*)\s*(ns|μs|us)/gi,
+      normalize: (m) => ({
+        numValue: parseFloat(m[1].replace(/,/g, '')) * (m[2] === 'us' || m[2] === 'μs' ? 1000 : 1),
+        unit: 'ns'
+      })
+    },
+    {
+      specKey: 'interconnect_latency_rack',
+      regex: /(?:柜内|同柜|rack\s*internal|in.rack|intra.rack|ToR\s*switch|top.of.rack)\s*(?:互联|延迟|latency)[：:≈~]?\s*~?(\d[\d,.]*)\s*(ns|μs|us)/gi,
       normalize: (m) => ({
         numValue: parseFloat(m[1].replace(/,/g, '')) * (m[2] === 'us' || m[2] === 'μs' ? 1000 : 1),
         unit: 'ns'
@@ -3615,7 +3807,8 @@ const App = {
     competitorFilter: 'all',
     compareVisible: true,
     visibleChips: null,     // null = all visible; Set of chip IDs when filtered
-    sortByYear: false,      // false = FP16 sort; true = year ASC → FP16 DESC
+    sortByYear: true,       // true = year ASC → FP16 DESC (default); false = FP16 only
+    selectedYears: null,    // null = all years; Set of year numbers (e.g., 2025, 2026) when filtered
     collapsedCategories: null, // null = all expanded; Set of category ids that are collapsed
     detectedChips: [],      // New chips discovered from news text
     customChips: [],        // User-added chips persisted to localStorage
@@ -4463,9 +4656,35 @@ const App = {
       var btn = e.target.closest('.chip-toggle');
       if (!btn) return;
       var chipId = btn.dataset.chip;
+      // "全部" toggle for chips
+      if (chipId === '__all__') {
+        var yrsC = App.state.selectedYears;
+        var visC = App.state.visibleChips;
+        var allOnC = !visC;
+        if (visC) {
+          allOnC = true;
+          if (yrsC && !UIRenderer._chipYearMap) UIRenderer._buildChipYearMap();
+          for (var aci = 0; aci < CHIP_META.length; aci++) {
+            var acid = CHIP_META[aci].id;
+            if (yrsC) {
+              var acy = UIRenderer._chipYearMap[acid] || 9999;
+              if (!yrsC.has(acy)) continue;
+            }
+            if (!visC.has(acid)) { allOnC = false; break; }
+          }
+        }
+        App.state.visibleChips = allOnC ? new Set() : null;
+        UIRenderer._refreshCompareUI();
+        return;
+      }
       if (!App.state.visibleChips) {
-        // First click: initialize with all chips, then toggle off the clicked one
-        App.state.visibleChips = new Set(CHIP_META.map(function(c) { return c.id; }));
+        // Initialize with all year-eligible chips, then toggle off the clicked one
+        var initSet = new Set();
+        for (var ici = 0; ici < CHIP_META.length; ici++) {
+          var icid = CHIP_META[ici].id;
+          if (UIRenderer._isChipVisible(icid)) initSet.add(icid);
+        }
+        App.state.visibleChips = initSet;
       }
       if (App.state.visibleChips.has(chipId)) {
         App.state.visibleChips.delete(chipId);
@@ -4474,26 +4693,78 @@ const App = {
       }
       UIRenderer._refreshCompareUI();
     });
-    // Select all
-    document.getElementById('btnChipSelectAll').addEventListener('click', function() {
-      App.state.visibleChips = null; // null = all visible
-      UIRenderer._refreshCompareUI();
-    });
-    // Clear all
-    document.getElementById('btnChipClearAll').addEventListener('click', function() {
-      App.state.visibleChips = new Set(); // empty = none visible
-      UIRenderer._refreshCompareUI();
-    });
     // Sort by year toggle
     document.getElementById('btnSortByYear').addEventListener('click', function() {
       App.state.sortByYear = !App.state.sortByYear;
       var btn = document.getElementById('btnSortByYear');
       if (App.state.sortByYear) {
-        btn.textContent = '📅 年份 ✓';
+        btn.textContent = '📅 按年份排序 ✓';
         btn.classList.add('active');
       } else {
-        btn.textContent = '📅 按年份';
+        btn.textContent = '📅 按年份排序';
         btn.classList.remove('active');
+      }
+      UIRenderer._refreshCompareUI();
+    });
+    // Year toggle — cross-select with chip/vendor toggles
+    document.getElementById('yearToggles').addEventListener('click', function(e) {
+      var btn = e.target.closest('.year-toggle');
+      if (!btn) return;
+      var yearVal = btn.dataset.year;
+      // Toggle selectedYears ("全部" now toggles: all ↔ clear)
+      if (yearVal === 'all') {
+        App.state.selectedYears = App.state.selectedYears ? null : new Set();
+      } else {
+        if (!App.state.selectedYears) App.state.selectedYears = new Set();
+        var y = parseInt(yearVal, 10);
+        if (App.state.selectedYears.has(y)) {
+          App.state.selectedYears.delete(y);
+          if (App.state.selectedYears.size === 0) App.state.selectedYears = null;
+        } else {
+          App.state.selectedYears.add(y);
+        }
+      }
+      // Merge year filter with existing chip-level selection (cross-selection)
+      if (App.state.selectedYears) {
+        // Build chip→year map
+        var releaseRow = null;
+        for (var si = 0; si < COMPETITOR_SPECS.length; si++) {
+          if (COMPETITOR_SPECS[si].key === 'release') { releaseRow = COMPETITOR_SPECS[si]; break; }
+        }
+        // Compute eligible chips from selected years
+        var eligible = new Set();
+        for (var ci = 0; ci < CHIP_META.length; ci++) {
+          var cid = CHIP_META[ci].id;
+          var relVal = releaseRow && releaseRow[cid] ? releaseRow[cid] : '';
+          var ym = relVal.match(/\d{4}/);
+          var chipYear = ym ? parseInt(ym[0], 10) : 9999;
+          if (App.state.selectedYears.has(chipYear)) eligible.add(cid);
+        }
+        if (App.state.visibleChips) {
+          // Cross-selection: remove newly ineligible, add newly eligible
+          var toRemove = [];
+          App.state.visibleChips.forEach(function(existingId) {
+            if (!eligible.has(existingId)) toRemove.push(existingId);
+          });
+          for (var ri = 0; ri < toRemove.length; ri++) {
+            App.state.visibleChips.delete(toRemove[ri]);
+          }
+          eligible.forEach(function(eid) {
+            App.state.visibleChips.add(eid);
+          });
+        } else {
+          // No chip-level filter yet — show all eligible
+          App.state.visibleChips = eligible;
+        }
+      } else {
+        // All years selected — lift year filter, keep any chip-level exclusions
+        // Restore all chips that may have been hidden by year filter
+        if (App.state.visibleChips) {
+          for (var ai = 0; ai < CHIP_META.length; ai++) {
+            App.state.visibleChips.add(CHIP_META[ai].id);
+          }
+        }
+        // If visibleChips is null, stays null (all chips already visible)
       }
       UIRenderer._refreshCompareUI();
     });
@@ -4502,8 +4773,27 @@ const App = {
       UIRenderer.exportTableAsImage();
     });
 
-    // Category collapse/expand toggle on comparison table
+    // Category collapse/expand + expand-all / collapse-all on comparison table
     document.getElementById('compareTable').addEventListener('click', function (e) {
+      // Expand all categories
+      var expandAll = e.target.closest('.cat-expand-all');
+      if (expandAll) {
+        App.state.collapsedCategories = null;
+        UIRenderer.renderComparisonTable(App.state.specExtractions);
+        return;
+      }
+      // Collapse all categories
+      var collapseAll = e.target.closest('.cat-collapse-all');
+      if (collapseAll) {
+        var allIds = new Set();
+        for (var gi = 0; gi < SPEC_CATEGORIES.length; gi++) {
+          allIds.add(SPEC_CATEGORIES[gi].id);
+        }
+        App.state.collapsedCategories = allIds;
+        UIRenderer.renderComparisonTable(App.state.specExtractions);
+        return;
+      }
+      // Individual category toggle
       var headerRow = e.target.closest('.spec-cat-header');
       if (!headerRow) return;
       var catId = headerRow.getAttribute('data-cat');
@@ -4528,31 +4818,55 @@ const App = {
         var btn = e.target.closest('.vendor-toggle');
         if (!btn) return;
         var vendor = btn.getAttribute('data-vendor');
+        // "全部" toggle: select all vendors or clear all
+        if (vendor === '__all__') {
+          var yrsV = App.state.selectedYears;
+          if (yrsV && !UIRenderer._chipYearMap) UIRenderer._buildChipYearMap();
+          var visV = App.state.visibleChips;
+          var allOnV = !visV;
+          if (visV) {
+            allOnV = true;
+            for (var aci = 0; aci < CHIP_META.length; aci++) {
+              var acid = CHIP_META[aci].id;
+              if (yrsV) {
+                var acy = UIRenderer._chipYearMap[acid] || 9999;
+                if (!yrsV.has(acy)) continue;
+              }
+              if (!visV.has(acid)) { allOnV = false; break; }
+            }
+          }
+          App.state.visibleChips = allOnV ? new Set() : null;
+          UIRenderer._refreshCompareUI();
+          return;
+        }
         // Collect all chip ids for this vendor
         var vendorChipIds = [];
         CHIP_META.forEach(function(c) {
           if (c.vendor === vendor) vendorChipIds.push(c.id);
         });
         if (!vendorChipIds.length) return;
-        // Initialize visibleChips if null (all visible)
+        // Initialize visibleChips if null (first vendor click = filter TO this vendor)
         var vis = App.state.visibleChips;
-        var allOn = !vis;
-        if (vis) {
-          allOn = true;
-          for (var i = 0; i < vendorChipIds.length; i++) {
-            if (!vis.has(vendorChipIds[i])) { allOn = false; break; }
-          }
-        }
         if (!vis) {
           vis = new Set();
-          CHIP_META.forEach(function(c) { vis.add(c.id); });
           App.state.visibleChips = vis;
         }
+        // Check if all vendor chips (that are year-eligible) are currently ON
+        var allOn = true;
+        for (var vi = 0; vi < vendorChipIds.length; vi++) {
+          // Skip chips blocked by year filter (they can't be toggled via vendor button)
+          if (App.state.selectedYears) {
+            if (!UIRenderer._chipYearMap) UIRenderer._buildChipYearMap();
+            var chipYr = UIRenderer._chipYearMap[vendorChipIds[vi]] || 9999;
+            if (!App.state.selectedYears.has(chipYr)) continue;
+          }
+          if (!vis.has(vendorChipIds[vi])) { allOn = false; break; }
+        }
         if (allOn) {
-          // Turn this vendor OFF
+          // Turn this vendor OFF — remove all chips (persists across year filter changes)
           for (var j = 0; j < vendorChipIds.length; j++) { vis.delete(vendorChipIds[j]); }
         } else {
-          // Turn this vendor ON
+          // Turn this vendor ON — add all chips (year-ineligible chips stay latent until year filter lifts)
           for (var k = 0; k < vendorChipIds.length; k++) { vis.add(vendorChipIds[k]); }
         }
         UIRenderer._refreshCompareUI();
